@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 7 章　用 Python 写模拟器：执行与访存</title>
+<style>
+:root { --red: #C8102E; --ink: #1f2328; --muted: #6b7280; --line: #e5e7eb; --bg: #ffffff; --soft: #faf9f7; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: var(--ink); background: var(--bg); line-height: 1.8;
+       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif; }
+a { color: var(--red); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.topbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.97);
+          border-bottom: 2px solid var(--red); padding: 10px 24px;
+          display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 700; color: var(--ink); font-size: 15px; }
+.topbar nav { display: flex; gap: 16px; font-size: 13px; align-items: center; flex-wrap: wrap; }
+.topbar nav a { color: #374151; }
+.topbar nav a:hover { color: var(--red); }
+.wrap { max-width: 900px; margin: 0 auto; padding: 32px 22px 90px; }
+.hero { display: flex; gap: 36px; align-items: flex-start; flex-wrap: wrap; margin: 18px 0 46px; }
+.hero .cover { width: 232px; max-width: 100%; border: 1px solid var(--line);
+               box-shadow: 0 8px 28px rgba(0,0,0,.12); border-radius: 2px; }
+.hero .info { flex: 1 1 360px; }
+.series { color: var(--red); font-size: 13px; letter-spacing: 2px; margin: 4px 0 10px; }
+.hero h1 { font-size: 32px; line-height: 1.3; margin: 0 0 6px; }
+.hero .subtitle { font-size: 21px; color: var(--red); margin: 0 0 18px; }
+.byline { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+.intro { color: #374151; font-size: 15px; margin: 0 0 24px; }
+.btn { display: inline-block; padding: 9px 20px; background: var(--red); color: #fff;
+       border-radius: 4px; font-size: 14px; margin-right: 10px; }
+.btn:hover { background: #a50e26; text-decoration: none; }
+.btn.ghost { background: #fff; color: var(--red); border: 1px solid var(--red); }
+.btn.ghost:hover { background: #fdf2f4; }
+.toc-group { margin: 30px 0; }
+.toc-group h2 { font-size: 18px; color: var(--ink); border-bottom: 2px solid var(--line);
+                padding-bottom: 8px; margin: 0 0 12px; }
+ol.toc-list { list-style: none; padding: 0; margin: 0; counter-reset: item; }
+ol.toc-list li { border-bottom: 1px dashed var(--line); padding: 7px 2px; font-size: 15px; }
+ol.toc-list li a { color: var(--ink); }
+ol.toc-list li a:hover { color: var(--red); }
+.article h1 { font-size: 28px; color: var(--red); border-bottom: 3px solid var(--red);
+              padding-bottom: 10px; margin: 0 0 28px; line-height: 1.4; }
+.article h2 { font-size: 21px; margin: 38px 0 12px; padding-left: 10px; border-left: 4px solid var(--red); }
+.article h3 { font-size: 17px; margin: 26px 0 8px; }
+.article p { text-align: justify; margin: 12px 0; }
+.article img { max-width: 100%; height: auto; display: block; margin: 22px auto 6px; }
+.article blockquote { border-left: 3px solid var(--line); background: var(--soft);
+                      margin: 16px 0; padding: 10px 16px; color: #4b5563; }
+.article pre { background: #f6f6f4; border-left: 3px solid var(--red); padding: 14px 16px;
+               border-radius: 0 4px 4px 0; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+.article code { font-family: Consolas, "Courier New", monospace; background: #f2f2f0;
+                padding: 1px 4px; border-radius: 3px; font-size: .92em; }
+.article pre code { background: none; padding: 0; }
+.article table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: 14px; }
+.article th, .article td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+.article th { background: var(--soft); font-weight: 600; }
+.pagenav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+           border-top: 1px solid var(--line); margin-top: 54px; padding-top: 18px; font-size: 14px; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px 0 40px; }
+@media (max-width: 640px) { .hero h1 { font-size: 26px; } .wrap { padding: 20px 16px 60px; } }
+</style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="../index.html">RISC-V 处理器设计入门</a><nav><a href="../index.html">目录</a><a href="ch06.html">← 第 6 章</a><a href="ch08.html">第 8 章 →</a><a href="https://github.com/jgxing/riscv-intro-book">代码仓库</a></nav></header>
+<main class="wrap"><article class="article"><h1 id="第-7-章-用-python-写模拟器执行与访存">第 7 章　用 Python 写模拟器：执行与访存</h1>
+<blockquote>
+<p>本章导读</p>
+<p>上一章的模拟器能取指、能译码，但只能把指令打印出来，寄存器始终没变过。这一章给它接上执行部分。算术运算改寄存器，访存指令走总线，分支跳转改 pc。等这些齐了，第 3 章写的汇编程序就能在模拟器里跑起来，每执行一条指令打印一次寄存器状态。最后再加一个简化的串口，让程序能输出字符。</p>
+</blockquote>
+<h2 id="执行一条指令要改什么">7.1　执行一条指令要改什么</h2>
+<p>译码之后，手里有一个 <code>Inst</code>，里面装着操作码、寄存器号、立即数和指令类别。执行要做的事，说到底就是改三样东西：寄存器、内存、pc。</p>
+<p>算术指令只改寄存器。load 和 store 要碰内存。分支跳转要改 pc，让下一条指令不在顺序的位置上。ecall 特殊，它让模拟器停下来。</p>
+<p>这三件事的分布如附图。</p>
+<figure>
+<img src="../figures/fig7-1-execute-flow.svg" alt="一条指令从取指到改状态的过程" />
+<figcaption aria-hidden="true">一条指令从取指到改状态的过程</figcaption>
+</figure>
+<p><em>图 7-1　一条指令从取指到改状态的过程</em></p>
+<p>先定接口。执行函数拿到三个东西：CPU 状态（读写 pc 和寄存器）、译码结果、总线（访问内存和串口）。返回是否继续运行。</p>
+<pre class="python"><code>def execute(cpu, d, bus):
+    &quot;&quot;&quot;执行一条已译码指令，返回 running；pc 的推进集中在这里。&quot;&quot;&quot;
+    pc = cpu.get_pc()
+    next_pc, running = EXEC[d.kind](cpu, d, bus, pc)
+    cpu.set_pc(next_pc)
+    return running</code></pre>
+<p>这里有两点值得说。第一，pc 的推进集中在 <code>execute</code> 里做。每个处理函数返回它算出的 <code>next_pc</code>，普通指令返回 <code>pc + 4</code>，分支指令返回跳转目标。这样不会漏掉 pc 更新，也不会出现两处都改 pc 的混乱。第二，用 <code>EXEC</code> 查表分发，而不是写一长串 <code>if</code>。表的键是上一章译出的 <code>kind</code>，值是对应的处理函数。</p>
+<p>处理函数的统一签名是 <code>(cpu, d, bus, pc)</code>，返回 <code>(next_pc, running)</code>。参数多，但形状一致，查表才使得起来。</p>
+<h2 id="最简单的两条lui-和-auipc">7.2　最简单的两条：lui 和 auipc</h2>
+<p>从最简单的开始。这两条指令只写一个寄存器，别的都不碰。</p>
+<p><code>lui</code> 把立即数直接放进 rd。上一章的 <code>imm_u</code> 已经把高 20 位摆好、低 12 位填了 0，这里直接写进去就行。</p>
+<pre class="python"><code>def ex_lui(cpu, d, bus, pc):
+    cpu.set_reg(d.rd, d.imm)
+    return u32(pc + 4), True</code></pre>
+<p><code>auipc</code> 多一步，要把当前 pc 加上去。这个名字就是 add upper immediate to pc 的缩写。</p>
+<pre class="python"><code>def ex_auipc(cpu, d, bus, pc):
+    cpu.set_reg(d.rd, u32(pc + d.imm))
+    return u32(pc + 4), True</code></pre>
+<p>两处都调用了 <code>u32</code>。这是本章反复要用的工具。Python 的整数不限宽度，5 加 10 得 15 没问题，但 <code>0xFFFFFFFF + 1</code> 会得到 <code>0x100000000</code>，九位十六进制数，不是 32 位处理器的行为。得手动截断。</p>
+<pre class="python"><code>MASK = 0xFFFFFFFF
+
+
+def u32(value):
+    return value &amp; MASK
+
+
+def s32(value):
+    return sext(value, 32)</code></pre>
+<p><code>s32</code> 反过来，把一个 32 位模式按补码解释成 Python 的负数。有符号比较和算术右移都要用它。<code>sext</code> 是上一章写的函数，直接拿来用。</p>
+<h2 id="alu-运算把第-5-章的电路搬进软件">7.3　ALU 运算：把第 5 章的电路搬进软件</h2>
+<p>第 5 章用门电路搭了 ALU，这里用 Python 函数实现同样的运算。R 型指令的两个操作数都来自寄存器，I 型指令的一个操作数来自立即数。</p>
+<p>运算本身用字典装起来，每个名字对应一个 lambda。</p>
+<pre class="python"><code>R_OPS = {
+    &quot;add&quot;: lambda a, b: u32(a + b),
+    &quot;sub&quot;: lambda a, b: u32(a - b),
+    &quot;sll&quot;: lambda a, b: u32(a &lt;&lt; (b &amp; 0x1F)),
+    &quot;slt&quot;: lambda a, b: 1 if s32(a) &lt; s32(b) else 0,
+    &quot;sltu&quot;: lambda a, b: 1 if u32(a) &lt; u32(b) else 0,
+    &quot;xor&quot;: lambda a, b: a ^ b,
+    &quot;srl&quot;: lambda a, b: u32(a) &gt;&gt; (b &amp; 0x1F),
+    &quot;sra&quot;: lambda a, b: u32(s32(a) &gt;&gt; (b &amp; 0x1F)),
+    &quot;or&quot;: lambda a, b: a | b,
+    &quot;and&quot;: lambda a, b: a &amp; b,
+}</code></pre>
+<p>几个细节要留意。移位量只取低 5 位，因为 RV32I 的寄存器移位位数是 5 位；取 <code>b &amp; 0x1F</code> 正好模拟硬件里只接低 5 根线。<code>srl</code> 是逻辑右移，先按无符号看；<code>sra</code> 是算术右移，先按有符号看，移动完再截回 32 位。<code>slt</code> 和 <code>sltu</code> 的区别也在这里，一个走 <code>s32</code>，一个走 <code>u32</code>。</p>
+<p>处理函数先取操作数，再查表算，最后写回。</p>
+<pre class="python"><code>def ex_op(cpu, d, bus, pc):
+    a = cpu.get_reg(d.rs1)
+    b = cpu.get_reg(d.rs2)
+    cpu.set_reg(d.rd, R_OPS[d.name](a, b))
+    return u32(pc + 4), True</code></pre>
+<p>I 型这边稍有不同。移位指令的立即数字段里，低 5 位是移位量，高 7 位是 funct7；其他指令的立即数就是一个普通的 12 位数。上一章的 <code>imm_i</code> 已经把它符号扩展好了，加减和逻辑运算直接用，<code>slli</code>、<code>srli</code>、<code>srai</code> 单独取低 5 位。</p>
+<pre class="python"><code>I_OPS = {
+    &quot;addi&quot;: lambda a, imm: u32(a + imm),
+    &quot;slti&quot;: lambda a, imm: 1 if s32(a) &lt; imm else 0,
+    &quot;sltiu&quot;: lambda a, imm: 1 if u32(a) &lt; u32(imm) else 0,
+    &quot;xori&quot;: lambda a, imm: a ^ u32(imm),
+    &quot;ori&quot;: lambda a, imm: a | u32(imm),
+    &quot;andi&quot;: lambda a, imm: a &amp; u32(imm),
+    &quot;srli&quot;: lambda a, imm: u32(a) &gt;&gt; (imm &amp; 0x1F),
+    &quot;srai&quot;: lambda a, imm: u32(s32(a) &gt;&gt; (imm &amp; 0x1F)),
+}</code></pre>
+<pre class="python"><code>def ex_op_imm(cpu, d, bus, pc):
+    a = cpu.get_reg(d.rs1)
+    if d.name in (&quot;slli&quot;, &quot;srli&quot;, &quot;srai&quot;):
+        shamt = d.imm &amp; 0x1F
+        if d.name == &quot;slli&quot;:
+            result = u32(a &lt;&lt; shamt)
+        elif d.name == &quot;srli&quot;:
+            result = u32(a) &gt;&gt; shamt
+        else:
+            result = u32(s32(a) &gt;&gt; shamt)
+    else:
+        result = I_OPS[d.name](a, d.imm)
+    cpu.set_reg(d.rd, result)
+    return u32(pc + 4), True</code></pre>
+<p>写这一章时发现第 6 章的译码表漏了 <code>slli</code>。它的 funct3 是 001，上一章的 <code>OP_IMM_NAME</code> 没列这一项，译出来会是 <code>op-imm?</code>。现在补上即可。</p>
+<pre class="python"><code>OP_IMM_NAME = {0: &quot;addi&quot;, 1: &quot;slli&quot;, 2: &quot;slti&quot;, 3: &quot;sltiu&quot;, 4: &quot;xori&quot;, 6: &quot;ori&quot;, 7: &quot;andi&quot;}</code></pre>
+<p>同时让 <code>disasm</code> 认识它。这是渐进开发里常见的事：写执行代码时才会发现译码漏了一种情况。</p>
+<h2 id="访存地址算一次宽度各不同">7.4　访存：地址算一次，宽度各不同</h2>
+<p>load 和 store 都要先算地址，再用上一章的 <code>bus</code> 读写。地址是 <code>regs[rs1] + imm</code>，算完也要 <code>u32</code> 截断。</p>
+<pre class="python"><code>def ex_load(cpu, d, bus, pc):
+    addr = u32(cpu.get_reg(d.rs1) + d.imm)
+    if d.name == &quot;lb&quot;:
+        value = sext(bus.load8(addr), 8)
+    elif d.name == &quot;lbu&quot;:
+        value = bus.load8(addr)
+    elif d.name == &quot;lh&quot;:
+        value = sext(bus.load16(addr), 16)
+    elif d.name == &quot;lhu&quot;:
+        value = bus.load16(addr)
+    else:
+        value = bus.load32(addr)
+    cpu.set_reg(d.rd, value)
+    return u32(pc + 4), True</code></pre>
+<p>宽度和符号扩展都由 <code>d.name</code> 决定，如附图。<code>lb</code> 和 <code>lh</code> 要符号扩展，<code>lbu</code> 和 <code>lhu</code> 只要零扩展，<code>lw</code> 读出来的就是 32 位，不必再处理。第 6 章的 <code>sext</code> 在这里派上用场，传 8 或 16 进去就行。</p>
+<figure>
+<img src="../figures/fig7-2-load-store.svg" alt="访存指令的宽度与符号扩展" />
+<figcaption aria-hidden="true">访存指令的宽度与符号扩展</figcaption>
+</figure>
+<p><em>图 7-2　访存指令的宽度与符号扩展</em></p>
+<p>store 更简单，没有符号扩展这回事，只需按宽度把值的低位写出去。</p>
+<pre class="python"><code>def ex_store(cpu, d, bus, pc):
+    addr = u32(cpu.get_reg(d.rs1) + d.imm)
+    value = cpu.get_reg(d.rs2)
+    if d.name == &quot;sb&quot;:
+        bus.store8(addr, value)
+    elif d.name == &quot;sh&quot;:
+        bus.store16(addr, value)
+    else:
+        bus.store32(addr, value)
+    return u32(pc + 4), True</code></pre>
+<h2 id="分支与跳转只负责算出下一个地址">7.5　分支与跳转：只负责算出下一个地址</h2>
+<p>分支指令比较两个数，条件成立才跳。六种比较写在一起，最后统一返回目标或 <code>pc + 4</code>。</p>
+<pre class="python"><code>def ex_branch(cpu, d, bus, pc):
+    a = cpu.get_reg(d.rs1)
+    b = cpu.get_reg(d.rs2)
+    name = d.name
+    if name == &quot;beq&quot;:
+        taken = a == b
+    elif name == &quot;bne&quot;:
+        taken = a != b
+    elif name == &quot;blt&quot;:
+        taken = s32(a) &lt; s32(b)
+    elif name == &quot;bge&quot;:
+        taken = s32(a) &gt;= s32(b)
+    elif name == &quot;bltu&quot;:
+        taken = u32(a) &lt; u32(b)
+    else:
+        taken = u32(a) &gt;= u32(b)
+    return (u32(pc + d.imm) if taken else u32(pc + 4)), True</code></pre>
+<p>有符号和无符号的比较各走各的转换，和 ALU 里的 <code>slt</code>、<code>sltu</code> 是同一套道理。</p>
+<p><code>jal</code> 是相对跳转，顺手把返回地址写进 rd。<code>jalr</code> 是间接跳转，目标来自寄存器加立即数，最低位要清 0。</p>
+<figure>
+<img src="../figures/fig7-3-branch-target.svg" alt="分支与跳转的目标地址计算" />
+<figcaption aria-hidden="true">分支与跳转的目标地址计算</figcaption>
+</figure>
+<p><em>图 7-3　分支与跳转的目标地址计算</em></p>
+<pre class="python"><code>def ex_jal(cpu, d, bus, pc):
+    cpu.set_reg(d.rd, u32(pc + 4))
+    return u32(pc + d.imm), True
+
+
+def ex_jalr(cpu, d, bus, pc):
+    target = u32((cpu.get_reg(d.rs1) + d.imm) &amp; ~1)
+    cpu.set_reg(d.rd, u32(pc + 4))
+    return target, True</code></pre>
+<p>图里把两种跳转画在一起，是因为它们都要写链接地址。<code>rd</code> 为 x0 时不写，于是同一条指令也能当普通跳转用，这正是第 3 章里 <code>j</code> 伪指令的实现方式。</p>
+<h2 id="收尾ecall-停机与分发表">7.6　收尾：ecall 停机与分发表</h2>
+<p>剩下的三条很短。<code>fence</code> 在单核功能模型里没有实际动作，直接往下走。<code>system</code> 类的 <code>ecall</code> 和 <code>ebreak</code> 让模拟器停下来，返回 <code>running = False</code>。非法的指令字抛异常，别让它悄悄混过去。</p>
+<pre class="python"><code>def ex_fence(cpu, d, bus, pc):
+    return u32(pc + 4), True
+
+
+def ex_system(cpu, d, bus, pc):
+    return u32(pc + 4), False
+
+
+def ex_illegal(cpu, d, bus, pc):
+    raise ValueError(&quot;illegal instruction at pc=0x%08x&quot; % pc)</code></pre>
+<p>把处理函数登记到表里，<code>execute</code> 就能按类别找到它们。</p>
+<pre class="python"><code>EXEC = {
+    &quot;lui&quot;: ex_lui, &quot;auipc&quot;: ex_auipc,
+    &quot;op&quot;: ex_op, &quot;op-imm&quot;: ex_op_imm,
+    &quot;load&quot;: ex_load, &quot;store&quot;: ex_store,
+    &quot;branch&quot;: ex_branch, &quot;jal&quot;: ex_jal, &quot;jalr&quot;: ex_jalr,
+    &quot;fence&quot;: ex_fence, &quot;system&quot;: ex_system, &quot;illegal&quot;: ex_illegal,
+}</code></pre>
+<p>完整的 <code>execute.py</code> 就是把上面这些函数按依赖顺序排好：先是 <code>u32</code>、<code>s32</code>，再是各个处理函数，然后是 <code>EXEC</code> 表和 <code>execute</code>。放在 <code>code/python/07_simulator/</code> 下。</p>
+<h2 id="运行器让程序真正跑起来">7.7　运行器：让程序真正跑起来</h2>
+<p>有了执行函数，还差一个循环：装载程序，取指，译码，执行，重复到停机。<code>run.py</code> 做这件事，并在每步之后打印发生变化的寄存器。</p>
+<pre class="python"><code>def run(words, data_chunks=(), max_steps=1000, trace=True):
+    bus = Bus()
+    load_program(bus, words, data_chunks)
+    cpu = CPU(bus)
+    steps = 0
+    running = True
+    while running and steps &lt; max_steps:
+        pc = cpu.get_pc()
+        word = cpu.fetch()
+        d = decode(word)
+        before = list(cpu.regs)
+        running = execute(cpu, d, bus)
+        after = list(cpu.regs)
+        steps += 1
+        if trace:
+            changed = [&quot;x%d=0x%08x&quot; % (i, after[i])
+                       for i in range(1, 32) if before[i] != after[i]]
+            print(&quot;pc=0x%08x  %-24s  %s&quot;
+                  % (pc, disasm(word), &quot;  &quot;.join(changed)))
+    if steps &gt;= max_steps:
+        raise RuntimeError(&quot;step limit reached&quot;)
+    return cpu, bus, steps</code></pre>
+<p><code>before</code> 和 <code>after</code> 两份寄存器快照相减，只打印变了的那些。一路打印全部 32 个寄存器会很吵，看 traces 时反而找不到重点。<code>max_steps</code> 是死循环的保险，跑过一千条还没停机就报错。</p>
+<p>装载程序也有讲究。<code>words</code> 是机器码列表，从 <code>0x80000000</code> 开始一条条放。<code>data_chunks</code> 放数据，可以是整数列表（按字放），也可以是字节串（按字节放）。</p>
+<pre class="python"><code>def load_program(bus, words, data_chunks=()):
+    for i, word in enumerate(words):
+        bus.store32(BASE + 4 * i, word)
+    for addr, blob in data_chunks:
+        if isinstance(blob, int):
+            bus.store32(addr, blob)
+        elif isinstance(blob, (list, tuple)):
+            for j, word in enumerate(blob):
+                bus.store32(addr + 4 * j, word)
+        else:
+            for j, byte in enumerate(blob):
+                bus.store8(addr + j, byte)</code></pre>
+<p>这里踩过一个坑。数组求和的数据是整数列表，初版把它当字节串处理，只写了五个字节，读出来的数组自然不对。现在按类型分支，整数列表按字写，字节串按字节写。</p>
+<h2 id="走通例子数组求和">7.8　走通例子：数组求和</h2>
+<p>拿第 3 章的数组求和做个完整演示。程序用 <code>encode.py</code> 里的辅助函数拼出机器码，注释写着对应的汇编。</p>
+<pre><code>0  lui   x1, 0x80000       # x1 指向数组
+1  addi  x1, x1, 256
+2  addi  x2, x0, 5         # 剩余 5 个数
+3  addi  x3, x0, 0         # 累加和清零
+4  lw    x4, 0(x1)         # loop
+5  add   x3, x3, x4
+6  addi  x1, x1, 4
+7  addi  x2, x2, -1
+8  bne   x2, x0, -16       # 回 loop
+9  lui   x5, 0x10000       # x5 指向串口
+10 sw    x3, 0(x5)
+11 ecall</code></pre>
+<p>运行结果的前几步和后几步如下。</p>
+<pre><code>pc=0x80000000  lui x1, 0x80000           x1=0x80000000
+pc=0x80000004  addi x1, x1, 256          x1=0x80000100
+pc=0x80000008  addi x2, x0, 5            x2=0x00000005
+pc=0x8000000c  addi x3, x0, 0
+pc=0x80000010  lw x4, 0(x1)              x4=0x0000000a
+pc=0x80000014  add x3, x3, x4            x3=0x0000000a
+...
+pc=0x80000010  lw x4, 0(x1)              x4=0x00000032
+pc=0x80000014  add x3, x3, x4            x3=0x00000096
+...
+pc=0x80000028  sw x3, 0(x5)
+pc=0x8000002c  ecall</code></pre>
+<p>数组是 <code>[10, 20, 30, 40, 50]</code>，累加和 <code>0x96</code> 就是十进制 150。第 8 条 <code>bne</code> 的偏移是 -16，从 pc <code>0x80000020</code> 回到 <code>0x80000010</code>，正好是循环开头。整段跑 32 步。</p>
+<p>这份 traces 就是调试工具。哪条指令没按预期改寄存器，一眼就能看到。第 8 章搭硬件时，会用测试台打印同样的信息，和这里对照。</p>
+<h2 id="给模拟器接一个串口">7.9　给模拟器接一个串口</h2>
+<p>现在加外设。RISC-V 采用内存映射 I/O，外设寄存器也占一段地址，读写外设和读写内存用同一套指令。第 12 章会详细讲，这里先接一个简化的 16550 UART 让程序能输出字符。</p>
+<p>先做 UART 本身。真实的 16550 有一堆寄存器，这里只留两个：偏移 0 是数据寄存器，写进去就是发送，读出来就是接收；偏移 5 是线路状态寄存器，bit 0 表示有数据可读，bit 5 表示发送保持寄存器为空。</p>
+<pre class="python"><code>class UART:
+    def __init__(self):
+        self.rx_fifo = []
+        self.tx_log = []
+
+    def feed(self, data):
+        if isinstance(data, str):
+            data = data.encode(&quot;ascii&quot;)
+        self.rx_fifo.extend(data)
+
+    def read(self, offset):
+        if offset == RBR:
+            return self.rx_fifo.pop(0) if self.rx_fifo else 0
+        if offset == LSR:
+            status = LSR_THRE
+            if self.rx_fifo:
+                status |= LSR_DR
+            return status
+        return 0
+
+    def write(self, offset, value):
+        if offset == THR:
+            self.tx_log.append(value &amp; 0xFF)
+
+    def output(self):
+        return bytes(self.tx_log).decode(&quot;ascii&quot;, errors=&quot;replace&quot;)</code></pre>
+<p><code>feed</code> 是宿主机往模拟器里送字符，<code>tx_log</code> 记录模拟器发出去的字符。状态位里 THRE 恒为 1，因为我们的串口没有真正的发送延迟，写进去就算发完了。</p>
+<p>再写总线。它按地址分流：落在 UART 地址段的转给 UART，其余的转给内存。对 CPU 来说，接口和原来的 Memory 一样，所以把 <code>Bus</code> 实例传给 <code>CPU</code> 即可，不必改 CPU 的代码。</p>
+<figure>
+<img src="../figures/fig7-4-memory-map.svg" alt="总线按地址分流到内存和 UART" />
+<figcaption aria-hidden="true">总线按地址分流到内存和 UART</figcaption>
+</figure>
+<p><em>图 7-4　总线按地址分流到内存和 UART</em></p>
+<pre class="python"><code>class Bus:
+    def __init__(self, mem=None, uart=None):
+        self.mem = mem if mem is not None else Memory()
+        self.uart = uart if uart is not None else UART()
+
+    def _is_uart(self, addr):
+        return UART_BASE &lt;= addr &lt; UART_BASE + UART_SIZE
+
+    def load8(self, addr):
+        if self._is_uart(addr):
+            return self.uart.read(addr - UART_BASE)
+        return self.mem.load8(addr)
+
+    def store8(self, addr, value):
+        if self._is_uart(addr):
+            self.uart.write(addr - UART_BASE, value)
+            return
+        self.mem.store8(addr, value)</code></pre>
+<p>字节访问分流后，半字和字访问就用字节拼。这样 UART 只需实现 <code>read</code> 和 <code>write</code>，不必管 16 位和 32 位。</p>
+<pre class="python"><code>    def load16(self, addr):
+        return self.load8(addr) | (self.load8(addr + 1) &lt;&lt; 8)
+
+    def store16(self, addr, value):
+        self.store8(addr, value)
+        self.store8(addr + 1, value &gt;&gt; 8)
+
+    def load32(self, addr):
+        return (self.load8(addr)
+                | (self.load8(addr + 1) &lt;&lt; 8)
+                | (self.load8(addr + 2) &lt;&lt; 16)
+                | (self.load8(addr + 3) &lt;&lt; 24))
+
+    def store32(self, addr, value):
+        self.store8(addr, value)
+        self.store8(addr + 1, value &gt;&gt; 8)
+        self.store8(addr + 2, value &gt;&gt; 16)
+        self.store8(addr + 3, value &gt;&gt; 24)</code></pre>
+<p>程序那边只要让 x5 指向 <code>0x10000000</code>，一句 <code>sw x3, 0(x5)</code> 就把字节送到了串口。数组求和程序末尾那句 <code>sw</code> 就是这个用意，它把结果 150 写进了 <code>tx_log</code>。</p>
+<p>另一个示例程序逐字节读字符串，遇到结尾 0 停下，运行后 <code>uart.output()</code> 得到 <code>Hi, RV32I!</code>。这就是第 12 章访问外设的雏形：没有专门的 I/O 指令，全靠地址和读写。</p>
+<h2 id="实验">7.10　实验</h2>
+<p>本章代码在 <code>code/python/07_simulator/</code>，目录里带了第 6 章的三个基础模块，可以独立运行。</p>
+<pre><code>cd code/python/07_simulator
+python test_execute.py</code></pre>
+<p><code>test_execute.py</code> 有 58 项检查，覆盖 32 位回绕、R 型和 I 型运算、五种 load 与三种 store、六种分支、jal 与 jalr、总线分流、UART 读写，以及两个完整程序。全部通过会打印 <code>ALL TESTS PASSED</code>。</p>
+<p>想看执行轨迹，用 <code>run.py</code> 里的小例子，或者直接：</p>
+<pre><code>python -c &quot;from programs import *; from run import run; run(SUM_PROGRAM, [(SUM_DATA_ADDR, SUM_DATA)])&quot;</code></pre>
+<p>调试时最有用的就是这份轨迹。初版测试和示例程序里有几处错误，都是靠轨迹和逐项核对找出来的：R 型用例把两个操作数写反、<code>auipc</code> 的期望值少加了一个 pc、<code>jalr</code> 前忘设源寄存器、数组求和的 <code>add</code> 指令把 x3 当成了两个源。这些问题藏在机器码里，光看十六进制很难发现，跑一遍轨迹就清楚了。</p>
+<h2 id="功能级模型的意义">7.11　功能级模型的意义</h2>
+<p>到这一章为止，模拟器已经能跑完整的 RV32I 程序。它没有时钟，也没有流水线，一条指令接着一条执行。这恰恰是它的用处：把指令的语义单独拎出来，不受微结构细节干扰。</p>
+<p>第 8 章搭单周期处理器时，硬件每个周期做完一条指令，结果应该和这里逐步执行一致。第 9、10 章引入流水线和转发，中间状态会复杂得多，但每条指令最终留下的状态仍然要对得上。有这个模型在，硬件仿真结果就有了一个可靠的参照。</p>
+<p>现在还有两块没做。一是 CSR 和特权指令，<code>ecall</code> 只是停机，没有真正的异常号和陷阱处理；二是中断，定时器到点时 CPU 该响应什么。这些留到第 11 章。二是外设只做了串口，GPIO 和定时器留到第 12 章。</p>
+<h2 id="本章小结">7.12　本章小结</h2>
+<ul>
+<li>执行函数按译码出的 <code>kind</code> 查表分发到处理函数，处理函数返回下一个 pc 和是否继续运行，pc 的推进集中在 <code>execute</code> 一处。</li>
+<li>Python 整数不限宽度，所有运算结果都要用 <code>u32</code> 截成 32 位；有符号比较和算术右移先用 <code>s32</code> 转成负数。</li>
+<li>R 型运算用 <code>funct7</code> 和 <code>funct3</code> 共同区分，I 型移位指令的移位量取立即数低 5 位。第 6 章漏掉的 <code>slli</code> 在本章补上。</li>
+<li>load 按 funct3 决定读字节、半字还是字，<code>lb</code> 和 <code>lh</code> 要做符号扩展；store 按宽度写低位字节。</li>
+<li>分支目标是 <code>pc + imm</code>，jal 也是相对跳转并写链接地址，jalr 目标是 <code>(rs1 + imm) &amp; ~1</code>。</li>
+<li>总线按地址把访问分流给内存和 UART，CPU 看到的是同一套 load/store 接口。这样第 6 章的 CPU 代码不必改。</li>
+<li>运行器打印每条指令后发生变化的寄存器，形成一份能用来调试程序状态的执行轨迹。</li>
+</ul>
+<h2 id="思考题">思考题</h2>
+<ol type="1">
+<li>如果把 <code>execute</code> 里的 <code>cpu.set_pc(next_pc)</code> 移到每个处理函数里各自实现，会有什么风险？举一个容易漏掉的路径。</li>
+<li><code>sra</code> 的实现是 <code>u32(s32(a) &gt;&gt; (b &amp; 0x1F))</code>。如果去掉外层的 <code>u32</code>，Python 会返回什么？对后续 <code>get_reg</code> 和分支比较有什么影响？</li>
+<li><code>jalr</code> 为什么要把目标地址的最低位清 0？如果不清，在 RV32I 上会发生什么？</li>
+<li>总线的 <code>load32</code> 用四次 <code>load8</code> 拼成。如果访问 UART 地址段，这四次读分别读到什么？这样的设计对真实的 16550 合理吗？</li>
+<li>运行器只打印变化的寄存器。如果想观察某个寄存器”被写了同样的值”，该怎么改？这样做在调试什么问题时有用？</li>
+</ol>
+<p><em>下一章进入硬件实现，用 Verilog 搭一个单周期处理器，把这一章的软件模型变成真实的电路。</em></p>
+</article></main>
+<footer>浙江工商大学　·　邢建国</footer>
+</body>
+</html>

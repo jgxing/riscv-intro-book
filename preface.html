@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>前言</title>
+<style>
+:root { --red: #C8102E; --ink: #1f2328; --muted: #6b7280; --line: #e5e7eb; --bg: #ffffff; --soft: #faf9f7; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: var(--ink); background: var(--bg); line-height: 1.8;
+       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif; }
+a { color: var(--red); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.topbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.97);
+          border-bottom: 2px solid var(--red); padding: 10px 24px;
+          display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 700; color: var(--ink); font-size: 15px; }
+.topbar nav { display: flex; gap: 16px; font-size: 13px; align-items: center; flex-wrap: wrap; }
+.topbar nav a { color: #374151; }
+.topbar nav a:hover { color: var(--red); }
+.wrap { max-width: 900px; margin: 0 auto; padding: 32px 22px 90px; }
+.hero { display: flex; gap: 36px; align-items: flex-start; flex-wrap: wrap; margin: 18px 0 46px; }
+.hero .cover { width: 232px; max-width: 100%; border: 1px solid var(--line);
+               box-shadow: 0 8px 28px rgba(0,0,0,.12); border-radius: 2px; }
+.hero .info { flex: 1 1 360px; }
+.series { color: var(--red); font-size: 13px; letter-spacing: 2px; margin: 4px 0 10px; }
+.hero h1 { font-size: 32px; line-height: 1.3; margin: 0 0 6px; }
+.hero .subtitle { font-size: 21px; color: var(--red); margin: 0 0 18px; }
+.byline { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+.intro { color: #374151; font-size: 15px; margin: 0 0 24px; }
+.btn { display: inline-block; padding: 9px 20px; background: var(--red); color: #fff;
+       border-radius: 4px; font-size: 14px; margin-right: 10px; }
+.btn:hover { background: #a50e26; text-decoration: none; }
+.btn.ghost { background: #fff; color: var(--red); border: 1px solid var(--red); }
+.btn.ghost:hover { background: #fdf2f4; }
+.toc-group { margin: 30px 0; }
+.toc-group h2 { font-size: 18px; color: var(--ink); border-bottom: 2px solid var(--line);
+                padding-bottom: 8px; margin: 0 0 12px; }
+ol.toc-list { list-style: none; padding: 0; margin: 0; counter-reset: item; }
+ol.toc-list li { border-bottom: 1px dashed var(--line); padding: 7px 2px; font-size: 15px; }
+ol.toc-list li a { color: var(--ink); }
+ol.toc-list li a:hover { color: var(--red); }
+.article h1 { font-size: 28px; color: var(--red); border-bottom: 3px solid var(--red);
+              padding-bottom: 10px; margin: 0 0 28px; line-height: 1.4; }
+.article h2 { font-size: 21px; margin: 38px 0 12px; padding-left: 10px; border-left: 4px solid var(--red); }
+.article h3 { font-size: 17px; margin: 26px 0 8px; }
+.article p { text-align: justify; margin: 12px 0; }
+.article img { max-width: 100%; height: auto; display: block; margin: 22px auto 6px; }
+.article blockquote { border-left: 3px solid var(--line); background: var(--soft);
+                      margin: 16px 0; padding: 10px 16px; color: #4b5563; }
+.article pre { background: #f6f6f4; border-left: 3px solid var(--red); padding: 14px 16px;
+               border-radius: 0 4px 4px 0; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+.article code { font-family: Consolas, "Courier New", monospace; background: #f2f2f0;
+                padding: 1px 4px; border-radius: 3px; font-size: .92em; }
+.article pre code { background: none; padding: 0; }
+.article table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: 14px; }
+.article th, .article td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+.article th { background: var(--soft); font-weight: 600; }
+.pagenav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+           border-top: 1px solid var(--line); margin-top: 54px; padding-top: 18px; font-size: 14px; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px 0 40px; }
+@media (max-width: 640px) { .hero h1 { font-size: 26px; } .wrap { padding: 20px 16px 60px; } }
+</style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="index.html">RISC-V 处理器设计入门</a><nav><a href="index.html">目录</a><a href="chapters/ch01.html">第 1 章 →</a><a href="https://github.com/jgxing/riscv-intro-book">代码仓库</a></nav></header>
+<main class="wrap"><article class="article"><h1 id="前言">前言</h1>
+<h2 id="为什么写这本书">为什么写这本书</h2>
+<p>学处理器设计的人，常常会遇到一段断层。讲指令集和汇编的教材，负责把程序这一侧说清楚；讲数字电路的教材，负责把门电路和触发器说清楚。等到翻开处理器设计的章节，却往往直接从五级流水线开始，仿佛寄存器堆、ALU、多路选择器这些零件读者已经会搭了。结果是很多人能背下流水线的五个阶段，却说不清一条 <code>add</code> 指令从内存里取出来以后，电信号究竟经过了哪些门，又是在哪里被时钟存住的。再往后看异常、外设和操作系统接口，距离就更远了。</p>
+<p>市面上并不缺好书，但常常各管一段：有的停在汇编层，不碰硬件；有的从单周期讲起，默认读者已有数字电路基础；有的直接讨论乱序和超标量，那是另一本书该讲的事。想找一本从零起步，把指令、汇编、电路、模拟器、处理器、异常外设、C 程序一路串到多任务切换的书，不太容易。</p>
+<p>《RISC-V 处理器设计入门：从指令集到五级流水线》想填的就是这段空白。它从一条 RV32I 指令出发，带着读者写汇编、搭门电路、用 Python 把指令”跑”起来，再用 Verilog 做出单周期和五级流水线处理器，随后加上异常、中断与外设，最后用 C 写裸机程序，并让两个任务在定时器中断下交替运行。整条路走完，读者手里应该有一台自己搭出来的、能跑程序的机器，以及一套从软件追到硬件的分析方法，而不是若干互不相干的知识点。</p>
+<h2 id="这本书写给谁">这本书写给谁</h2>
+<p>本书不要求读者学过处理器设计，也不要求熟悉数字电路。有基本的 C 或 Python 编程经验就够。变量、函数、数组、循环这些概念已经会用的话，剩下的部分书里会从头讲起。</p>
+<p>具体来说，适合三类读者。一类是计算机相关专业的本科生，学过程序设计但还没上过体系结构课，想提前把底层这条线摸一遍；一类是研究生或工程师，平时写软件，想补上硬件这一侧的知识，知道自己的程序在机器上究竟怎么跑；还有一类是自学者，对处理器感兴趣，希望有一本书能带着自己从头动手，而不是在各处捡碎片。</p>
+<p>如果你已经能独立设计五级流水线，本书的第一篇到第四篇可以快读，把注意力放在第 11 章之后的异常、外设、C 程序和多任务切换上。如果想继续深入乱序处理器，可以接着读姊妹篇《RISC-V 多发射乱序处理器：从原理到实现》，那本书假定读者已经熟悉本书第 8 至第 10 章的内容。</p>
+<h2 id="怎么讲">怎么讲</h2>
+<p>本书采用四条贯穿始终的做法。</p>
+<p>第一，一条主线走到底。书里反复使用同一个简单程序：数组求和、串口输出几个字符。它在汇编里是什么样，在 Python 模拟器里怎么执行，在硬件里经过哪些门和流水线寄存器，用 C 写又是什么样，读者能在不同层次看到同一件事的不同侧面。每换一个工具，不是换一个问题。</p>
+<p>第二，先说卡在哪，再给解决办法。每个模块出现时，先回答”现在有什么做不到的”，然后才引出这个模块。比如先看到单周期处理器里所有指令都要等最慢的那条，再讲为什么要流水；先看到相邻两条指令抢同一个寄存器会算错，再讲转发和停顿。这样记住的是因果关系，不是端口清单。</p>
+<p>第三，图形、电路和代码三样配合。插图一律用可编辑的 SVG，负责把数据通路、信号流向和时序关系画出来；Digital 电路可以打开来单步观察信号怎么沿线传播；Verilog 和 Python 代码带测试台，可以跑起来看结果。看不懂某个模块在机器里的位置，先看图；想弄清某个判断到底怎么写，再看代码；想确认自己是不是真懂了，就把测试台跑一遍。</p>
+<p>第四，软件的门槛尽量压低。全书只用四组工具：RARS 用来写和调试汇编，Digital 与 Icarus Verilog 用来搭电路和仿真硬件，RISC-V GCC 用来编译 C 程序，QEMU 用来运行裸机程序并观察异常与多任务。前两组免费、体积小，第 4 章之后就会用到；后两组用于软件侧的系统实验，附录 C 给出安装和配置步骤，正文给出完整命令与预期结果。本书的核心实验不依赖后两组工具，没有它们也能走完从指令到流水线的主要路线。</p>
+<p>有意略过的内容也在这里说清楚：缓存的一致性协议、虚拟内存与操作系统内核的完整实现、FPGA 时序收敛、向量扩展与高级分支预测。这些主题在相关章节会用一两句话说明它们与本书方法的关系，但不展开。一本书什么都想讲，往往什么都讲不深。</p>
+<h2 id="内容安排">内容安排</h2>
+<p>全书五篇十四章，另附三个附录。</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>篇</th>
+<th>章</th>
+<th>主题</th>
+<th>要回答的问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第一篇</td>
+<td>1 至 3</td>
+<td>指令与汇编</td>
+<td>软件交给硬件的到底是什么</td>
+</tr>
+<tr>
+<td>第二篇</td>
+<td>4 至 5</td>
+<td>数字电路基础</td>
+<td>门电路怎么做出运算和存储</td>
+</tr>
+<tr>
+<td>第三篇</td>
+<td>6 至 7</td>
+<td>软件模拟器</td>
+<td>怎么用程序把指令”跑”起来</td>
+</tr>
+<tr>
+<td>第四篇</td>
+<td>8 至 10</td>
+<td>硬件实现</td>
+<td>怎么搭出单周期和五级流水线处理器</td>
+</tr>
+<tr>
+<td>第五篇</td>
+<td>11 至 14</td>
+<td>系统与软件</td>
+<td>处理器怎么和异常、外设、C 程序打交道</td>
+</tr>
+</tbody>
+</table>
+<p>第一篇从一台会算数的机器讲起。第 1 章分清软件、指令集、硬件三层的关系，说明 RV32I 在整套规范中的位置；第 2 章逐类讲清寄存器、指令格式和 RV32I 指令，重点不是背指令，而是看懂一条指令用到哪些字段、改变哪些状态；第 3 章用 RARS 写几个完整的小程序，学会看寄存器和内存的变化。</p>
+<p>第二篇补上硬件的地基。第 4 章从二进制、布尔代数和逻辑门出发，讲组合逻辑、时序逻辑、锁存器和 D 触发器；第 5 章从真值表一路搭出加法器、ALU 和寄存器堆。这两章用 Digital 搭电路，用 Verilog 描述同一件事，建立”信号沿线走、时钟沿翻状态”的直觉。</p>
+<p>第三篇在软件里造一台处理器。第 6 章实现内存、寄存器堆、PC 和译码函数，第 7 章补上 ALU、访存和分支跳转，并加一个简化的 UART。走完这两章，读者手上有一个能调试 RV32I 程序的 Python 模拟器，而且已经能看懂第 7 章的 UART 与第 12 章硬件外设之间的联系。</p>
+<p>第四篇进入硬件实现。第 8 章画出单周期数据通路和控制信号表，用 Verilog 跑通几条指令；第 9 章插入流水级，讲时空图、吞吐率与延迟；第 10 章处理三类冒险，把转发、load-use 停顿和分支冲刷接进硬件。第 9 章为了绕开数据相关，测试程序里插了几条空操作；第 10 章的任务，就是用硬件把这些空操作真正消掉。</p>
+<p>第五篇把处理器接回真实系统。第 11 章讲异常与中断、机器模式和 CSR，观察现场保存与返回；第 12 章讲内存映射 I/O，给处理器接上 GPIO、UART 和定时器；第 13 章讲交叉编译、启动代码、链接脚本、ELF 和 volatile，把 C 程序跑起来；第 14 章做综合实验，用定时器中断驱动两个任务交替运行，把全书串成一条线。每章末尾的”香山一瞥”是选读，跳过去不影响主线。</p>
+<p>三个附录是工具与速查：附录 A 汇总 RV32I 指令与 CSR，附录 B 给出 Verilog 模块和测试台模板，附录 C 讲四组工具的安装与使用。</p>
+<h2 id="怎么读这本书">怎么读这本书</h2>
+<p>每章的结构大体一致：本章导读提出问题，接着讲原理和关键权衡，用图把系统连接画出来，再用电路和代码把机制做出来，最后给出走通的例子、实验、小结和思考题。</p>
+<p>代码不是整段贴出来让人抄的，而是跟着要解决的问题一点点长出来。先说现在要解决什么，再给出为解决这个问题而写的几行代码，解释每行来历，一个小问题一小块代码，逐步叠加成完整模块。讲每个模块时也先看接口再看实现，而且接口不一次列全：需要哪个信号才引出哪个，攒齐了才给完整端口列表。读的时候不妨按这个顺序自己敲一遍，先试着只写那几行，再看后面的完整代码。</p>
+<p>正文、插图、电路和代码放在同一个项目里。<code>chapters/</code> 是正文，<code>figures/</code> 是可编辑的 SVG，<code>code/</code> 按语言和章分目录，Python 模拟器、Digital 电路、Verilog 工程、C 裸机程序和 QEMU 示例都在里面，<code>tools/</code> 放机器码生成和镜像转换脚本。附录 C 说明各工具怎么装；每个实验都能独立运行，建议边读边动手，把电路打开单步走一遍，把测试台跑起来看波形。</p>
+<p>全书正文、插图和配套代码已整理成一个开源项目，放在 GitHub 上：</p>
+<blockquote>
+<p>代码仓库：https://github.com/jgxing/riscv-intro-book</p>
+</blockquote>
+<p>代码在 <code>code/</code> 目录下按语言和章分文件夹，根目录的 README 给出完整目录结构、测试状态与运行命令。Python 与 Verilog 实验不依赖 GCC 和 QEMU，装好 Python 和 Icarus Verilog 就能跑；QEMU 与裸机 C 的工程在装好完整工具链的机器上按各目录 README 操作。</p>
+<p>有两点需要提前说明。本书的 Verilog 是教学模型，目的是把机制说清楚、跑通，不是拿去综合的实现；真实处理器还要处理大量边界情况、时序要求和面积功耗权衡。QEMU 一侧的实验是软件环境里的对照，用来看异常、中断和多任务在完整系统里是什么样，它不替代本书自己搭的处理器。两条线互相印证，但主线始终是读者自己搭出来的那台机器。</p>
+<p>最后，从一条指令到一台能跑多任务的机器，中间没有跳步，每一步都能在前一步里找到原因。把第 7 章的模拟器和第 10 章的流水线真正跑通，再看第 14 章的任务切换，就会明白那不过是同一套道理换了个地方用。希望读完这本书，你看到的不再是一串需要背下来的名词，而是一台知道自己在做什么的机器。</p>
+</article></main>
+<footer>浙江工商大学　·　邢建国</footer>
+</body>
+</html>

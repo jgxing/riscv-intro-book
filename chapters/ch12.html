@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 12 章　外设</title>
+<style>
+:root { --red: #C8102E; --ink: #1f2328; --muted: #6b7280; --line: #e5e7eb; --bg: #ffffff; --soft: #faf9f7; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: var(--ink); background: var(--bg); line-height: 1.8;
+       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif; }
+a { color: var(--red); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.topbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.97);
+          border-bottom: 2px solid var(--red); padding: 10px 24px;
+          display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 700; color: var(--ink); font-size: 15px; }
+.topbar nav { display: flex; gap: 16px; font-size: 13px; align-items: center; flex-wrap: wrap; }
+.topbar nav a { color: #374151; }
+.topbar nav a:hover { color: var(--red); }
+.wrap { max-width: 900px; margin: 0 auto; padding: 32px 22px 90px; }
+.hero { display: flex; gap: 36px; align-items: flex-start; flex-wrap: wrap; margin: 18px 0 46px; }
+.hero .cover { width: 232px; max-width: 100%; border: 1px solid var(--line);
+               box-shadow: 0 8px 28px rgba(0,0,0,.12); border-radius: 2px; }
+.hero .info { flex: 1 1 360px; }
+.series { color: var(--red); font-size: 13px; letter-spacing: 2px; margin: 4px 0 10px; }
+.hero h1 { font-size: 32px; line-height: 1.3; margin: 0 0 6px; }
+.hero .subtitle { font-size: 21px; color: var(--red); margin: 0 0 18px; }
+.byline { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+.intro { color: #374151; font-size: 15px; margin: 0 0 24px; }
+.btn { display: inline-block; padding: 9px 20px; background: var(--red); color: #fff;
+       border-radius: 4px; font-size: 14px; margin-right: 10px; }
+.btn:hover { background: #a50e26; text-decoration: none; }
+.btn.ghost { background: #fff; color: var(--red); border: 1px solid var(--red); }
+.btn.ghost:hover { background: #fdf2f4; }
+.toc-group { margin: 30px 0; }
+.toc-group h2 { font-size: 18px; color: var(--ink); border-bottom: 2px solid var(--line);
+                padding-bottom: 8px; margin: 0 0 12px; }
+ol.toc-list { list-style: none; padding: 0; margin: 0; counter-reset: item; }
+ol.toc-list li { border-bottom: 1px dashed var(--line); padding: 7px 2px; font-size: 15px; }
+ol.toc-list li a { color: var(--ink); }
+ol.toc-list li a:hover { color: var(--red); }
+.article h1 { font-size: 28px; color: var(--red); border-bottom: 3px solid var(--red);
+              padding-bottom: 10px; margin: 0 0 28px; line-height: 1.4; }
+.article h2 { font-size: 21px; margin: 38px 0 12px; padding-left: 10px; border-left: 4px solid var(--red); }
+.article h3 { font-size: 17px; margin: 26px 0 8px; }
+.article p { text-align: justify; margin: 12px 0; }
+.article img { max-width: 100%; height: auto; display: block; margin: 22px auto 6px; }
+.article blockquote { border-left: 3px solid var(--line); background: var(--soft);
+                      margin: 16px 0; padding: 10px 16px; color: #4b5563; }
+.article pre { background: #f6f6f4; border-left: 3px solid var(--red); padding: 14px 16px;
+               border-radius: 0 4px 4px 0; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+.article code { font-family: Consolas, "Courier New", monospace; background: #f2f2f0;
+                padding: 1px 4px; border-radius: 3px; font-size: .92em; }
+.article pre code { background: none; padding: 0; }
+.article table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: 14px; }
+.article th, .article td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+.article th { background: var(--soft); font-weight: 600; }
+.pagenav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+           border-top: 1px solid var(--line); margin-top: 54px; padding-top: 18px; font-size: 14px; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px 0 40px; }
+@media (max-width: 640px) { .hero h1 { font-size: 26px; } .wrap { padding: 20px 16px 60px; } }
+</style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="../index.html">RISC-V 处理器设计入门</a><nav><a href="../index.html">目录</a><a href="ch11.html">← 第 11 章</a><a href="ch13.html">第 13 章 →</a><a href="https://github.com/jgxing/riscv-intro-book">代码仓库</a></nav></header>
+<main class="wrap"><article class="article"><h1 id="第-12-章-外设">第 12 章　外设</h1>
+<h2 id="本章导读">本章导读</h2>
+<p>前面十章里，处理器不是跟内存打交道，就是跟寄存器打交道。程序算出的结果存回内存，下一条指令再从内存取回来，整个过程自给自足。可是真正的计算机得跟外面的世界说话：点亮一盏灯，读一下拨码开关，在终端上打印一个字符，看看时间过了多久。这些部件不是内存，叫<strong>外设</strong>。</p>
+<p>外设种类很多，接法却可以统一。RISC-V 采用内存映射 I/O，把外设的控制寄存器安排进地址空间，让软件用普通的 <code>lw</code> 和 <code>sw</code> 就能访问。处理器不需要专门的输入输出指令，只要地址译码时认得这些地址，把读写转给对应的设备就行。这样一来，第 8 章那套访存逻辑几乎不用改。</p>
+<p>这一章先给第 7 章的 Python 模拟器接上 GPIO、UART 和定时器，用熟悉的软件把地址映射这件事看清楚；再给硬件加一段总线，把单周期核和三个外设连起来。测试程序会依次点灯、读开关、发两个字符、读串口状态和定时器，把每一结果都检查一遍。配套的门电路 <code>code/digital/12_addr_decode.dig</code> 用一个两位译码器演示片选是怎么产生的。</p>
+<p>学完这一章，你应该能回答：什么是内存映射 I/O；CPU 怎么知道一次访问是给内存还是给设备；为什么串口的数据寄存器既能写又能读；定时器为什么分两次读高低 32 位。</p>
+<h2 id="把设备当成地址来看">12.1　把设备当成地址来看</h2>
+<p>设想一个最简单的需求：让程序点亮一盏灯。最直接的想法是加一条专门的指令，比如 <code>out x1</code>，把寄存器的值送到某个端口。这条路能走通，但每加一种设备就要加一条指令，指令集会越来越臃肿。</p>
+<p>RISC-V 走了另一条路。它不给 I/O 留专门的指令，而是把设备的寄存器安排到地址空间里的某一段。要点亮灯，就往那个地址写一个数；要读开关，就从另一个地址读一个数。软件看到的仍然是 <code>lw</code> 和 <code>sw</code>，只是这些地址背后不再是内存芯片，而是一盏灯或一组拨码开关。这就是<strong>内存映射 I/O</strong>。</p>
+<p>本书的地址布局画在图 12-1。代码段放在 <code>0x00400000</code>，数据内存放在 <code>0x10000000</code>，两者分开；外设寄存器集中在 <code>0xffff0000</code> 开始的一小段，各占四个字节或一个地址。</p>
+<figure>
+<img src="../figures/fig12-1-memory-map.svg" alt="本系统的地址空间布局" />
+<figcaption aria-hidden="true">本系统的地址空间布局</figcaption>
+</figure>
+<p><em>图 12-1　本系统的地址空间布局</em></p>
+<p>具体安排是这样的：</p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>设备</th>
+<th>方向</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0xffff0000</code></td>
+<td>定时器</td>
+<td>读</td>
+<td>64 位计数的低 32 位</td>
+</tr>
+<tr>
+<td><code>0xffff0004</code></td>
+<td>定时器</td>
+<td>读</td>
+<td>64 位计数的高 32 位</td>
+</tr>
+<tr>
+<td><code>0xffff0010</code></td>
+<td>LED</td>
+<td>写</td>
+<td>低 8 位驱动八盏灯</td>
+</tr>
+<tr>
+<td><code>0xffff0020</code></td>
+<td>开关</td>
+<td>读</td>
+<td>低 8 位是拨码状态</td>
+</tr>
+<tr>
+<td><code>0xffff0030</code></td>
+<td>UART 数据</td>
+<td>读写</td>
+<td>写是发送，读是接收</td>
+</tr>
+<tr>
+<td><code>0xffff0034</code></td>
+<td>UART 状态</td>
+<td>读</td>
+<td>bit 0 有数据，bit 5 可发送</td>
+</tr>
+</tbody>
+</table>
+<p>这张表不难记，因为它的规律就是”高 16 位是 <code>ffff</code>，低 16 位决定具体设备”。第 4 章讲译码器时说过，地址线上的每一位都能用来做选择，这里正是那个思想的应用。</p>
+<p>也有不采用内存映射的架构，最典型的是 x86 的 <code>in</code> 和 <code>out</code> 指令，它们访问一个独立于内存的 I/O 地址空间。两种做法各有取舍，内存映射的好处是软件模型统一，坏处是外设占掉了本来可以放内存的地址。RISC-V 选了前一种，本书照此办理。</p>
+<h2 id="先在软件里把地址访问走一遍">12.2　先在软件里把地址访问走一遍</h2>
+<p>直接上 Verilog 容易迷路。先用第 7 章熟悉的 Python 把同一套地址映射写一遍，等概念清楚了，再看硬件就顺了。代码放在 <code>code/python/12_peripheral/peripherals.py</code>。</p>
+<p>先把地址常量集中起来，避免满屏魔数。</p>
+<pre class="python"><code># ---- 地址常量 ----
+MEM_BASE = 0x10000000
+MEM_SIZE = 0x1000
+
+MTIME_LO = 0xFFFF0000
+MTIME_HI = 0xFFFF0004
+LED_ADDR = 0xFFFF0010
+SW_ADDR = 0xFFFF0020
+UART_DATA = 0xFFFF0030
+UART_STAT = 0xFFFF0034
+
+LSR_DR = 0x01    # 接收数据就绪
+LSR_THRE = 0x20  # 发送保持寄存器空</code></pre>
+<p>这些常量稍后会被总线和设备类共用。写地址时只要写 <code>LED_ADDR</code>，不必每次都数 <code>0xffff0010</code> 里有几个零。</p>
+<h3 id="gpio-是最容易理解的起点">GPIO 是最容易理解的起点</h3>
+<p>GPIO 只有两个寄存器，一个管灯，一个管开关。灯的寄存器只写：把值的低 8 位记下来。开关的寄存器只读：把外界的 8 位拨码返回出来。</p>
+<pre class="python"><code>class GPIO:
+    &quot;&quot;&quot;两个寄存器：写 LED，读开关。&quot;&quot;&quot;
+
+    def __init__(self):
+        self.led = 0
+
+    def matches(self, addr):
+        return addr in (LED_ADDR, SW_ADDR)
+
+    def read(self, addr, switches):
+        if addr == SW_ADDR:
+            return switches &amp; 0xFF
+        return 0
+
+    def write(self, addr, value):
+        if addr == LED_ADDR:
+            self.led = value &amp; 0xFF</code></pre>
+<p><code>matches</code> 回答一个关键问题：这个地址是不是我的。总线上挂着好几个设备，每个都先做这个判断，只有命中的那个才动手。这个”先看是不是叫我”的习惯，硬件里也一样，只不过判断从 Python 的 <code>in</code> 变成了比较器。</p>
+<h3 id="uart-的同一地址两种用途">UART 的同一地址两种用途</h3>
+<p>串口稍微绕一点。数据寄存器 <code>UART_DATA</code> 写入时是发送，读出时是接收，一个地址两种用途，靠读还是写来区分。状态寄存器 <code>UART_STAT</code> 只读，用两个位告诉程序现在能不能收发。</p>
+<pre class="python"><code>class UART:
+    &quot;&quot;&quot;一个数据寄存器，一个状态寄存器，行为对齐 Verilog 版。&quot;&quot;&quot;
+
+    def __init__(self):
+        self.rx_queue = []
+        self.tx_log = []
+
+    def matches(self, addr):
+        return addr in (UART_DATA, UART_STAT)
+
+    def feed(self, data):
+        if isinstance(data, str):
+            data = data.encode(&quot;ascii&quot;)
+        self.rx_queue.extend(data)
+
+    def read(self, addr):
+        if addr == UART_DATA:
+            return self.rx_queue.pop(0) if self.rx_queue else 0
+        if addr == UART_STAT:
+            status = LSR_THRE
+            if self.rx_queue:
+                status |= LSR_DR
+            return status
+        return 0
+
+    def write(self, addr, value):
+        if addr == UART_DATA:
+            self.tx_log.append(value &amp; 0xFF)
+
+    def output(self):
+        return bytes(self.tx_log).decode(&quot;ascii&quot;, errors=&quot;replace&quot;)</code></pre>
+<p><code>feed</code> 是宿主机往模拟器里送字符，<code>tx_log</code> 记录程序发出去的字符。状态位里 THRE 恒为 1，因为这里没有真正的发送延迟，写进去就算发完了。真实的 16550 会在字节还没发完时把这个位清掉，程序得等它重新变 1 才能写下一个。第 7 章已经见过这套简化，这里保持一致。</p>
+<h3 id="定时器只是个加法器">定时器只是个加法器</h3>
+<p>定时器的全部本事就是每个时钟加一。它有两个读出地址，分别给低 32 位和高 32 位。</p>
+<pre class="python"><code>class Timer:
+    &quot;&quot;&quot;64 位自由运行计数器，读低 32 位或高 32 位。&quot;&quot;&quot;
+
+    def __init__(self):
+        self.count = 0
+
+    def matches(self, addr):
+        return (MTIME_LO &lt;= addr &lt; MTIME_LO + 4) or \
+               (MTIME_HI &lt;= addr &lt; MTIME_HI + 4)
+
+    def tick(self):
+        self.count = (self.count + 1) &amp; 0xFFFFFFFFFFFFFFFF
+
+    def read(self, addr):
+        if MTIME_LO &lt;= addr &lt; MTIME_LO + 4:
+            return (self.count &gt;&gt; (8 * (addr - MTIME_LO))) &amp; 0xFF
+        if MTIME_HI &lt;= addr &lt; MTIME_HI + 4:
+            return (self.count &gt;&gt; (32 + 8 * (addr - MTIME_HI))) &amp; 0xFF
+        return 0</code></pre>
+<p>注意 <code>matches</code> 判的是一个四字节的范围，不是单个地址。原因在总线那一段讲：一次 <code>lw</code> 会拆成四个字节访问，定时器的四个字节都得认领，否则拼出来的 32 位数只剩最低一个字节。这个坑在硬件版里不存在，因为硬件一次就给出 32 位，Python 版按字节模拟才需要这样处理。</p>
+<h3 id="总线负责分发">总线负责分发</h3>
+<p>最后写总线。它持有内存和三个设备，按地址决定把一次字节访问转给谁。</p>
+<pre class="python"><code>class Bus:
+    &quot;&quot;&quot;按地址把字节访问分发给内存或外设。&quot;&quot;&quot;
+
+    def __init__(self, switches=0):
+        self.mem = bytearray(MEM_SIZE)
+        self.switches = switches &amp; 0xFF
+        self.gpio = GPIO()
+        self.uart = UART()
+        self.timer = Timer()
+
+    @staticmethod
+    def _in_mem(addr):
+        return MEM_BASE &lt;= addr &lt; MEM_BASE + MEM_SIZE
+
+    def load8(self, addr):
+        addr = u32(addr)
+        if self._in_mem(addr):
+            return self.mem[addr - MEM_BASE]
+        if self.gpio.matches(addr):
+            return self.gpio.read(addr, self.switches) &amp; 0xFF
+        if self.uart.matches(addr):
+            return self.uart.read(addr) &amp; 0xFF
+        if self.timer.matches(addr):
+            return self.timer.read(addr) &amp; 0xFF
+        return 0
+
+    def store8(self, addr, value):
+        addr = u32(addr)
+        value &amp;= 0xFF
+        if self._in_mem(addr):
+            self.mem[addr - MEM_BASE] = value
+        elif addr == LED_ADDR:
+            self.gpio.write(addr, value)
+        elif addr == UART_DATA:
+            self.uart.write(addr, value)</code></pre>
+<p><code>load8</code> 里那串 <code>if</code> 就是软件版的地址译码。四段地址互不重叠，顺序无所谓，命中哪段就返回哪段的数据，都没命中就返回 0。<code>store8</code> 只处理真正可写的两个地址，定时器根本没有写入口，往它的地址写东西会被静默忽略。</p>
+<p>半字和字访问仍然靠字节拼，这一层完全不用改。</p>
+<pre class="python"><code>    def load32(self, addr):
+        return (self.load8(addr)
+                | (self.load8(addr + 1) &lt;&lt; 8)
+                | (self.load8(addr + 2) &lt;&lt; 16)
+                | (self.load8(addr + 3) &lt;&lt; 24))
+
+    def store32(self, addr, value):
+        for i in range(4):
+            self.store8(addr + i, (value &gt;&gt; (8 * i)) &amp; 0xFF)</code></pre>
+<p>运行 <code>code/python/12_peripheral/demo.py</code>，能看到 LED 写成 <code>0xa5</code>、开关读回 <code>0x5a</code>、串口输出 <code>Hi</code>，以及定时器节节增长。<code>test_peripherals.py</code> 有 13 项检查，全部通过会打印 <code>ALL TESTS PASSED</code>。软件这条线走通了，接下来把它搬到硬件。</p>
+<h2 id="总线的接口先从一次访存说起">12.3　总线的接口先从一次访存说起</h2>
+<p>现在看硬件。第 8 章的单周期核里，ALU 算出的地址直接送进 <code>dmem</code>，读出的数据直接送回寄存器堆。要把外设插进来，最省事的做法是在中间加一层总线：核这边还是给地址、给写使能、给数据，总线那边负责转交。</p>
+<p>先看核与总线之间需要哪些信号。接口不是一次想全的，按需求一个个加：</p>
+<ul>
+<li>ALU 算完的地址要给出去，于是有 <code>addr</code>。</li>
+<li>是读还是写要说明，于是有 <code>we</code>。</li>
+<li>写的时候数据要给出去，于是有 <code>wdata</code>；读的位宽由访存指令决定，于是有 <code>funct3</code>。</li>
+<li>读出来的数据要送回核，于是有 <code>rdata</code>。</li>
+</ul>
+<p>到这里，总线对核的接口和原来的 <code>dmem</code> 一模一样。核根本不用知道自己接的是内存还是总线。</p>
+<p>再看总线对外设那一边。LED 和开关是真实世界的东西，得引到芯片外面，于是有 <code>switch_i</code> 和 <code>led_o</code>。串口要有收发两根数据线，简化成并行的 <code>rx_i</code>、<code>rx_valid_i</code>、<code>tx_o</code> 和 <code>tx_valid_o</code>。时钟复位照旧。攒齐之后，接口定稿如下。</p>
+<pre class="verilog"><code>module bus (
+    input  wire        clk,
+    input  wire        rst_n,
+    input  wire [31:0] addr,
+    input  wire        we,
+    input  wire [2:0]  funct3,
+    input  wire [31:0] wdata,
+    input  wire [7:0]  switch_i,
+    input  wire [7:0]  rx_i,
+    input  wire        rx_valid_i,
+    output wire [7:0]  led_o,
+    output wire [7:0]  tx_o,
+    output wire        tx_valid_o,
+    output wire [31:0] rdata
+);</code></pre>
+<p>图 12-2 画出了这条连接。核把访存请求交给总线，总线按地址分发给四个设备，再把选中的读出数据汇总送回核。</p>
+<figure>
+<img src="../figures/fig12-2-bus-connection.svg" alt="CPU 经总线连接内存与外设" />
+<figcaption aria-hidden="true">CPU 经总线连接内存与外设</figcaption>
+</figure>
+<p><em>图 12-2　CPU 经总线连接内存与外设</em></p>
+<p>这个结构有个好处：以后要加新设备，比如实时时钟或者模数转换器，只要再写个模块挂到总线上，分配一段地址，核的代码一个字都不用改。可扩展性就是从这一层译码里来的。</p>
+<h2 id="地址译码产生片选">12.4　地址译码产生片选</h2>
+<p>总线的第一件事是判断这次访问落在哪一段。内存区用掩码比较，外设区直接看高 16 位。</p>
+<pre class="verilog"><code>    localparam [31:0] MEM_BASE   = 32&#39;h10000000;
+    localparam [31:0] MEM_MASK   = 32&#39;hfffff000;
+
+    wire mem_sel = ((addr &amp; MEM_MASK) == MEM_BASE);
+    wire io_sel  = (addr[31:16] == 16&#39;hffff);</code></pre>
+<p><code>MEM_MASK</code> 是 <code>0xfffff000</code>，把地址的低 12 位抹掉。内存有 4 KB，正好由低 12 位寻址，所以只要高 20 位等于 <code>0x10000</code>，就落在内存区。外设区更简单，高 16 位是 <code>ffff</code> 就算数，具体是哪个设备留给设备自己判断。</p>
+<figure>
+<img src="../figures/fig12-3-address-decode.svg" alt="地址译码产生片选" />
+<figcaption aria-hidden="true">地址译码产生片选</figcaption>
+</figure>
+<p><em>图 12-3　地址译码产生片选</em></p>
+<p>片选出来后，要跟写使能相与。不这么做的话，写 LED 的那次写操作会同时写进内存，因为在总线眼里 io_sel 和 mem_sel 的判断是并行的。</p>
+<pre class="verilog"><code>    wire dmem_we = we &amp; mem_sel;
+    wire gpio_we = we &amp; io_sel;
+    wire uart_we = we &amp; io_sel;</code></pre>
+<p>这里 <code>gpio_we</code> 和 <code>uart_we</code> 都等于 <code>we &amp; io_sel</code>，看起来两个设备会同时被写。其实不会：GPIO 和 UART 各自还会检查低 16 位，只有地址真的是 <code>0xffff0010</code> 或 <code>0xffff0030</code> 才动手。片选分两级，先粗后细，这是地址译码常见的写法。</p>
+<p>配套电路 <code>code/digital/12_addr_decode.dig</code> 用两个反相器和四个与门搭了一个两位译码器，输入地址的最高两位，输出四个片选，真值表列在文件里。打开 Digital 拨动开关，就能看到”地址一变，片选跟着变”。</p>
+<h2 id="gpio-从写灯开始">12.5　GPIO 从写灯开始</h2>
+<p>现在写第一个外设。先解决点灯：需要一个寄存器记住当前该亮哪些灯，复位时清零，写使能且地址命中时更新。</p>
+<pre class="verilog"><code>module gpio (
+    input  wire        clk,
+    input  wire        rst_n,
+    input  wire [31:0] addr,
+    input  wire        we,
+    input  wire [31:0] wdata,
+    input  wire [7:0]  switch_i,
+    output reg  [7:0]  led_o,
+    output reg  [31:0] rdata
+);
+
+    localparam [31:0] LED_ADDR    = 32&#39;hffff0010;
+    localparam [31:0] SWITCH_ADDR = 32&#39;hffff0020;
+
+    wire led_sel    = (addr == LED_ADDR);
+    wire switch_sel = (addr == SWITCH_ADDR);</code></pre>
+<p>接口里 <code>switch_i</code> 和 <code>led_o</code> 是接到芯片外面的信号，<code>rdata</code> 送回总线。两个地址常量和对应的片选信号紧挨着写，一眼能对上。</p>
+<p>点灯的逻辑只有几行。</p>
+<pre class="verilog"><code>    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            led_o &lt;= 8&#39;b0;
+        else if (we &amp;&amp; led_sel)
+            led_o &lt;= wdata[7:0];
+    end</code></pre>
+<p>复位时灯全灭。否则只有 <code>we</code> 为 1、地址又是 LED 寄存器时才更新，取写回数据的低 8 位。八盏灯对应低八位，写 <code>0xa5</code> 就是 <code>1010 0101</code> 的图案，图 12-4 左边画了这个效果。</p>
+<figure>
+<img src="../figures/fig12-4-gpio.svg" alt="GPIO 的 LED 与开关寄存器" />
+<figcaption aria-hidden="true">GPIO 的 LED 与开关寄存器</figcaption>
+</figure>
+<p><em>图 12-4　GPIO 的 LED 与开关寄存器</em></p>
+<p>读开关是纯组合逻辑，不需要时钟。</p>
+<pre class="verilog"><code>    always @(*) begin
+        rdata = switch_sel ? {24&#39;b0, switch_i} : 32&#39;b0;
+    end
+
+endmodule</code></pre>
+<p>地址是开关寄存器就把 8 位拨码零扩展成 32 位，其余情况给 0。给 0 而不是高阻，是因为总线那边用”或”来汇总数据，高阻会污染结果。</p>
+<h2 id="uart-的数据与状态寄存器">12.6　UART 的数据与状态寄存器</h2>
+<p>串口要处理两件事：程序写数据寄存器时发送一个字节，程序读数据寄存器时取回收到的字节。先看地址和状态位的编码。</p>
+<pre class="verilog"><code>    localparam [31:0] DATA_ADDR  = 32&#39;hffff0030;
+    localparam [31:0] STAT_ADDR  = 32&#39;hffff0034;
+
+    localparam [31:0] LSR_DR    = 32&#39;h00000001;  // 接收数据就绪
+    localparam [31:0] LSR_THRE  = 32&#39;h00000020;  // 发送保持寄存器空
+
+    wire data_sel = (addr == DATA_ADDR);
+    wire stat_sel = (addr == STAT_ADDR);</code></pre>
+<p>DR 是 Data Ready 的缩写，收到一个字节就置 1。THRE 是 Transmit Holding Register Empty，发送保持寄存器空，表示可以再写一个字节。这两个名字来自真实的 16550，第 7 章介绍过。</p>
+<p>发送用时序逻辑，因为要产生一拍有效的脉冲。</p>
+<pre class="verilog"><code>    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            tx_o        &lt;= 8&#39;b0;
+            tx_valid_o  &lt;= 1&#39;b0;
+        end else begin
+            tx_valid_o &lt;= 1&#39;b0;
+            if (we &amp;&amp; data_sel) begin
+                tx_o       &lt;= wdata[7:0];
+                tx_valid_o &lt;= 1&#39;b1;
+            end
+        end
+    end</code></pre>
+<p>每个时钟先把 <code>tx_valid_o</code> 清成 0，只有这一拍真的写了数据寄存器才重新拉高。这是产生单拍脉冲的标准写法：先默认清零，再按条件置位。<code>tx_valid_o</code> 拉高的那一拍，<code>tx_o</code> 上就是刚写进去的字节，外界的发送器可以据此把它变成串行波形。</p>
+<p>读操作是组合的，按地址选数据或状态。</p>
+<pre class="verilog"><code>    always @(*) begin
+        if (stat_sel)
+            rdata = LSR_THRE | (rx_valid_i ? LSR_DR : 32&#39;b0);
+        else if (data_sel)
+            rdata = {24&#39;b0, rx_i};
+        else
+            rdata = 32&#39;b0;
+    end
+
+endmodule</code></pre>
+<p>写数据寄存器和读数据寄存器是同一个地址 <code>0xffff0030</code>，但方向不同，一个走时序逻辑的 <code>we &amp;&amp; data_sel</code>，一个走组合逻辑的 <code>data_sel</code> 读分支，互不干扰。图 12-5 把这两个寄存器和状态位画在一起。</p>
+<figure>
+<img src="../figures/fig12-5-uart.svg" alt="UART 的数据寄存器与状态寄存器" />
+<figcaption aria-hidden="true">UART 的数据寄存器与状态寄存器</figcaption>
+</figure>
+<p><em>图 12-5　UART 的数据寄存器与状态寄存器</em></p>
+<p>这里的串口是教学简化版。真实的 UART 按波特率一位一位发送，还带起始位、停止位、校验位和 FIFO。本书只保留”写一个字节、读一个字节、看两个状态位”这个最小的软件接口，够写驱动就行。</p>
+<h2 id="定时器分两次读">12.7　定时器分两次读</h2>
+<p>定时器只有一个 64 位计数器，每个时钟加一。</p>
+<pre class="verilog"><code>    localparam [31:0] MTIME_LO = 32&#39;hffff0000;
+    localparam [31:0] MTIME_HI = 32&#39;hffff0004;
+
+    reg [63:0] count;
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            count &lt;= 64&#39;b0;
+        else
+            count &lt;= count + 64&#39;d1;
+    end</code></pre>
+<p>32 位的 CPU 一条指令读不了 64 位，所以拆成两个地址，各给 32 位。</p>
+<pre class="verilog"><code>    always @(*) begin
+        if (addr == MTIME_LO)
+            rdata = count[31:0];
+        else if (addr == MTIME_HI)
+            rdata = count[63:32];
+        else
+            rdata = 32&#39;b0;
+    end
+
+endmodule</code></pre>
+<p>图 12-6 画了这个读法。程序在开始时读一次记为 t0，结束时读一次记为 t1，两者之差就是经过的时钟周期数。周期数乘以时钟周期就是时间。</p>
+<figure>
+<img src="../figures/fig12-6-timer.svg" alt="定时器的 64 位计数与读取" />
+<figcaption aria-hidden="true">定时器的 64 位计数与读取</figcaption>
+</figure>
+<p><em>图 12-6　定时器的 64 位计数与读取</em></p>
+<p>分两次读藏着一个细节：两次读之间计数器还在走。如果第一次读到低 32 位是 <code>0xffffffff</code>，第二次读高位时刚好进位，拼出来的数就错了。稳妥的做法是先读高位，再读低位，再读一次高位，两次高位相同才认为低位的读数有效。测试程序只验证计数在增长，没有跨 32 位边界，所以没处理这个情况；真实驱动得考虑。</p>
+<h2 id="把设备接到总线上">12.8　把设备接到总线上</h2>
+<p>四个设备各自的读数据线先声明出来，再把片选后的写使能接进去。</p>
+<pre class="verilog"><code>    wire [31:0] dmem_rdata;
+    wire [31:0] gpio_rdata;
+    wire [31:0] uart_rdata;
+    wire [31:0] timer_rdata;
+
+    dmem u_dmem (
+        .clk    (clk),
+        .addr   (addr),
+        .we     (dmem_we),
+        .funct3 (funct3),
+        .wdata  (wdata),
+        .rdata  (dmem_rdata)
+    );</code></pre>
+<p>GPIO 和 UART 的实例化把对外的引脚接上去，定时器不需要写使能，只读。</p>
+<pre class="verilog"><code>    gpio u_gpio (
+        .clk       (clk),
+        .rst_n     (rst_n),
+        .addr      (addr),
+        .we        (gpio_we),
+        .wdata     (wdata),
+        .switch_i  (switch_i),
+        .led_o     (led_o),
+        .rdata     (gpio_rdata)
+    );
+
+    uart u_uart (
+        .clk         (clk),
+        .rst_n       (rst_n),
+        .addr        (addr),
+        .we          (uart_we),
+        .wdata       (wdata),
+        .rx_i        (rx_i),
+        .rx_valid_i  (rx_valid_i),
+        .tx_o        (tx_o),
+        .tx_valid_o  (tx_valid_o),
+        .rdata       (uart_rdata)
+    );
+
+    timer u_timer (
+        .clk   (clk),
+        .rst_n (rst_n),
+        .addr  (addr),
+        .rdata (timer_rdata)
+    );</code></pre>
+<p>最后是读数据的汇总。这是整条总线最要紧的一行。</p>
+<pre class="verilog"><code>    assign rdata = mem_sel ? dmem_rdata :
+                   io_sel  ? (gpio_rdata | uart_rdata | timer_rdata) : 32&#39;b0;
+
+endmodule</code></pre>
+<p>内存命中时直接取 <code>dmem_rdata</code>。外设命中时把三个设备的读数或起来。为什么可以或？因为每个设备在自己没被选中时输出全 0，全 0 跟任何数相或都不改变那个数。三个设备里最多只有一个会给出非零值，或起来正好就是它的读数。这种接法省掉了一级多路选择器，代价是所有设备都得保证未选中时输出 0——GPIO 和 UART 的 <code>else rdata = 32'b0</code> 就是为这件事准备的。</p>
+<h2 id="顶层核只需改一处">12.9　顶层核只需改一处</h2>
+<p>核的顶层端口要加上外设引脚。原来只有时钟、复位和 PC 输出，现在多出开关输入、串口收发和 LED 输出。</p>
+<pre class="verilog"><code>module core (
+    input  wire        clk,
+    input  wire        rst_n,
+    input  wire [7:0]  switch_i,
+    input  wire [7:0]  rx_i,
+    input  wire        rx_valid_i,
+    output wire [7:0]  led_o,
+    output wire [7:0]  tx_o,
+    output wire        tx_valid_o,
+    output wire [31:0] pc_out
+);</code></pre>
+<p>数据通路里，原来实例化 <code>dmem</code> 的地方换成 <code>bus</code>，连接几乎照抄，只是多了几个外设引脚。</p>
+<pre class="verilog"><code>    bus u_bus (
+        .clk         (clk),
+        .rst_n       (rst_n),
+        .addr        (alu_result),
+        .we          (mem_write),
+        .funct3      (mem_func),
+        .wdata       (r2),
+        .switch_i    (switch_i),
+        .rx_i        (rx_i),
+        .rx_valid_i  (rx_valid_i),
+        .led_o       (led_o),
+        .tx_o        (tx_o),
+        .tx_valid_o  (tx_valid_o),
+        .rdata       (rdata)
+    );</code></pre>
+<p>其余部分，取指、译码、寄存器堆、ALU、分支判断、写回选择，跟第 8 章完全一样。访存地址还是 ALU 的结果，写回数据还是从 <code>wdata</code> 那几路里选。这一章真正新增的东西都关在总线和四个设备里，核只是换了个邻居。</p>
+<h2 id="走通一个程序">12.10　走通一个程序</h2>
+<p>测试程序在 <code>tools/gen_code_hex12.py</code> 里生成。它从 <code>0x00400000</code> 开始，逐条做下面这些事。</p>
+<p>头两条把外设基址和点灯图案准备好。<code>lui x1, 0xffff0</code> 把 <code>0xffff0000</code> 装进 x1，<code>addi x2, x0, 0xa5</code> 是要点亮的图案。</p>
+<p>接着点灯、读开关。</p>
+<pre><code>0x08: addi x3, x1, 0x10     # LED 地址
+0x0c: sw   x2, 0(x3)        # 写 LED
+0x10: addi x4, x1, 0x20     # 开关地址
+0x14: lw   x5, 0(x4)        # 读开关到 x5</code></pre>
+<p>测试台把 <code>switch_i</code> 接成 <code>0x5a</code>。程序读完 x5 应该是 <code>0x5a</code>，LED 输出应该是 <code>0xa5</code>。</p>
+<p>然后是两次串口发送。<code>addi x7, x1, 0x30</code> 得到数据寄存器地址，接着两次 <code>sw</code>，分别写 <code>0x48</code> 和 <code>0x69</code>，也就是字符 <code>H</code> 和 <code>i</code>。测试台记录 <code>tx_valid_o</code> 为 1 那一拍的 <code>tx_o</code>，拼出发出的字符串。</p>
+<p>读状态、读定时器、读接收数据各占一条指令。</p>
+<pre><code>0x2c: addi x9, x1, 0x34     # UART 状态地址
+0x30: lw   x10, 0(x9)       # 状态 -&gt; x10
+0x34: lw   x11, 0(x1)       # 定时器低 32 位 -&gt; x11
+0x38: lw   x12, 0(x7)       # 串口收到的数据 -&gt; x12
+0x3c: j    0x3c             # 停机</code></pre>
+<p>测试台把 <code>rx_i</code> 接成 <code>0x7a</code> 且 <code>rx_valid_i</code> 恒为 1，所以状态读回来是 <code>0x21</code>（THRE 和 DR 都为 1），接收数据是 <code>0x7a</code>。定时器读回来是个两位数，说明它一直在走。最后一条指令跳到自己，程序停在原地。</p>
+<p>在 <code>code/verilog/12_peripheral/</code> 下运行仿真：</p>
+<pre><code>iverilog -g2012 -o sim.out \
+  alu.v pc.v control.v regfile.v imem.v dmem.v \
+  gpio.v uart.v timer.v bus.v core.v tb_core.v
+vvp sim.out</code></pre>
+<p>九项检查全部打印 PASS，最后出现 <code>ALL TESTS PASSED</code>。</p>
+<h2 id="重点与权衡">12.11　重点与权衡</h2>
+<p>这一章的内容可以归纳成三句话。</p>
+<p><strong>地址就是设备的名字。</strong> 内存映射 I/O 不需要新指令，读写外设和读写内存走同一条数据通路。代价是外设要占一段地址空间，地址译码也要多花一点逻辑。</p>
+<p><strong>片选先粗后细。</strong> 总线先分内存区还是外设区，设备再按低位地址判断是不是自己。两级译码让每个模块各管各的，加设备时不用动总线。</p>
+<p><strong>未选中时输出零。</strong> 用”或”汇总读数据时，这条约定是正确性的前提。忘了写 <code>else rdata = 32'b0</code>，读出的数据就会被别人的高阻或未知态带坏。</p>
+<p>再说说简化。真实的外设比这里复杂得多：UART 有波特率发生器和 FIFO，GPIO 有方向和上下拉配置，定时器往往带比较寄存器和中断。本书只留软件能看到的最小寄存器集合，目的是把”地址映射到设备”这件事讲透，而不是造一个能接真实串口的控制器。等读者要写实际驱动时，对着芯片手册补寄存器就是了，方法是一样的。</p>
+<p>还有一处软硬件差异值得留意。Python 版的定时器按字节读，因为 <code>load32</code> 拆成四次 <code>load8</code>；Verilog 版的定时器一次给出 32 位，因为硬件的 <code>lw</code> 就是一拍一次读 32 位。两种实现都对，只是模拟粒度不同。读代码时看到 <code>matches</code> 判断一个范围，要明白它对应的是软件里的四次字节访问。</p>
+<h2 id="实验">12.12　实验</h2>
+<p><strong>实验一　改点灯图案。</strong> 把测试程序里 <code>addi x2, x0, 0xa5</code> 的立即数换成别的 8 位数，重新生成 <code>code.hex</code> 并仿真，观察 LED 输出怎么变。再换成超过 8 位的值，看看高位是不是被丢掉了。</p>
+<p><strong>实验二　让串口多打几个字符。</strong> 在程序里再加两次 <code>sw</code> 到 <code>0xffff0030</code>，发送 <code>RV</code> 两个字符，同时改测试台去检查 <code>tx_log[2]</code> 和 <code>tx_log[3]</code>。注意每次发送之间不必插入空操作，因为写数据寄存器是一拍一次。</p>
+<p><strong>实验三　用开关控制灯。</strong> 在程序末尾加一条 <code>lw</code> 读开关、一条 <code>sw</code> 写 LED，把拨码状态直接显示到灯上。改测试台的 <code>switch_i</code>，看 LED 是否跟着变。这就是第 4 章”访问外设”课件里的按键控制 LED 示例。</p>
+<p><strong>实验四　测一段代码跑了多久。</strong> 在程序开头和结尾各读一次定时器，把两次读数相减存进一个寄存器。改变中间插入的空指令条数，看差值怎么变。</p>
+<p><strong>实验五　软件对照。</strong> 运行 <code>code/python/12_peripheral/demo.py</code> 和 <code>test_peripherals.py</code>，把输出跟硬件仿真比一比。两个版本的地址布局完全一致，结果应该对得上。</p>
+<h2 id="香山一瞥选读">12.13　香山一瞥（选读）</h2>
+<p>真实的处理器不会把 LED 直接挂在核的总线上。香山把外设访问交给总线桥，经片上总线送到不同的控制器，串口、定时器、中断控制器各有自己的地址段。软件看到的仍然是内存映射的寄存器，和本章没有本质区别，只是中间的互连复杂得多。</p>
+<p>香山用的是 RISC-V 平台级的中断控制器和外设：定时器通过 CLINT 提供 mtime 和 mtimecmp，外部中断经 PLIC 汇总后送到核的中断线。第 11 章接的那根中断请求线，在真实系统里就是 PLIC 的输出。第 14 章会看到定时器中断的完整用法。</p>
+<p>对外设驱动作者来说，本章的方法可以直接迁移：查手册找到寄存器地址，用 <code>volatile</code> 指针读写，按状态位决定下一步。第 13 章写 C 驱动时会用到这一点。</p>
+<h2 id="小结与思考题">12.14　小结与思考题</h2>
+<p>这一章给单周期核接上了外面的世界。内存映射 I/O 让外设寄存器占一段地址，软件用普通访存指令就能控制硬件。总线按地址译码产生片选，把读写转给内存、GPIO、UART 或定时器，再把选中设备的读数送回核。Python 版和 Verilog 版用同一套地址布局，可以互相印证。</p>
+<p>几个要点：地址高位区分设备区、低位区分具体寄存器；写使能必须和片选相与；多个设备的读数据线用”或”汇总时，未选中设备要输出零；串口的同一数据寄存器写是发送、读是接收；定时器分高低两次读，跨 32 位边界时要防读数不一致。</p>
+<p>思考题：</p>
+<ol type="1">
+<li>内存映射 I/O 和独立 I/O 地址空间各有什么好处？为什么 RISC-V 选了前者？</li>
+<li>总线里 <code>gpio_we</code> 和 <code>uart_we</code> 都等于 <code>we &amp; io_sel</code>，为什么两个设备不会同时被写？</li>
+<li>如果忘了在 GPIO 的 <code>else</code> 分支给 <code>rdata</code> 赋零，会发生什么？结合总线的”或”逻辑说明。</li>
+<li>UART 数据寄存器为什么一个地址既能写又能读？硬件里靠什么区分？</li>
+<li>定时器为什么要分两次读？什么情况下两次读拼出来的数会出错，怎么避免？</li>
+<li>如果要在系统里加一个 8 位模数转换器，地址定为 <code>0xffff0040</code>，需要改哪些模块？核的代码要改吗？</li>
+<li>Python 版定时器的 <code>matches</code> 判断的是一个地址范围，Verilog 版只判断单个地址，为什么会有这个差别？</li>
+<li>本章的串口 THRE 位恒为 1。如果换成真实串口，程序在发送前该做什么？</li>
+</ol>
+</article></main>
+<footer>浙江工商大学　·　邢建国</footer>
+</body>
+</html>

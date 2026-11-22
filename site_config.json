@@ -1,0 +1,26 @@
+{
+  "title": "RISC-V 处理器设计入门",
+  "subtitle": "从指令集到五级流水线",
+  "series": "计算机体系结构丛书",
+  "author": "邢建国",
+  "affiliation": "浙江工商大学",
+  "repo": "https://github.com/jgxing/riscv-intro-book",
+  "intro": "一本面向数字逻辑与程序设计基础读者的 RISC-V 入门教材。从 RV32I 指令集和汇编讲起，经过门电路、Python 模拟器与单周期处理器，最终落到带转发、停顿和冲刷的五级流水线，并延伸到异常中断、外设与基于 C 的裸机编程。",
+  "front": [
+    {"src": "前言.md", "out": "preface.html", "label": "前言"}
+  ],
+  "chapters": {
+    "dir": "chapters",
+    "pattern": "第??章_*.md",
+    "out_prefix": "ch"
+  },
+  "back": [
+    {"src": "附录A_RV32I指令与CSR速查.md", "out": "appendix-a.html", "label": "附录A"},
+    {"src": "附录B_Verilog模块与测试台模板.md", "out": "appendix-b.html", "label": "附录B"},
+    {"src": "附录C_工具链与环境搭建.md", "out": "appendix-c.html", "label": "附录C"}
+  ],
+  "references": {
+    "src": "参考文献与延伸阅读.md",
+    "out": "references.html"
+  }
+}

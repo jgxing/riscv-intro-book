@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>附录 B　Verilog 模块与测试台模板</title>
+<style>
+:root { --red: #C8102E; --ink: #1f2328; --muted: #6b7280; --line: #e5e7eb; --bg: #ffffff; --soft: #faf9f7; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: var(--ink); background: var(--bg); line-height: 1.8;
+       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif; }
+a { color: var(--red); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.topbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.97);
+          border-bottom: 2px solid var(--red); padding: 10px 24px;
+          display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 700; color: var(--ink); font-size: 15px; }
+.topbar nav { display: flex; gap: 16px; font-size: 13px; align-items: center; flex-wrap: wrap; }
+.topbar nav a { color: #374151; }
+.topbar nav a:hover { color: var(--red); }
+.wrap { max-width: 900px; margin: 0 auto; padding: 32px 22px 90px; }
+.hero { display: flex; gap: 36px; align-items: flex-start; flex-wrap: wrap; margin: 18px 0 46px; }
+.hero .cover { width: 232px; max-width: 100%; border: 1px solid var(--line);
+               box-shadow: 0 8px 28px rgba(0,0,0,.12); border-radius: 2px; }
+.hero .info { flex: 1 1 360px; }
+.series { color: var(--red); font-size: 13px; letter-spacing: 2px; margin: 4px 0 10px; }
+.hero h1 { font-size: 32px; line-height: 1.3; margin: 0 0 6px; }
+.hero .subtitle { font-size: 21px; color: var(--red); margin: 0 0 18px; }
+.byline { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+.intro { color: #374151; font-size: 15px; margin: 0 0 24px; }
+.btn { display: inline-block; padding: 9px 20px; background: var(--red); color: #fff;
+       border-radius: 4px; font-size: 14px; margin-right: 10px; }
+.btn:hover { background: #a50e26; text-decoration: none; }
+.btn.ghost { background: #fff; color: var(--red); border: 1px solid var(--red); }
+.btn.ghost:hover { background: #fdf2f4; }
+.toc-group { margin: 30px 0; }
+.toc-group h2 { font-size: 18px; color: var(--ink); border-bottom: 2px solid var(--line);
+                padding-bottom: 8px; margin: 0 0 12px; }
+ol.toc-list { list-style: none; padding: 0; margin: 0; counter-reset: item; }
+ol.toc-list li { border-bottom: 1px dashed var(--line); padding: 7px 2px; font-size: 15px; }
+ol.toc-list li a { color: var(--ink); }
+ol.toc-list li a:hover { color: var(--red); }
+.article h1 { font-size: 28px; color: var(--red); border-bottom: 3px solid var(--red);
+              padding-bottom: 10px; margin: 0 0 28px; line-height: 1.4; }
+.article h2 { font-size: 21px; margin: 38px 0 12px; padding-left: 10px; border-left: 4px solid var(--red); }
+.article h3 { font-size: 17px; margin: 26px 0 8px; }
+.article p { text-align: justify; margin: 12px 0; }
+.article img { max-width: 100%; height: auto; display: block; margin: 22px auto 6px; }
+.article blockquote { border-left: 3px solid var(--line); background: var(--soft);
+                      margin: 16px 0; padding: 10px 16px; color: #4b5563; }
+.article pre { background: #f6f6f4; border-left: 3px solid var(--red); padding: 14px 16px;
+               border-radius: 0 4px 4px 0; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+.article code { font-family: Consolas, "Courier New", monospace; background: #f2f2f0;
+                padding: 1px 4px; border-radius: 3px; font-size: .92em; }
+.article pre code { background: none; padding: 0; }
+.article table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: 14px; }
+.article th, .article td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+.article th { background: var(--soft); font-weight: 600; }
+.pagenav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+           border-top: 1px solid var(--line); margin-top: 54px; padding-top: 18px; font-size: 14px; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px 0 40px; }
+@media (max-width: 640px) { .hero h1 { font-size: 26px; } .wrap { padding: 20px 16px 60px; } }
+</style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="index.html">RISC-V 处理器设计入门</a><nav><a href="index.html">目录</a><a href="appendix-a.html">← 附录A</a><a href="appendix-c.html">附录C →</a><a href="https://github.com/jgxing/riscv-intro-book">代码仓库</a></nav></header>
+<main class="wrap"><article class="article"><h1 id="附录-b-verilog-模块与测试台模板">附录 B　Verilog 模块与测试台模板</h1>
+<p>这个附录把全书反复用到的 Verilog 写法集中起来，供查漏和复用。每个模板都来自正文里已经跑通的代码，放在 <code>code/verilog/appendix_b/</code>，三组测试台全部通过。写代码时不必从头想起，来这里找一块改改就能用。</p>
+<p>模板分两类。一类是电路模块，包括带使能的触发器、寄存器堆、ALU、指令存储器；另一类是测试台的骨架，包括时钟复位、检查任务和结束条件。最后列几条实践中容易踩的坑。</p>
+<h2 id="b.1-带使能的-d-触发器">B.1 带使能的 D 触发器</h2>
+<h3 id="要解决什么问题">要解决什么问题</h3>
+<p>处理器里到处是”到时钟沿才更新”的状态：PC、流水线寄存器、CSR。它们的行为都一样：复位时清零，时钟沿到来时，若使能打开就存入新值，否则保持原值。把这个行为写成一个模块，以后不用每次重来。</p>
+<h3 id="接口怎么来">接口怎么来</h3>
+<p>先看存状态需要什么。时钟和复位是时序逻辑的标配，少一个都不行。</p>
+<pre class="verilog"><code>    input  wire       clk,
+    input  wire       rst_n,</code></pre>
+<p>复位信号用低电平有效，写成 <code>rst_n</code>，这是全书统一的约定。</p>
+<p>再看数据这一侧。要有个数据输入，还要有个信号决定”这一拍到底存不存”。</p>
+<pre class="verilog"><code>    input  wire       en,
+    input  wire       d,</code></pre>
+<p>最后是要被驱动的输出。它在本拍里保持旧值，所以声明成 <code>reg</code>。</p>
+<pre class="verilog"><code>    output reg        q</code></pre>
+<p>接口就齐了。</p>
+<h3 id="实现">实现</h3>
+<p>时序逻辑写在 <code>always @(posedge clk)</code> 里，用非阻塞赋值 <code>&lt;=</code>。复位和使能构成两级判断：复位优先，其次看使能。</p>
+<pre class="verilog"><code>    always @(posedge clk) begin
+        if (!rst_n)
+            q &lt;= 1&#39;b0;
+        else if (en)
+            q &lt;= d;
+    end</code></pre>
+<p>这里没有 <code>else</code> 分支。<code>en</code> 为 0 时什么也不做，<code>q</code> 自然保持原值，这正是我们要的效果。变量名省略赋值会让综合工具推断出触发器，仿真器也会保持旧值。</p>
+<p>完整代码在 <code>code/verilog/appendix_b/dff_en.v</code>：</p>
+<pre class="verilog"><code>module dff_en (
+    input  wire       clk,
+    input  wire       rst_n,
+    input  wire       en,
+    input  wire       d,
+    output reg        q
+);
+
+    always @(posedge clk) begin
+        if (!rst_n)
+            q &lt;= 1&#39;b0;
+        else if (en)
+            q &lt;= d;
+    end
+
+endmodule</code></pre>
+<p>这个模块在第 4 章第一次出现，第 9 章的流水线寄存器用的也是同一套写法，只是数据从 1 位加宽到几十位，把 <code>d</code> 和 <code>q</code> 改成总线即可。</p>
+<h2 id="b.2-寄存器堆">B.2 寄存器堆</h2>
+<h3 id="要解决什么问题-1">要解决什么问题</h3>
+<p>RV32I 程序员眼里的 32 个通用寄存器，在硬件里是一个 32 项、每项 32 位的存储阵列。它有两个读端口和一个写端口，因为一条典型指令要读两个源操作数、写一个结果。</p>
+<h3 id="接口怎么来-1">接口怎么来</h3>
+<p>存状态要有时钟和复位，这两样先引出来。</p>
+<pre class="verilog"><code>    input  wire        clk,
+    input  wire        rst_n,</code></pre>
+<p>再看读端口。给出寄存器号，返回对应的值。一条指令通常要读两个源操作数，所以需要两组输入输出。</p>
+<pre class="verilog"><code>    input  wire [4:0]  rs1,
+    input  wire [4:0]  rs2,</code></pre>
+<p>写端口除了寄存器号和数据，还要一个使能信号。没有它，每条指令都会往某个寄存器里写，程序立刻乱套。</p>
+<pre class="verilog"><code>    input  wire [4:0]  rd,
+    input  wire        we,
+    input  wire [31:0] wdata,</code></pre>
+<p>最后是两路读出的数据。</p>
+<pre class="verilog"><code>    output wire [31:0] rdata1,
+    output wire [31:0] rdata2</code></pre>
+<p>接口就齐了。 ### 实现里要注意什么</p>
+<p>第一件事是 <code>x0</code>。规范规定它恒为零，所以写端口必须挡住 <code>rd == 0</code>，读端口遇到 <code>rs1 == 0</code> 或 <code>rs2 == 0</code> 也要直接返回零，不去读存储器。少一个判断，<code>x0</code> 就不再是零了。</p>
+<p>第二件事是复位。数组不能在声明时清零，得在复位分支里用循环逐项写。</p>
+<pre class="verilog"><code>    reg [31:0] regs [0:31];
+    integer i;
+
+    always @(posedge clk) begin
+        if (!rst_n) begin
+            for (i = 0; i &lt; 32; i = i + 1)
+                regs[i] &lt;= 32&#39;b0;
+        end else if (we &amp;&amp; (rd != 5&#39;d0)) begin
+            regs[rd] &lt;= wdata;
+        end
+    end</code></pre>
+<p>读端口用连续赋值，两个判断分别处理两个端口：</p>
+<pre class="verilog"><code>    assign rdata1 = (rs1 == 5&#39;d0) ? 32&#39;b0 : regs[rs1];
+    assign rdata2 = (rs2 == 5&#39;d0) ? 32&#39;b0 : regs[rs2];</code></pre>
+<p>完整代码在 <code>code/verilog/appendix_b/regfile.v</code>：</p>
+<pre class="verilog"><code>module regfile (
+    input  wire        clk,
+    input  wire        rst_n,
+    input  wire [4:0]  rs1,
+    input  wire [4:0]  rs2,
+    input  wire [4:0]  rd,
+    input  wire        we,
+    input  wire [31:0] wdata,
+    output wire [31:0] rdata1,
+    output wire [31:0] rdata2
+);
+
+    reg [31:0] regs [0:31];
+    integer i;
+
+    always @(posedge clk) begin
+        if (!rst_n) begin
+            for (i = 0; i &lt; 32; i = i + 1)
+                regs[i] &lt;= 32&#39;b0;
+        end else if (we &amp;&amp; (rd != 5&#39;d0)) begin
+            regs[rd] &lt;= wdata;
+        end
+    end
+
+    assign rdata1 = (rs1 == 5&#39;d0) ? 32&#39;b0 : regs[rs1];
+    assign rdata2 = (rs2 == 5&#39;d0) ? 32&#39;b0 : regs[rs2];
+
+endmodule</code></pre>
+<p>这个版本是第 5 章的写法。第 10 章为了解决”距离三条指令”的数据相关，在它内部加了一条写直通，把本拍要写回的数据直接旁路到读端口；那是针对流水线问题的改动，基础的寄存器堆保持这个样子就够了。</p>
+<h2 id="b.3-组合逻辑块的标准写法">B.3 组合逻辑块的标准写法</h2>
+<h3 id="要解决什么问题-2">要解决什么问题</h3>
+<p>ALU、译码器、立即数生成这些电路没有状态，输入一变输出就该跟着变。这种电路叫组合逻辑，写法和时序逻辑完全不同，混用会导致仿真出波形、综合出锁存器这类怪问题。</p>
+<h3 id="两条规矩">两条规矩</h3>
+<p>组合逻辑用 <code>always @(*)</code>，里面用阻塞赋值 <code>=</code>：</p>
+<pre class="verilog"><code>    always @(*) begin
+        case (alu_op)
+            ALU_ADD: result = add_result;
+            ALU_SUB: result = add_result;
+            ALU_AND: result = a &amp; b;
+            ALU_OR:  result = a | b;
+            ALU_XOR: result = a ^ b;
+            ALU_SLT: result = (a[31] != b[31]) ? {31&#39;b0, a[31]} : {31&#39;b0, (a &lt; b)};
+            ALU_SLL: result = a &lt;&lt; b[4:0];
+            ALU_SRL: result = a &gt;&gt; b[4:0];
+            default: result = 32&#39;b0;
+        endcase
+    end</code></pre>
+<p>这里有三点值得留意。<code>always @(*)</code> 让仿真器自动敏感于块里读到的所有信号，不必手工列敏感表；<code>case</code> 里用阻塞赋值 <code>=</code>，表示立即算出结果；最后一定要有 <code>default</code>，否则某些输入组合下 <code>result</code> 会保持旧值，综合工具就会推断出锁存器。</p>
+<p>还有一条：组合逻辑块里赋值的输出要声明成 <code>reg</code>，哪怕它在硬件里只是一根线。这是 Verilog 语法的要求，<code>reg</code> 在这里的意思不是”触发器”，而是”过程块里被赋值的变量”。ALU 的端口声明就体现了这一点：</p>
+<pre class="verilog"><code>module alu (
+    input  wire [31:0] a,
+    input  wire [31:0] b,
+    input  wire [3:0]  alu_op,
+    output reg  [31:0] result,
+    output wire        zero
+);</code></pre>
+<p><code>result</code> 在 <code>always</code> 块里赋值，声明成 <code>reg</code>；<code>zero</code> 用 <code>assign</code> 连续赋值，声明成 <code>wire</code>。</p>
+<h3 id="加法器与子模块">加法器与子模块</h3>
+<p>ALU 把 32 位加法交给独立的 <code>adder_32</code>，后者用 <code>generate</code> 循环把 32 个全加器串起来。这种写法比手抄 32 行短得多，改位宽也只需改一个数字。</p>
+<pre class="verilog"><code>    genvar i;
+    generate
+        for (i = 0; i &lt; 32; i = i + 1) begin : g_bit
+            if (i == 0) begin : g_first
+                full_adder u_fa (
+                    .a    (a[0]),
+                    .b    (b[0]),
+                    .cin  (cin),
+                    .sum  (sum[0]),
+                    .cout (carry[0])
+                );
+            end else begin : g_rest
+                full_adder u_fa (
+                    .a    (a[i]),
+                    .b    (b[i]),
+                    .cin  (carry[i-1]),
+                    .sum  (sum[i]),
+                    .cout (carry[i])
+                );
+            end
+        end
+    endgenerate</code></pre>
+<p>最低位没有前一级进位，所以单独用一个 <code>if</code> 分支处理。实例化时用 <code>.a(a[i])</code> 这样的具名连接，比按顺序连可靠得多：端口顺序改了也不会连错。</p>
+<p>附录目录里的 <code>alu.v</code>、<code>adder_32.v</code>、<code>full_adder.v</code>、<code>half_adder.v</code> 四个文件构成完整的一条链，配合 <code>tb_alu.v</code> 可以独立跑通。</p>
+<h2 id="b.4-立即数生成的写法">B.4 立即数生成的写法</h2>
+<h3 id="要解决什么问题-3">要解决什么问题</h3>
+<p>RV32I 的立即数被打散在不同位置，译码时要按指令格式把它们拼回 32 位。这段代码在第 8 章第一次出现，后面各章的核都沿用。</p>
+<h3 id="实现-1">实现</h3>
+<p>先把五个字段提取出来，每一条对应一种格式：</p>
+<pre class="verilog"><code>    wire [31:0] imm_i = {{20{instr[31]}}, instr[31:20]};
+    wire [31:0] imm_s = {{20{instr[31]}}, instr[31:25], instr[11:7]};
+    wire [31:0] imm_b = {{19{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1&#39;b0};
+    wire [31:0] imm_u = {instr[31:12], 12&#39;b0};
+    wire [31:0] imm_j = {{11{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21], 1&#39;b0};</code></pre>
+<p><code>{{20{instr[31]}}, ...}</code> 是符号扩展：把最高位复制 20 遍，接在原来的 12 位前面，凑成 32 位。B 型和 J 型的最低位固定为 0，因为跳转目标必须 2 字节对齐。U 型不做符号扩展，高 20 位直接放到结果高位，低 12 位补零。</p>
+<p>拼好之后按操作码挑一个：</p>
+<pre class="verilog"><code>    reg [31:0] imm_r;
+    always @(*) begin
+        case (opcode)</code></pre>
+<p>这段的完整代码在 <code>code/verilog/appendix_b/control.v</code>。注意它是一个大的组合块，末尾同样要有 <code>default</code>，保证任何操作码下都有确定输出。</p>
+<h2 id="b.5-用-readmemh-装载程序">B.5 用 $readmemh 装载程序</h2>
+<h3 id="要解决什么问题-4">要解决什么问题</h3>
+<p>处理器要跑程序，得先把机器码放进指令存储器。写死在代码里太笨，应该从一个 hex 文件读进来。</p>
+<h3 id="实现-2">实现</h3>
+<pre class="verilog"><code>    reg [31:0] mem [0:DEPTH-1];
+
+    initial begin
+        $readmemh(&quot;code.hex&quot;, mem);
+    end</code></pre>
+<p><code>$readmemh</code> 是仿真任务，在仿真开始时把文件里的十六进制数逐行填进数组。文件每行一个 32 位字，小端序的程序要用 <code>tools/bin_to_hex.py</code> 之类的脚本先转成这个格式。</p>
+<p>地址译码部分要减掉存储器的基地址，再用字地址索引：</p>
+<pre class="verilog"><code>    wire [31:0] offset = addr - BASE;
+    wire [IDX_W-1:0] idx = offset[IDX_W+1:2];
+
+    always @(*) begin
+        if (addr &gt;= BASE &amp;&amp; offset &lt; DEPTH * 4)
+            instr = mem[idx];
+        else
+            instr = 32&#39;h00000013;
+    end</code></pre>
+<p><code>offset[IDX_W+1:2]</code> 是右移两位，把字节地址变成字地址。越界访问返回 <code>0x00000013</code>，也就是 <code>nop</code>，这样程序跑飞时不会取到非法指令，便于观察。完整代码在 <code>code/verilog/appendix_b/imem.v</code>。</p>
+<h2 id="b.6-测试台骨架">B.6 测试台骨架</h2>
+<h3 id="要解决什么问题-5">要解决什么问题</h3>
+<p>写好了模块，得有个地方给它加激励、检查输出、报告结果。测试台不参与综合，写法可以随意，但有几样东西几乎每次都要用：时钟、复位、检查任务和结束条件。</p>
+<h3 id="时钟与复位">时钟与复位</h3>
+<p>方波时钟用一条 <code>always</code> 语句产生：</p>
+<pre class="verilog"><code>    always #5 clk = ~clk;</code></pre>
+<p>这行产生周期 10 个时间单位的时钟。<code>timescale</code> 声明决定单位，全书统一用 1 ns / 1 ps，所以周期是 10 ns。</p>
+<p>复位要在 <code>initial</code> 块里先拉低、过一小段时间再拉高。先给一段低电平，让所有触发器进入确定状态：</p>
+<pre class="verilog"><code>    initial begin
+        clk = 0;
+        rst_n = 0;
+        en = 0;
+        d = 0;
+        errors = 0;
+
+        #12;
+        check(1&#39;b0, &quot;reset clears q&quot;);
+        rst_n = 1;</code></pre>
+<h3 id="检查任务">检查任务</h3>
+<p>每次检查都要打印通过还是失败，失败时累计错误数。把它写成一个 <code>task</code>，后面就不用重复：</p>
+<pre class="verilog"><code>    task check;
+        input          expected;
+        input [1023:0] text;
+        begin
+            if (q !== expected) begin
+                $display(&quot;FAIL: %0t  %s  (q=%b, expected=%b)&quot;, $time, text, q, expected);
+                errors = errors + 1;
+            end else begin
+                $display(&quot;PASS: %0t  %s&quot;, $time, text);
+            end
+        end
+    endtask</code></pre>
+<p>消息参数写成 <code>[1023:0]</code> 而不是常见的 <code>[255:0]</code>，是为了放下长消息。位宽不够时字符串会被悄悄截断，排查起来很费时间。比较用 <code>!==</code> 而不是 <code>!=</code>，这样 <code>x</code> 和 <code>z</code> 也会被判为失败，不会蒙混过关。</p>
+<h3 id="结束条件">结束条件</h3>
+<p>测试跑完要给出明确结论并停下：</p>
+<pre class="verilog"><code>        $display(&quot;--------------------------------&quot;);
+        if (errors == 0)
+            $display(&quot;ALL TESTS PASSED&quot;);
+        else
+            $display(&quot;%0d TESTS FAILED&quot;, errors);
+        $finish;
+    end</code></pre>
+<p>完整的 <code>tb_dff_en.v</code> 有 7 项检查，覆盖复位、使能开启、使能关闭和数据变化，可以直接拿去改。目录里的 <code>tb_regfile.v</code> 和 <code>tb_alu.v</code> 是稍微复杂一点的例子。</p>
+<p>运行方法：</p>
+<pre class="bash"><code>iverilog -g2012 -o sim.out dff_en.v tb_dff_en.v
+vvp sim.out</code></pre>
+<p>三条测试台命令分别为：</p>
+<pre class="bash"><code>iverilog -g2012 -o sim.out dff_en.v tb_dff_en.v &amp;&amp; vvp sim.out
+iverilog -g2012 -o sim.out regfile.v tb_regfile.v &amp;&amp; vvp sim.out
+iverilog -g2012 -o sim.out alu.v adder_32.v full_adder.v half_adder.v tb_alu.v &amp;&amp; vvp sim.out</code></pre>
+<p>三组都打印 <code>ALL TESTS PASSED</code> 才算环境正常。</p>
+<h2 id="b.7-几条容易踩的坑">B.7 几条容易踩的坑</h2>
+<p><strong>保留字不能用。</strong> <code>table</code>、<code>expect</code> 是 Verilog 保留字，拿去当信号名会直接报错。本书把标记存储器叫 <code>tag_ram</code>，把预期地址叫 <code>exp_addr</code>，就是为了绕开它们。</p>
+<p><strong>数组上界要用常量。</strong> Icarus Verilog 不接受数组声明里直接写参数表达式，得先转成 <code>localparam</code>。模板目录里的 <code>fifo.v</code> 是个通用同步队列，开头就这么写：</p>
+<pre class="verilog"><code>    localparam PTR_W    = $clog2(DEPTH) + 1;  // 下标位数多留 1 位判满
+    localparam DEPTH_M1 = DEPTH - 1;  // iverilog 不接受数组上界直接写参数表达式</code></pre>
+<p><strong>多一位指针的队列，索引只能用低位。</strong> 深度 8 的队列，指针要 4 位才能判满，但数组下标只有 3 位。写满时完整指针会走到 8，用它索引就越界读出 <code>x</code>。正确写法是 <code>mem[tail[PTR_W-2:0]]</code>。</p>
+<p><strong>判满要用当前 tail。</strong> 用 <code>tail + 1</code> 判断会让队列深度平白少一格。判据是最高位不同、其余位相同，而且两边都取当前值。</p>
+<p><strong>复位沿要有明确跳变。</strong> 未知态到 0 在 Icarus 里不一定触发 <code>negedge rst_n</code>。测试台里先拉高再拉低，给出确定的下降沿，比只写初值 0 可靠。</p>
+<p><strong>组合逻辑的 <code>case</code> 要有 <code>default</code>。</strong> 少一个分支，综合工具就会推断出锁存器，仿真时表现为输出莫名保持旧值。</p>
+<p>这些坑大多在正文各章里踩过一次，写在这里省得再踩第二遍。模板本身不复杂，真正要留心的是这些细节。</p>
+</article></main>
+<footer>浙江工商大学　·　邢建国</footer>
+</body>
+</html>

@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>附录 A　RV32I 指令与 CSR 速查</title>
+<style>
+:root { --red: #C8102E; --ink: #1f2328; --muted: #6b7280; --line: #e5e7eb; --bg: #ffffff; --soft: #faf9f7; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: var(--ink); background: var(--bg); line-height: 1.8;
+       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif; }
+a { color: var(--red); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.topbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.97);
+          border-bottom: 2px solid var(--red); padding: 10px 24px;
+          display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 700; color: var(--ink); font-size: 15px; }
+.topbar nav { display: flex; gap: 16px; font-size: 13px; align-items: center; flex-wrap: wrap; }
+.topbar nav a { color: #374151; }
+.topbar nav a:hover { color: var(--red); }
+.wrap { max-width: 900px; margin: 0 auto; padding: 32px 22px 90px; }
+.hero { display: flex; gap: 36px; align-items: flex-start; flex-wrap: wrap; margin: 18px 0 46px; }
+.hero .cover { width: 232px; max-width: 100%; border: 1px solid var(--line);
+               box-shadow: 0 8px 28px rgba(0,0,0,.12); border-radius: 2px; }
+.hero .info { flex: 1 1 360px; }
+.series { color: var(--red); font-size: 13px; letter-spacing: 2px; margin: 4px 0 10px; }
+.hero h1 { font-size: 32px; line-height: 1.3; margin: 0 0 6px; }
+.hero .subtitle { font-size: 21px; color: var(--red); margin: 0 0 18px; }
+.byline { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+.intro { color: #374151; font-size: 15px; margin: 0 0 24px; }
+.btn { display: inline-block; padding: 9px 20px; background: var(--red); color: #fff;
+       border-radius: 4px; font-size: 14px; margin-right: 10px; }
+.btn:hover { background: #a50e26; text-decoration: none; }
+.btn.ghost { background: #fff; color: var(--red); border: 1px solid var(--red); }
+.btn.ghost:hover { background: #fdf2f4; }
+.toc-group { margin: 30px 0; }
+.toc-group h2 { font-size: 18px; color: var(--ink); border-bottom: 2px solid var(--line);
+                padding-bottom: 8px; margin: 0 0 12px; }
+ol.toc-list { list-style: none; padding: 0; margin: 0; counter-reset: item; }
+ol.toc-list li { border-bottom: 1px dashed var(--line); padding: 7px 2px; font-size: 15px; }
+ol.toc-list li a { color: var(--ink); }
+ol.toc-list li a:hover { color: var(--red); }
+.article h1 { font-size: 28px; color: var(--red); border-bottom: 3px solid var(--red);
+              padding-bottom: 10px; margin: 0 0 28px; line-height: 1.4; }
+.article h2 { font-size: 21px; margin: 38px 0 12px; padding-left: 10px; border-left: 4px solid var(--red); }
+.article h3 { font-size: 17px; margin: 26px 0 8px; }
+.article p { text-align: justify; margin: 12px 0; }
+.article img { max-width: 100%; height: auto; display: block; margin: 22px auto 6px; }
+.article blockquote { border-left: 3px solid var(--line); background: var(--soft);
+                      margin: 16px 0; padding: 10px 16px; color: #4b5563; }
+.article pre { background: #f6f6f4; border-left: 3px solid var(--red); padding: 14px 16px;
+               border-radius: 0 4px 4px 0; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+.article code { font-family: Consolas, "Courier New", monospace; background: #f2f2f0;
+                padding: 1px 4px; border-radius: 3px; font-size: .92em; }
+.article pre code { background: none; padding: 0; }
+.article table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: 14px; }
+.article th, .article td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+.article th { background: var(--soft); font-weight: 600; }
+.pagenav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+           border-top: 1px solid var(--line); margin-top: 54px; padding-top: 18px; font-size: 14px; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px 0 40px; }
+@media (max-width: 640px) { .hero h1 { font-size: 26px; } .wrap { padding: 20px 16px 60px; } }
+</style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="index.html">RISC-V 处理器设计入门</a><nav><a href="index.html">目录</a><a href="chapters/ch14.html">← 第 14 章</a><a href="appendix-b.html">附录B →</a><a href="https://github.com/jgxing/riscv-intro-book">代码仓库</a></nav></header>
+<main class="wrap"><article class="article"><h1 id="附录-a-rv32i-指令与-csr-速查">附录 A　RV32I 指令与 CSR 速查</h1>
+<p>这个附录把全书用到的指令和 CSR 集中起来，查起来方便。编码字段以 RISC-V 非特权规范为准，写法与本书第 2 章一致。读正文时遇到不认识的指令，回到这里查一查即可。</p>
+<h2 id="a.1-寄存器">A.1　寄存器</h2>
+<p>RV32I 有 32 个通用整数寄存器，<code>x0</code> 到 <code>x31</code>。<code>x0</code> 的值恒为零，写进去的数据会被丢掉。汇编器给它们起了名字，写程序时更常用名字。</p>
+<table>
+<thead>
+<tr>
+<th>名字</th>
+<th>编号</th>
+<th>用途</th>
+<th>谁负责维护</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>zero</code></td>
+<td>x0</td>
+<td>恒为零</td>
+<td>硬件固定</td>
+</tr>
+<tr>
+<td><code>ra</code></td>
+<td>x1</td>
+<td>函数返回地址</td>
+<td>调用约定</td>
+</tr>
+<tr>
+<td><code>sp</code></td>
+<td>x2</td>
+<td>栈指针</td>
+<td>调用约定</td>
+</tr>
+<tr>
+<td><code>gp</code></td>
+<td>x3</td>
+<td>全局指针</td>
+<td>链接器</td>
+</tr>
+<tr>
+<td><code>tp</code></td>
+<td>x4</td>
+<td>线程指针</td>
+<td>运行环境</td>
+</tr>
+<tr>
+<td><code>t0</code>–<code>t2</code></td>
+<td>x5–x7</td>
+<td>临时寄存器，用完不必保存</td>
+<td>调用者</td>
+</tr>
+<tr>
+<td><code>s0</code>–<code>s1</code></td>
+<td>x8–x9</td>
+<td>保存寄存器，用完要还原</td>
+<td>被调用者</td>
+</tr>
+<tr>
+<td><code>a0</code>–<code>a1</code></td>
+<td>x10–x11</td>
+<td>函数参数与返回值</td>
+<td>调用者</td>
+</tr>
+<tr>
+<td><code>a2</code>–<code>a7</code></td>
+<td>x12–x17</td>
+<td>函数参数</td>
+<td>调用者</td>
+</tr>
+<tr>
+<td><code>s2</code>–<code>s11</code></td>
+<td>x18–x27</td>
+<td>保存寄存器，用完要还原</td>
+<td>被调用者</td>
+</tr>
+<tr>
+<td><code>t3</code>–<code>t6</code></td>
+<td>x28–x31</td>
+<td>临时寄存器，用完不必保存</td>
+<td>调用者</td>
+</tr>
+</tbody>
+</table>
+<p>“调用者保存”意思是调用函数的一方如果不介意被改掉，就不用管；“被调用者保存”意思是函数如果用了这些寄存器，返回前必须恢复原值。第 3 章讲函数调用时按这个约定用寄存器。</p>
+<p>程序计数器 <code>pc</code> 不在通用寄存器里，它是独立的一个状态。处理器每取一条指令就把它推进 4 字节，跳转指令会改写它。</p>
+<h2 id="a.2-六种指令格式">A.2　六种指令格式</h2>
+<p>RV32I 指令固定 32 位，按低位 <code>opcode</code> 分类。六类格式的字段位置如下，从高位到低位排列：</p>
+<table>
+<thead>
+<tr>
+<th>格式</th>
+<th>31–25</th>
+<th>24–20</th>
+<th>19–15</th>
+<th>14–12</th>
+<th>11–7</th>
+<th>6–0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R</td>
+<td>funct7</td>
+<td>rs2</td>
+<td>rs1</td>
+<td>funct3</td>
+<td>rd</td>
+<td>opcode</td>
+</tr>
+<tr>
+<td>I</td>
+<td>imm[11:0]</td>
+<td></td>
+<td>rs1</td>
+<td>funct3</td>
+<td>rd</td>
+<td>opcode</td>
+</tr>
+<tr>
+<td>S</td>
+<td>imm[11:5]</td>
+<td>rs2</td>
+<td>rs1</td>
+<td>funct3</td>
+<td>imm[4:0]</td>
+<td>opcode</td>
+</tr>
+<tr>
+<td>B</td>
+<td>imm[12|10:5]</td>
+<td>rs2</td>
+<td>rs1</td>
+<td>funct3</td>
+<td>imm[4:1|11]</td>
+<td>opcode</td>
+</tr>
+<tr>
+<td>U</td>
+<td>imm[31:12]</td>
+<td></td>
+<td></td>
+<td></td>
+<td>rd</td>
+<td>opcode</td>
+</tr>
+<tr>
+<td>J</td>
+<td>imm[20|10:1|11|19:12]</td>
+<td></td>
+<td></td>
+<td></td>
+<td>rd</td>
+<td>opcode</td>
+</tr>
+</tbody>
+</table>
+<p><code>rs1</code>、<code>funct3</code> 和 <code>opcode</code> 在六种格式里位置固定，硬件译码时不必先判断指令类型就能取出这几个字段。第 8 章的译码电路直接受益于这个安排。</p>
+<p>立即数被打散放在不同位置，是为了让同一字段在各类格式里尽量对齐。硬件取立即数时要按格式重新拼接，第 8 章给出了完整的拼接表达式。</p>
+<p><code>opcode</code> 的常见取值：</p>
+<table>
+<thead>
+<tr>
+<th>opcode</th>
+<th>指令类别</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0110011</code></td>
+<td>寄存器-寄存器运算（R 型整数指令）</td>
+</tr>
+<tr>
+<td><code>0010011</code></td>
+<td>立即数运算（I 型整数指令）</td>
+</tr>
+<tr>
+<td><code>0000011</code></td>
+<td>装入（load）</td>
+</tr>
+<tr>
+<td><code>0100011</code></td>
+<td>存储（store）</td>
+</tr>
+<tr>
+<td><code>1100011</code></td>
+<td>条件分支</td>
+</tr>
+<tr>
+<td><code>1100111</code></td>
+<td><code>jalr</code></td>
+</tr>
+<tr>
+<td><code>1101111</code></td>
+<td><code>jal</code></td>
+</tr>
+<tr>
+<td><code>0110111</code></td>
+<td><code>lui</code></td>
+</tr>
+<tr>
+<td><code>0010111</code></td>
+<td><code>auipc</code></td>
+</tr>
+<tr>
+<td><code>1110011</code></td>
+<td>系统指令（<code>ecall</code>、<code>ebreak</code>、CSR 访问）</td>
+</tr>
+<tr>
+<td><code>0001111</code></td>
+<td>内存屏障 <code>fence</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="a.3-算术与逻辑指令">A.3　算术与逻辑指令</h2>
+<p>R 型指令由 <code>funct7</code> 和 <code>funct3</code> 共同区分，I 型指令只看 <code>funct3</code>。下表按写法列出，便于反查编码。</p>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>格式</th>
+<th>funct7</th>
+<th>funct3</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add rd, rs1, rs2</code></td>
+<td>R</td>
+<td><code>0000000</code></td>
+<td><code>000</code></td>
+<td>加法</td>
+</tr>
+<tr>
+<td><code>sub rd, rs1, rs2</code></td>
+<td>R</td>
+<td><code>0100000</code></td>
+<td><code>000</code></td>
+<td>减法</td>
+</tr>
+<tr>
+<td><code>sll rd, rs1, rs2</code></td>
+<td>R</td>
+<td><code>0000000</code></td>
+<td><code>001</code></td>
+<td>逻辑左移</td>
+</tr>
+<tr>
+<td><code>slt rd, rs1, rs2</code></td>
+<td>R</td>
+<td><code>0000000</code></td>
+<td><code>010</code></td>
+<td>有符号小于则置 1</td>
+</tr>
+<tr>
+<td><code>sltu rd, rs1, rs2</code></td>
+<td>R</td>
+<td><code>0000000</code></td>
+<td><code>011</code></td>
+<td>无符号小于则置 1</td>
+</tr>
+<tr>
+<td><code>xor rd, rs1, rs2</code></td>
+<td>R</td>
+<td><code>0000000</code></td>
+<td><code>100</code></td>
+<td>按位异或</td>
+</tr>
+<tr>
+<td><code>srl rd, rs1, rs2</code></td>
+<td>R</td>
+<td><code>0000000</code></td>
+<td><code>101</code></td>
+<td>逻辑右移</td>
+</tr>
+<tr>
+<td><code>sra rd, rs1, rs2</code></td>
+<td>R</td>
+<td><code>0100000</code></td>
+<td><code>101</code></td>
+<td>算术右移</td>
+</tr>
+<tr>
+<td><code>or rd, rs1, rs2</code></td>
+<td>R</td>
+<td><code>0000000</code></td>
+<td><code>110</code></td>
+<td>按位或</td>
+</tr>
+<tr>
+<td><code>and rd, rs1, rs2</code></td>
+<td>R</td>
+<td><code>0000000</code></td>
+<td><code>111</code></td>
+<td>按位与</td>
+</tr>
+<tr>
+<td><code>addi rd, rs1, imm</code></td>
+<td>I</td>
+<td>—</td>
+<td><code>000</code></td>
+<td>加立即数</td>
+</tr>
+<tr>
+<td><code>slti rd, rs1, imm</code></td>
+<td>I</td>
+<td>—</td>
+<td><code>010</code></td>
+<td>有符号小于立即数则置 1</td>
+</tr>
+<tr>
+<td><code>sltiu rd, rs1, imm</code></td>
+<td>I</td>
+<td>—</td>
+<td><code>011</code></td>
+<td>无符号小于立即数则置 1</td>
+</tr>
+<tr>
+<td><code>xori rd, rs1, imm</code></td>
+<td>I</td>
+<td>—</td>
+<td><code>100</code></td>
+<td>异或立即数</td>
+</tr>
+<tr>
+<td><code>ori rd, rs1, imm</code></td>
+<td>I</td>
+<td>—</td>
+<td><code>110</code></td>
+<td>或立即数</td>
+</tr>
+<tr>
+<td><code>andi rd, rs1, imm</code></td>
+<td>I</td>
+<td>—</td>
+<td><code>111</code></td>
+<td>与立即数</td>
+</tr>
+<tr>
+<td><code>slli rd, rs1, shamt</code></td>
+<td>I</td>
+<td><code>0000000</code></td>
+<td><code>001</code></td>
+<td>立即数逻辑左移</td>
+</tr>
+<tr>
+<td><code>srli rd, rs1, shamt</code></td>
+<td>I</td>
+<td><code>0000000</code></td>
+<td><code>101</code></td>
+<td>立即数逻辑右移</td>
+</tr>
+<tr>
+<td><code>srai rd, rs1, shamt</code></td>
+<td>I</td>
+<td><code>0100000</code></td>
+<td><code>101</code></td>
+<td>立即数算术右移</td>
+</tr>
+<tr>
+<td><code>lui rd, imm20</code></td>
+<td>U</td>
+<td>—</td>
+<td>—</td>
+<td>高 20 位装立即数，低 12 位清零</td>
+</tr>
+<tr>
+<td><code>auipc rd, imm20</code></td>
+<td>U</td>
+<td>—</td>
+<td>—</td>
+<td>立即数加到 PC 上</td>
+</tr>
+</tbody>
+</table>
+<p>移位指令的移位数只看低 5 位，也就是 <code>shamt</code> 最多 31。I 型立即数是 12 位补码，取出来要符号扩展到 32 位。这部分的细节在第 2 章和第 6 章。</p>
+<h2 id="a.4-访存指令">A.4　访存指令</h2>
+<p>装入用 I 型，存储用 S 型。<code>funct3</code> 指明数据宽度和是否做符号扩展。</p>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>格式</th>
+<th>funct3</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lb rd, imm(rs1)</code></td>
+<td>I</td>
+<td><code>000</code></td>
+<td>装入 1 字节，符号扩展</td>
+</tr>
+<tr>
+<td><code>lh rd, imm(rs1)</code></td>
+<td>I</td>
+<td><code>001</code></td>
+<td>装入 2 字节，符号扩展</td>
+</tr>
+<tr>
+<td><code>lw rd, imm(rs1)</code></td>
+<td>I</td>
+<td><code>010</code></td>
+<td>装入 4 字节</td>
+</tr>
+<tr>
+<td><code>lbu rd, imm(rs1)</code></td>
+<td>I</td>
+<td><code>100</code></td>
+<td>装入 1 字节，零扩展</td>
+</tr>
+<tr>
+<td><code>lhu rd, imm(rs1)</code></td>
+<td>I</td>
+<td><code>101</code></td>
+<td>装入 2 字节，零扩展</td>
+</tr>
+<tr>
+<td><code>sb rs2, imm(rs1)</code></td>
+<td>S</td>
+<td><code>000</code></td>
+<td>存储 1 字节</td>
+</tr>
+<tr>
+<td><code>sh rs2, imm(rs1)</code></td>
+<td>S</td>
+<td><code>001</code></td>
+<td>存储 2 字节</td>
+</tr>
+<tr>
+<td><code>sw rs2, imm(rs1)</code></td>
+<td>S</td>
+<td><code>010</code></td>
+<td>存储 4 字节</td>
+</tr>
+</tbody>
+</table>
+<p>有效地址是 <code>rs1</code> 的值加上符号扩展后的立即数。访存地址不要求对齐也能工作，但跨边界的数据要分两次访问，本书的单周期核只支持对齐访问，第 8 章会说明这个限制。</p>
+<h2 id="a.5-分支与跳转">A.5　分支与跳转</h2>
+<p>条件分支用 B 型，无条件跳转用 J 型或 I 型。所有跳转目标都以当前指令地址为基准，加上符号扩展后的立即数。</p>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>格式</th>
+<th>funct3</th>
+<th>跳转条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>beq rs1, rs2, label</code></td>
+<td>B</td>
+<td><code>000</code></td>
+<td>相等</td>
+</tr>
+<tr>
+<td><code>bne rs1, rs2, label</code></td>
+<td>B</td>
+<td><code>001</code></td>
+<td>不等</td>
+</tr>
+<tr>
+<td><code>blt rs1, rs2, label</code></td>
+<td>B</td>
+<td><code>100</code></td>
+<td>有符号小于</td>
+</tr>
+<tr>
+<td><code>bge rs1, rs2, label</code></td>
+<td>B</td>
+<td><code>101</code></td>
+<td>有符号大于等于</td>
+</tr>
+<tr>
+<td><code>bltu rs1, rs2, label</code></td>
+<td>B</td>
+<td><code>110</code></td>
+<td>无符号小于</td>
+</tr>
+<tr>
+<td><code>bgeu rs1, rs2, label</code></td>
+<td>B</td>
+<td><code>111</code></td>
+<td>无符号大于等于</td>
+</tr>
+<tr>
+<td><code>jal rd, label</code></td>
+<td>J</td>
+<td>—</td>
+<td>无条件跳，返回地址写 <code>rd</code></td>
+</tr>
+<tr>
+<td><code>jalr rd, imm(rs1)</code></td>
+<td>I</td>
+<td><code>000</code></td>
+<td>跳到 <code>rs1 + imm</code>，返回地址写 <code>rd</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>jalr</code> 的目标地址会把最低位清零，这是为了配合函数指针的最低位标记约定。<code>jal</code> 常写成 <code>j label</code>，此时 <code>rd</code> 默认是 <code>x0</code>；写 <code>jal ra, label</code> 就是函数调用。第 3 章和第 10 章分别用到它们。</p>
+<h2 id="a.6-系统指令与-csr">A.6　系统指令与 CSR</h2>
+<p><code>ecall</code>、<code>ebreak</code> 和 CSR 访问都用 opcode <code>1110011</code>，靠 <code>funct3</code> 和立即数字段区分。</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>写法</th>
+<th>funct3</th>
+<th>imm</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ecall</code></td>
+<td><code>000</code></td>
+<td><code>0x000</code></td>
+<td>向执行环境发出请求</td>
+</tr>
+<tr>
+<td><code>ebreak</code></td>
+<td><code>000</code></td>
+<td><code>0x001</code></td>
+<td>断点，交给调试器</td>
+</tr>
+<tr>
+<td><code>mret</code></td>
+<td><code>000</code></td>
+<td><code>0x302</code></td>
+<td>从机器模式陷阱返回</td>
+</tr>
+<tr>
+<td><code>csrrw rd, csr, rs1</code></td>
+<td><code>001</code></td>
+<td>CSR 编号</td>
+<td>读 CSR 到 <code>rd</code>，同时写入 <code>rs1</code></td>
+</tr>
+<tr>
+<td><code>csrrs rd, csr, rs1</code></td>
+<td><code>010</code></td>
+<td>CSR 编号</td>
+<td>读 CSR 到 <code>rd</code>，同时置位</td>
+</tr>
+<tr>
+<td><code>csrrc rd, csr, rs1</code></td>
+<td><code>011</code></td>
+<td>CSR 编号</td>
+<td>读 CSR 到 <code>rd</code>，同时清零</td>
+</tr>
+<tr>
+<td><code>csrrwi rd, csr, uimm</code></td>
+<td><code>101</code></td>
+<td>CSR 编号</td>
+<td>同上，立即数来源是 5 位无符号数</td>
+</tr>
+<tr>
+<td><code>csrrsi rd, csr, uimm</code></td>
+<td><code>110</code></td>
+<td>CSR 编号</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>csrrci rd, csr, uimm</code></td>
+<td><code>111</code></td>
+<td>CSR 编号</td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<p>CSR 有自己的 12 位编号空间，不属于 32 个通用寄存器。机器模式里本书用到的几个如下：</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>CSR</th>
+<th>编号</th>
+<th>含义</th>
+<th>出现章节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mstatus</code></td>
+<td><code>0x300</code></td>
+<td>机器模式状态，<code>MIE</code> 位控制中断使能</td>
+<td>第 11、14 章</td>
+</tr>
+<tr>
+<td><code>mie</code></td>
+<td><code>0x304</code></td>
+<td>中断使能寄存器，<code>MTIE</code> 位控制定时器中断</td>
+<td>第 11、14 章</td>
+</tr>
+<tr>
+<td><code>mtvec</code></td>
+<td><code>0x305</code></td>
+<td>陷阱入口基址</td>
+<td>第 11、14 章</td>
+</tr>
+<tr>
+<td><code>mscratch</code></td>
+<td><code>0x340</code></td>
+<td>供处理程序临时使用</td>
+<td>第 11、14 章</td>
+</tr>
+<tr>
+<td><code>mepc</code></td>
+<td><code>0x341</code></td>
+<td>陷阱返回地址</td>
+<td>第 11、14 章</td>
+</tr>
+<tr>
+<td><code>mcause</code></td>
+<td><code>0x342</code></td>
+<td>陷阱原因，中断时最高位置 1</td>
+<td>第 11、14 章</td>
+</tr>
+<tr>
+<td><code>mtval</code></td>
+<td><code>0x343</code></td>
+<td>陷阱附加值，如非法指令字</td>
+<td>第 11 章</td>
+</tr>
+<tr>
+<td><code>mip</code></td>
+<td><code>0x344</code></td>
+<td>中断等待寄存器，记录哪些中断来了</td>
+<td>第 11 章</td>
+</tr>
+</tbody>
+</table>
+<p>注意 <code>mtvec</code> 是 <code>0x305</code>，<code>mepc</code> 是 <code>0x341</code>。这两个地址容易记混，第 11 章调试时就在写 <code>mtvec</code> 的地方误写成 <code>mepc</code>，结果陷阱跳到了错误的地方。</p>
+<p>进入陷阱时，硬件把 <code>mepc</code> 写成被中断指令的地址，把原因写进 <code>mcause</code>，并清掉 <code>mstatus.MIE</code>。<code>mret</code> 做相反的事：把 <code>mepc</code> 装回 <code>pc</code>，恢复 <code>mstatus.MIE</code>。第 14 章的多任务切换正是靠 <code>mret</code> 恢复中断使能，少做这一步，定时器中断只会发生一次。</p>
+<h2 id="a.7-伪指令">A.7　伪指令</h2>
+<p>伪指令由汇编器展开，硬件不认识它们。下表是全书用到的写法。</p>
+<table>
+<thead>
+<tr>
+<th>伪指令</th>
+<th>常见展开</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nop</code></td>
+<td><code>addi x0, x0, 0</code></td>
+<td>什么都不做</td>
+</tr>
+<tr>
+<td><code>li rd, imm</code></td>
+<td><code>addi</code>，或 <code>lui</code> + <code>addi</code></td>
+<td>装入常数</td>
+</tr>
+<tr>
+<td><code>la rd, label</code></td>
+<td><code>auipc</code> + <code>addi</code></td>
+<td>装入标号地址</td>
+</tr>
+<tr>
+<td><code>mv rd, rs</code></td>
+<td><code>addi rd, rs, 0</code></td>
+<td>寄存器间搬数</td>
+</tr>
+<tr>
+<td><code>not rd, rs</code></td>
+<td><code>xori rd, rs, -1</code></td>
+<td>按位取反</td>
+</tr>
+<tr>
+<td><code>seqz rd, rs</code></td>
+<td><code>sltiu rd, rs, 1</code></td>
+<td>等于零则置 1</td>
+</tr>
+<tr>
+<td><code>snez rd, rs</code></td>
+<td><code>sltu rd, x0, rs</code></td>
+<td>不等于零则置 1</td>
+</tr>
+<tr>
+<td><code>ble rs1, rs2, label</code></td>
+<td><code>bge rs2, rs1, label</code></td>
+<td>小于等于则跳</td>
+</tr>
+<tr>
+<td><code>bgt rs1, rs2, label</code></td>
+<td><code>blt rs2, rs1, label</code></td>
+<td>大于则跳</td>
+</tr>
+<tr>
+<td><code>bnez rs, label</code></td>
+<td><code>bne rs, x0, label</code></td>
+<td>不等于零则跳</td>
+</tr>
+<tr>
+<td><code>j label</code></td>
+<td><code>jal x0, label</code></td>
+<td>无条件跳，不记返回地址</td>
+</tr>
+<tr>
+<td><code>call label</code></td>
+<td><code>auipc</code> + <code>jalr</code></td>
+<td>函数调用</td>
+</tr>
+<tr>
+<td><code>ret</code></td>
+<td><code>jalr x0, 0(ra)</code></td>
+<td>函数返回</td>
+</tr>
+<tr>
+<td><code>csrr rd, csr</code></td>
+<td><code>csrrs rd, csr, x0</code></td>
+<td>只读 CSR</td>
+</tr>
+<tr>
+<td><code>csrw csr, rs</code></td>
+<td><code>csrrw x0, csr, rs</code></td>
+<td>只写 CSR</td>
+</tr>
+<tr>
+<td><code>csrs csr, rs</code></td>
+<td><code>csrrs x0, csr, rs</code></td>
+<td>置位 CSR</td>
+</tr>
+<tr>
+<td><code>csrc csr, rs</code></td>
+<td><code>csrrc x0, csr, rs</code></td>
+<td>清零 CSR</td>
+</tr>
+</tbody>
+</table>
+<p><code>li</code> 的展开要看立即数大小：12 位装得下时只用 <code>addi</code>，装不下时用 <code>lui</code> 加 <code>addi</code>。<code>addi</code> 的立即数是 12 位补码，范围从 -2048 到 2047；写 <code>li a0, 2048</code> 时，汇编器会改用两条指令。第 11 章调试时遇到过这个边界：直接写 <code>addi x4, x0, 2048</code>，汇编器只能截断，结果得到 -2048。</p>
+<h2 id="a.8-rars-服务号">A.8　RARS 服务号</h2>
+<p>第 3 章用 RARS 跑程序时，把服务号放进 <code>a7</code> 再执行 <code>ecall</code>。常用的几个：</p>
+<table>
+<thead>
+<tr>
+<th>服务号</th>
+<th>功能</th>
+<th>参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>打印整数</td>
+<td><code>a0</code> 是待打印的整数</td>
+</tr>
+<tr>
+<td>4</td>
+<td>打印字符串</td>
+<td><code>a0</code> 是字符串首地址</td>
+</tr>
+<tr>
+<td>5</td>
+<td>读入整数</td>
+<td>结果在 <code>a0</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td>读入字符串</td>
+<td><code>a0</code> 是缓冲区首地址，<code>a1</code> 是容量</td>
+</tr>
+<tr>
+<td>10</td>
+<td>退出程序</td>
+<td>无</td>
+</tr>
+</tbody>
+</table>
+<p>RARS 的服务号只在 RARS 里有效，裸机程序里 <code>ecall</code> 由自己写的陷阱处理程序接管。第 11 章和第 14 章就是这种情况，服务号的解释权在软件手里。</p>
+</article></main>
+<footer>浙江工商大学　·　邢建国</footer>
+</body>
+</html>

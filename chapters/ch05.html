@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 5 章　从真值表到运算电路</title>
+<style>
+:root { --red: #C8102E; --ink: #1f2328; --muted: #6b7280; --line: #e5e7eb; --bg: #ffffff; --soft: #faf9f7; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: var(--ink); background: var(--bg); line-height: 1.8;
+       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif; }
+a { color: var(--red); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.topbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.97);
+          border-bottom: 2px solid var(--red); padding: 10px 24px;
+          display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 700; color: var(--ink); font-size: 15px; }
+.topbar nav { display: flex; gap: 16px; font-size: 13px; align-items: center; flex-wrap: wrap; }
+.topbar nav a { color: #374151; }
+.topbar nav a:hover { color: var(--red); }
+.wrap { max-width: 900px; margin: 0 auto; padding: 32px 22px 90px; }
+.hero { display: flex; gap: 36px; align-items: flex-start; flex-wrap: wrap; margin: 18px 0 46px; }
+.hero .cover { width: 232px; max-width: 100%; border: 1px solid var(--line);
+               box-shadow: 0 8px 28px rgba(0,0,0,.12); border-radius: 2px; }
+.hero .info { flex: 1 1 360px; }
+.series { color: var(--red); font-size: 13px; letter-spacing: 2px; margin: 4px 0 10px; }
+.hero h1 { font-size: 32px; line-height: 1.3; margin: 0 0 6px; }
+.hero .subtitle { font-size: 21px; color: var(--red); margin: 0 0 18px; }
+.byline { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+.intro { color: #374151; font-size: 15px; margin: 0 0 24px; }
+.btn { display: inline-block; padding: 9px 20px; background: var(--red); color: #fff;
+       border-radius: 4px; font-size: 14px; margin-right: 10px; }
+.btn:hover { background: #a50e26; text-decoration: none; }
+.btn.ghost { background: #fff; color: var(--red); border: 1px solid var(--red); }
+.btn.ghost:hover { background: #fdf2f4; }
+.toc-group { margin: 30px 0; }
+.toc-group h2 { font-size: 18px; color: var(--ink); border-bottom: 2px solid var(--line);
+                padding-bottom: 8px; margin: 0 0 12px; }
+ol.toc-list { list-style: none; padding: 0; margin: 0; counter-reset: item; }
+ol.toc-list li { border-bottom: 1px dashed var(--line); padding: 7px 2px; font-size: 15px; }
+ol.toc-list li a { color: var(--ink); }
+ol.toc-list li a:hover { color: var(--red); }
+.article h1 { font-size: 28px; color: var(--red); border-bottom: 3px solid var(--red);
+              padding-bottom: 10px; margin: 0 0 28px; line-height: 1.4; }
+.article h2 { font-size: 21px; margin: 38px 0 12px; padding-left: 10px; border-left: 4px solid var(--red); }
+.article h3 { font-size: 17px; margin: 26px 0 8px; }
+.article p { text-align: justify; margin: 12px 0; }
+.article img { max-width: 100%; height: auto; display: block; margin: 22px auto 6px; }
+.article blockquote { border-left: 3px solid var(--line); background: var(--soft);
+                      margin: 16px 0; padding: 10px 16px; color: #4b5563; }
+.article pre { background: #f6f6f4; border-left: 3px solid var(--red); padding: 14px 16px;
+               border-radius: 0 4px 4px 0; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+.article code { font-family: Consolas, "Courier New", monospace; background: #f2f2f0;
+                padding: 1px 4px; border-radius: 3px; font-size: .92em; }
+.article pre code { background: none; padding: 0; }
+.article table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: 14px; }
+.article th, .article td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+.article th { background: var(--soft); font-weight: 600; }
+.pagenav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+           border-top: 1px solid var(--line); margin-top: 54px; padding-top: 18px; font-size: 14px; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px 0 40px; }
+@media (max-width: 640px) { .hero h1 { font-size: 26px; } .wrap { padding: 20px 16px 60px; } }
+</style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="../index.html">RISC-V 处理器设计入门</a><nav><a href="../index.html">目录</a><a href="ch04.html">← 第 4 章</a><a href="ch06.html">第 6 章 →</a><a href="https://github.com/jgxing/riscv-intro-book">代码仓库</a></nav></header>
+<main class="wrap"><article class="article"><h1 id="第-5-章-从真值表到运算电路">第 5 章　从真值表到运算电路</h1>
+<blockquote>
+<p><strong>本章导读</strong> 上一章我们学会了从真值表写出逻辑表达式。这一章把这条路走到底：从一位加法器搭到 32 位加法器，再加上逻辑运算、比较和移位，拼出处理器里真正干活的 ALU。最后搭一个 32 个寄存器的寄存器堆，让指令有地方存中间结果。</p>
+<p>这一章第一次用到 Verilog 的层次化写法：一个小模块拼进大模块，大模块再被更大的模块调用。代码按同样的顺序长出来，先解决”加一位”，再解决”加一串”，最后才面对”选哪一种运算”。</p>
+<p>实验文件在 <code>code/digital/</code> 和 <code>code/verilog/05_arith/</code>。</p>
+<p>学完本章，你应该能够： 1. 从真值表写出半加器和全加器的表达式，并解释进位怎么传； 2. 说明补码减法为什么能用加法器完成； 3. 读懂 ALU 的代码，说清每个操作码对应哪一路结果； 4. 解释寄存器堆为什么有两个读端口和一个写端口，为什么 <code>x0</code> 写不进去。</p>
+</blockquote>
+<hr />
+<h2 id="从真值表到半加器">5.1　从真值表到半加器</h2>
+<p>把两个一位二进制数相加，结果有两位：本位和 <code>sum</code>，进位 <code>carry</code>。输入只有四种组合，可以直接列出来。</p>
+<table>
+<thead>
+<tr>
+<th>a</th>
+<th>b</th>
+<th>sum</th>
+<th>carry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p><code>sum</code> 在 a 和 b 不同时为 1，这正是异或；<code>carry</code> 只在两者都为 1 时为 1，这是与。于是表达式和电路都定下来了：</p>
+<pre><code>sum   = a ^ b
+carry = a &amp; b</code></pre>
+<p>这就是<strong>半加器</strong>。它只处理两个加数，不管低位有没有送来的进位，所以叫”半”。</p>
+<figure>
+<img src="../figures/fig5-1-half-adder.svg" alt="图 5-1　半加器" />
+<figcaption aria-hidden="true">图 5-1　半加器</figcaption>
+</figure>
+<p><em>图 5-1　半加器的真值表、门电路与表达式。</em></p>
+<p>在 Digital 里打开 <code>code/digital/05_half_adder.dig</code>，拨动 a 和 b，核对四个组合。用门电路看真值表，和第 4 章用门电路核对与门的真值表是同一件事，只是这次输出有两个。</p>
+<h3 id="补上低位送来的进位">补上低位送来的进位</h3>
+<p>多位加法里，第 i 位除了 a 和 b，还要接收第 i-1 位传来的进位 <code>cin</code>。输入变成三个，真值表有八行。可以用两个半加器搭出来：第一个先把 a 和 b 加起来，得到中间和 <code>s1</code> 与中间进位 <code>c1</code>；第二个把 <code>s1</code> 和 <code>cin</code> 加起来，得到真正的 <code>sum</code> 与另一个进位 <code>c2</code>。总的进位是 <code>c1 | c2</code>。</p>
+<pre><code>s1   = a ^ b
+c1   = a &amp; b
+sum  = s1 ^ cin
+c2   = s1 &amp; cin
+cout = c1 | c2</code></pre>
+<p>这个结构叫<strong>全加器</strong>。它没有新的数学，只是把两次半加串起来，把两个可能的进位合并。</p>
+<figure>
+<img src="../figures/fig5-2-ripple-carry.svg" alt="图 5-2　全加器与串行进位加法器" />
+<figcaption aria-hidden="true">图 5-2　全加器与串行进位加法器</figcaption>
+</figure>
+<p><em>图 5-2　两个半加器拼成全加器，再把全加器串成多位加法器。</em></p>
+<h2 id="位加法器">5.2　32 位加法器</h2>
+<p>把 32 个全加器排成一列，低位算出的 <code>cout</code> 接高位的 <code>cin</code>，最低位的 <code>cin</code> 接外部输入，最高位的 <code>cout</code> 当作溢出进位输出。这叫<strong>串行进位加法器</strong>，也叫行波进位加法器。代码在 <code>code/verilog/05_arith/</code>，先看半加器和全加器。</p>
+<pre class="verilog"><code>module half_adder (
+    input  wire a,
+    input  wire b,
+    output wire sum,
+    output wire carry
+);
+
+    assign sum   = a ^ b;
+    assign carry = a &amp; b;
+
+endmodule</code></pre>
+<p>半加器两个输出都是组合逻辑，用 <code>assign</code> 直接写表达式。没有时钟，没有状态，输入一变输出就变。</p>
+<p>全加器调用两次半加器。这里的写法需要注意：实例名不能省，端口用 <code>.名字(信号)</code> 的形式一一对应，顺序可以打乱。</p>
+<pre class="verilog"><code>module full_adder (
+    input  wire a,
+    input  wire b,
+    input  wire cin,
+    output wire sum,
+    output wire cout
+);
+
+    wire s1;
+    wire c1;
+    wire c2;
+
+    half_adder u_h0 (
+        .a     (a),
+        .b     (b),
+        .sum   (s1),
+        .carry (c1)
+    );
+
+    half_adder u_h1 (
+        .a     (s1),
+        .b     (cin),
+        .sum   (sum),
+        .carry (c2)
+    );
+
+    assign cout = c1 | c2;
+
+endmodule</code></pre>
+<p><code>s1</code>、<code>c1</code>、<code>c2</code> 是内部连线，用 <code>wire</code> 声明。第一个半加器吃 a 和 b，第二个吃 <code>s1</code> 和 cin。最后那个或门把两条进位路径合起来。这段代码和上一节的推导逐句对应，读代码时可以直接在脑子里画出门电路。</p>
+<h3 id="把-32-个全加器串起来">把 32 个全加器串起来</h3>
+<p>如果手写 32 次实例化，代码冗长且容易写错下标。Verilog 提供 <code>generate</code> 加 <code>for</code> 循环，可以在电路展开阶段生成 32 份实例。注意这不是软件里的循环执行，硬件里真的有 32 个全加器同时存在。</p>
+<pre class="verilog"><code>module adder_32 (
+    input  wire [31:0] a,
+    input  wire [31:0] b,
+    input  wire        cin,
+    output wire [31:0] sum,
+    output wire        cout
+);
+
+    wire [31:0] carry;
+
+    genvar i;
+    generate
+        for (i = 0; i &lt; 32; i = i + 1) begin : g_bit
+            if (i == 0) begin : g_first
+                full_adder u_fa (
+                    .a    (a[0]),
+                    .b    (b[0]),
+                    .cin  (cin),
+                    .sum  (sum[0]),
+                    .cout (carry[0])
+                );
+            end else begin : g_rest
+                full_adder u_fa (
+                    .a    (a[i]),
+                    .b    (b[i]),
+                    .cin  (carry[i-1]),
+                    .sum  (sum[i]),
+                    .cout (carry[i])
+                );
+            end
+        end
+    endgenerate
+
+    assign cout = carry[31];
+
+endmodule</code></pre>
+<p>最低位没有”第 -1 位的进位”，所以单独写一份，其余 31 位统一接 <code>carry[i-1]</code>。<code>carry</code> 是 32 位内部连线，第 i 位全加器的输出接第 i+1 位的输入。</p>
+<p>为什么 <code>carry</code> 要声明成 <code>[31:0]</code> 而不是 <code>[30:0]</code>？因为最高位的进位输出也要有地方放，最后 <code>assign cout = carry[31];</code> 把它引出模块。少一位的话，仿真器会报出未连接的线。</p>
+<h2 id="用加法器做减法">5.3　用加法器做减法</h2>
+<p>补码的好处在这里体现出来。n 位补码里，<code>-b</code> 等于 <code>~b + 1</code>。于是</p>
+<pre><code>a - b = a + (~b) + 1</code></pre>
+<p>只要在做减法时把 b 取反，并把最低位的进位设为 1，原来的加法器就能算减法，不需要另做一套电路。这个 <code>~b</code> 加 <code>1</code> 的操作叫求补，前面的 <code>取反/直通</code> 小模块就是干这个的。</p>
+<p>在 Verilog 里写成两行：</p>
+<pre class="verilog"><code>assign b_operand = (alu_op == ALU_SUB) ? ~b : b;
+assign carry_in  = (alu_op == ALU_SUB) ? 1&#39;b1 : 1&#39;b0;</code></pre>
+<p>加法器永远在那里算 <code>a + b_operand + carry_in</code>。做加法时 <code>b_operand=b</code>、<code>carry_in=0</code>，做减法时 <code>b_operand=~b</code>、<code>carry_in=1</code>。一个加法器兼顾两种运算，这是补码表示送的礼物。</p>
+<p>溢出进位 <code>cout</code> 在加减法里另有含义：无符号加法时它表示结果超出 32 位，无符号减法时它是借位的反。本书的简化核不使用它，只在第 11 章讲异常时顺带提到。</p>
+<h2 id="alu-的接口与实现">5.4　ALU 的接口与实现</h2>
+<p>ALU 是处理器的运算中心。先把接口想清楚：两个 32 位操作数进来，一个操作码进来，一个 32 位结果出去。这是最初的版本。</p>
+<pre class="verilog"><code>module alu (
+    input  wire [31:0] a,
+    input  wire [31:0] b,
+    input  wire [3:0]  alu_op,
+    output reg  [31:0] result
+);</code></pre>
+<p>先只支持加法，把上一节做好的加法器接进来，组合逻辑里直接把结果送出去：</p>
+<pre class="verilog"><code>    adder_32 u_adder (
+        .a(a), .b(b), .cin(1&#39;b0),
+        .sum(result), .cout(add_cout)
+    );</code></pre>
+<p>这样只能算加法。要支持减法，就得引入上一节的 <code>b_operand</code> 和 <code>carry_in</code>；要把 <code>result</code> 从连线变成可在 <code>case</code> 里赋值的寄存器，端口声明也要改成 <code>output reg</code>。接着把逻辑运算加进来，代码变成一组分支：</p>
+<pre class="verilog"><code>    always @(*) begin
+        case (alu_op)
+            ALU_ADD: result = add_result;
+            ALU_SUB: result = add_result;
+            ALU_AND: result = a &amp; b;
+            ALU_OR:  result = a | b;
+            ALU_XOR: result = a ^ b;
+        endcase
+    end</code></pre>
+<p><code>always @(*)</code> 表示这是组合逻辑，敏感列表由工具自动推断。加法器的输出 <code>add_result</code> 一直在算，不管当前选的是不是加减法；<code>case</code> 只负责挑一路送出去。硬件里这对应图 5-3 那个大 MUX。</p>
+<p>再补两种运算。有符号比较 <code>SLT</code> 不能直接拿 <code>a &lt; b</code> 判断，因为 Verilog 里两个 32 位向量默认按无符号数比。正确做法是先比符号位：符号不同时负数更小，符号相同时才是数值比较。移位量取自 b 的低 5 位，因为 32 位数据最多移 31 位。</p>
+<pre class="verilog"><code>    ALU_SLT: result = (a[31] != b[31]) ? {31&#39;b0, a[31]} : {31&#39;b0, (a &lt; b)};
+    ALU_SLL: result = a &lt;&lt; b[4:0];
+    ALU_SRL: result = a &gt;&gt; b[4:0];</code></pre>
+<p>分支指令 <code>beq</code> 和 <code>bne</code> 要判断两个操作数是否相等。与其在 ALU 外面另接比较器，不如让 ALU 算减法 <code>a-b</code>，结果为 0 就说明相等。于是接口再加一个输出 <code>zero</code>：</p>
+<pre class="verilog"><code>    output wire        zero</code></pre>
+<pre class="verilog"><code>    assign zero = (result == 32&#39;b0);</code></pre>
+<p>接口到这里定稿。下面是完整代码，与 <code>code/verilog/05_arith/alu.v</code> 逐字相同。</p>
+<pre class="verilog"><code>module alu (
+    input  wire [31:0] a,
+    input  wire [31:0] b,
+    input  wire [3:0]  alu_op,
+    output reg  [31:0] result,
+    output wire        zero
+);
+
+    localparam ALU_ADD = 4&#39;d0;
+    localparam ALU_SUB = 4&#39;d1;
+    localparam ALU_AND = 4&#39;d2;
+    localparam ALU_OR  = 4&#39;d3;
+    localparam ALU_XOR = 4&#39;d4;
+    localparam ALU_SLT = 4&#39;d5;
+    localparam ALU_SLL = 4&#39;d6;
+    localparam ALU_SRL = 4&#39;d7;
+
+    wire [31:0] b_operand;
+    wire        carry_in;
+    wire [31:0] add_result;
+    wire        add_cout;
+
+    assign b_operand = (alu_op == ALU_SUB) ? ~b : b;
+    assign carry_in  = (alu_op == ALU_SUB) ? 1&#39;b1 : 1&#39;b0;
+
+    adder_32 u_adder (
+        .a    (a),
+        .b    (b_operand),
+        .cin  (carry_in),
+        .sum  (add_result),
+        .cout (add_cout)
+    );
+
+    always @(*) begin
+        case (alu_op)
+            ALU_ADD: result = add_result;
+            ALU_SUB: result = add_result;
+            ALU_AND: result = a &amp; b;
+            ALU_OR:  result = a | b;
+            ALU_XOR: result = a ^ b;
+            ALU_SLT: result = (a[31] != b[31]) ? {31&#39;b0, a[31]} : {31&#39;b0, (a &lt; b)};
+            ALU_SLL: result = a &lt;&lt; b[4:0];
+            ALU_SRL: result = a &gt;&gt; b[4:0];
+            default: result = 32&#39;b0;
+        endcase
+    end
+
+    assign zero = (result == 32&#39;b0);
+
+endmodule</code></pre>
+<h3 id="操作码">操作码</h3>
+<p>八种运算对应四位操作码，编码是本模块自己的约定，和指令里的 <code>funct3</code> 还隔着一层译码。第 8 章写一个译码模块，把指令字段翻译成这里的 <code>alu_op</code>。</p>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>运算</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>ADD</td>
+<td><code>a + b</code></td>
+</tr>
+<tr>
+<td>1</td>
+<td>SUB</td>
+<td><code>a - b</code>，也用于相等比较</td>
+</tr>
+<tr>
+<td>2</td>
+<td>AND</td>
+<td>按位与</td>
+</tr>
+<tr>
+<td>3</td>
+<td>OR</td>
+<td>按位或</td>
+</tr>
+<tr>
+<td>4</td>
+<td>XOR</td>
+<td>按位异或</td>
+</tr>
+<tr>
+<td>5</td>
+<td>SLT</td>
+<td>有符号比较，<code>a &lt; b</code> 时输出 1</td>
+</tr>
+<tr>
+<td>6</td>
+<td>SLL</td>
+<td>逻辑左移，移位量取 <code>b[4:0]</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>SRL</td>
+<td>逻辑右移，移位量取 <code>b[4:0]</code></td>
+</tr>
+</tbody>
+</table>
+<p>完整的 RV32I 还需要 SLTU、SRA，M 扩展还要乘除法。这里先做八种，把数据通路搭通；缺的运算以后按同样的模式往 <code>case</code> 里加一行即可。</p>
+<figure>
+<img src="../figures/fig5-3-alu-structure.svg" alt="图 5-3　32 位 ALU 的结构" />
+<figcaption aria-hidden="true">图 5-3　32 位 ALU 的结构</figcaption>
+</figure>
+<p><em>图 5-3　各类运算并行计算，由操作码选出一路作为结果。</em></p>
+<p>测试台 <code>tb_alu.v</code> 覆盖八种运算和零标志，共 15 项检查。其中 <code>SUB 3-10 wraps around</code> 检查补码下的借位，SLT 用正负组合确认有符号比较没有走错成无符号比较。</p>
+<h2 id="寄存器堆">5.5　寄存器堆</h2>
+<p>ALU 算完的结果要存起来，下一条指令才能接着用。RV32I 有 32 个通用寄存器，每个 32 位。硬件上就是一个小型存储阵列，加上读写端口。</p>
+<p>先看需求。一条典型指令要读两个源寄存器，比如 <code>add x3, x1, x2</code> 同时读 x1 和 x2；结果只写一个目的寄存器。所以接口需要两个读地址 <code>rs1</code>、<code>rs2</code>，两个读数据 <code>rdata1</code>、<code>rdata2</code>，一个写地址 <code>rd</code>，一个写数据 <code>wdata</code>，再加写使能 <code>we</code>。</p>
+<pre class="verilog"><code>    input  wire [4:0]  rs1,
+    input  wire [4:0]  rs2,
+    input  wire [4:0]  rd,
+    input  wire        we,
+    input  wire [31:0] wdata,
+    output wire [31:0] rdata1,
+    output wire [31:0] rdata2</code></pre>
+<p>5 位地址正好寻址 32 个寄存器。还有三个控制信号：时钟 <code>clk</code>、低有效复位 <code>rst_n</code>，以及写使能 <code>we</code>。为什么没有读使能？因为读是组合的：地址一给，输出就出来，不需要等时钟沿。写则是同步的：只有在时钟沿且 <code>we=1</code> 时才真正写进去。</p>
+<figure>
+<img src="../figures/fig5-4-regfile.svg" alt="图 5-4　寄存器堆的结构" />
+<figcaption aria-hidden="true">图 5-4　寄存器堆的结构</figcaption>
+</figure>
+<p><em>图 5-4　两个读地址各驱动一个 32 选 1 多路选择器，写地址经译码后产生写使能。</em></p>
+<p>完整代码在 <code>code/verilog/05_arith/regfile.v</code>。</p>
+<pre class="verilog"><code>module regfile (
+    input  wire        clk,
+    input  wire        rst_n,
+    input  wire [4:0]  rs1,
+    input  wire [4:0]  rs2,
+    input  wire [4:0]  rd,
+    input  wire        we,
+    input  wire [31:0] wdata,
+    output wire [31:0] rdata1,
+    output wire [31:0] rdata2
+);
+
+    reg [31:0] regs [0:31];
+    integer i;
+
+    always @(posedge clk) begin
+        if (!rst_n) begin
+            for (i = 0; i &lt; 32; i = i + 1)
+                regs[i] &lt;= 32&#39;b0;
+        end else if (we &amp;&amp; (rd != 5&#39;d0)) begin
+            regs[rd] &lt;= wdata;
+        end
+    end
+
+    assign rdata1 = (rs1 == 5&#39;d0) ? 32&#39;b0 : regs[rs1];
+    assign rdata2 = (rs2 == 5&#39;d0) ? 32&#39;b0 : regs[rs2];
+
+endmodule</code></pre>
+<p>有四处需要说明。</p>
+<p><code>reg [31:0] regs [0:31];</code> 声明了一个 32 行、每行 32 位的存储阵列。<code>regs[0]</code> 到 <code>regs[31]</code> 对应 x0 到 x31。</p>
+<p>复位时用 <code>for</code> 循环把 32 个寄存器全部清 0。这个 <code>for</code> 写在一个 <code>always</code> 块里，会被展开成 32 个并行的赋值，不是按顺序一个一个清。这里用了非阻塞赋值 <code>&lt;=</code>，保持时序逻辑的写法一致。</p>
+<p><code>rd != 5'd0</code> 这一句把 x0 固定成 0。规范规定 x0 永远读出 0，向它写入应当被忽略。与其专门留一个寄存器再想办法拦住写入，不如在写判断里直接排除，读的时候也直接返回 0。</p>
+<p>读端口用 <code>assign</code> 连续取值，相当于两个 32 选 1 的多路选择器。两个读地址相同时，两个端口读出同样的值，互不干扰。</p>
+<p>测试台 <code>tb_regfile.v</code> 有 7 项检查，覆盖复位清零、写后读、两个端口同时读同一寄存器、写 x0 被忽略、写使能无效时保持原值。这里有个值得记住的细节：改完 <code>rs1</code> 之后要等 1 ns 再检查 <code>rdata1</code>。组合逻辑的 <code>assign</code> 更新需要一个很小的时间，写在同一时刻检查会读到旧值。</p>
+<h2 id="重点与权衡">5.6　重点与权衡</h2>
+<p><strong>从真值表出发是可靠的路子。</strong> 一位加法器的真值表只有四行，八行的全加器也能手工列完。电路复杂到几十个输入时，才需要交给综合工具。</p>
+<p><strong>层次化让复杂度可控。</strong> 半加器拼全加器，全加器拼 32 位加法器，加法器再作为 ALU 的一个部件。每一层只关心输入输出，不必重新理解下面一层的门电路。</p>
+<p><strong>串行进位省面积，超前进位省时间。</strong> 图 5-5 对比了两种做法。本书用串行进位，代码短、容易看懂；但它让加法成为一条长关键路径，高频设计里通常要换成超前进位或更快的进位结构。</p>
+<figure>
+<img src="../figures/fig5-5-carry-tradeoff.svg" alt="图 5-5　串行进位与超前进位的取舍" />
+<figcaption aria-hidden="true">图 5-5　串行进位与超前进位的取舍</figcaption>
+</figure>
+<p><em>图 5-5　串行进位逐级传递，超前进位提前算出各级进位。</em></p>
+<p><strong>补码让加减法共用一套硬件。</strong> 减法只多了取反和末位加 1，代价是几个门，换来的是一个统一的加法通路。</p>
+<p><strong>寄存器堆读写不对称。</strong> 读是组合的，写是同步的；两个读端口对应一条指令的两个源操作数，一个写端口对应一个目的操作数。x0 用电路直接固定为 0。</p>
+<h2 id="实验">5.7　实验</h2>
+<h3 id="实验一-半加器">实验一　半加器</h3>
+<p>打开 <code>code/digital/05_half_adder.dig</code>，把 a、b 拨成四种组合，记录 <code>sum</code> 和 <code>carry</code>。然后对照 <code>half_adder.v</code>，确认 <code>assign sum = a ^ b;</code> 和 <code>assign carry = a &amp; b;</code> 与门电路一致。</p>
+<h3 id="实验二-一位-alu-切片">实验二　一位 ALU 切片</h3>
+<p>打开 <code>code/digital/05_alu_bit.dig</code>。op=0 时输出 <code>a^b</code>，op=1 时输出 <code>a&amp;b</code>。拨几组 a、b，确认切换 op 时输出跟着换。这个电路就是图 5-3 那个大 MUX 的一位版本。</p>
+<h3 id="实验三-跑-verilog-测试台">实验三　跑 Verilog 测试台</h3>
+<p>在 <code>code/verilog/05_arith/</code> 下分别执行：</p>
+<pre><code>iverilog -g2012 -o sim_alu.out half_adder.v full_adder.v adder_32.v alu.v tb_alu.v
+vvp sim_alu.out
+iverilog -g2012 -o sim_reg.out regfile.v tb_regfile.v
+vvp sim_reg.out</code></pre>
+<p>ALU 应有 15 项通过，寄存器堆应有 7 项通过，最后都打印 <code>ALL TESTS PASSED</code>。</p>
+<p>做完可以试两个小改动。把 <code>alu.v</code> 里 SLT 的有符号判断换成直接的 <code>a &lt; b</code>，看看哪个检查会失败；把 <code>regfile.v</code> 里的 <code>rd != 5'd0</code> 去掉，看看写 x0 的检查会怎样。这两个改动都很小，却能验证你是否真的看懂了这两处用意。</p>
+<h2 id="本章小结">5.8　本章小结</h2>
+<ul>
+<li>半加器由异或门和与门组成，输出本位和与进位。</li>
+<li>两个半加器串起来得到全加器，它能处理低位送来的进位。</li>
+<li>32 个全加器串成串行进位加法器，进位逐级传递，关键路径较长。</li>
+<li>补码减法可以写成 <code>a + (~b) + 1</code>，和加法共用同一套电路。</li>
+<li>ALU 让多种运算并行计算，用操作码控制的多路选择器挑出结果；零标志供分支指令使用。</li>
+<li>有符号比较要先看符号位，移位量取操作数低 5 位。</li>
+<li>寄存器堆有两个组合读端口和一个同步写端口，x0 读出恒为 0，写入被忽略。</li>
+</ul>
+<h2 id="思考题">思考题</h2>
+<ol type="1">
+<li>用真值表验证全加器的 <code>cout = (a&amp;b) | (cin&amp;(a^b))</code>，确认八种输入组合都成立。</li>
+<li>串行进位加法器的 32 位版本，从最低位 <code>cin</code> 到最高位 <code>sum[31]</code> 大致经过多少级门？把这个数字和时钟周期联系起来，说明它为什么限制主频。</li>
+<li>在 4 位补码里计算 <code>3 - 5</code>，写出 <code>~b + 1</code> 的过程，确认结果表示 -2。</li>
+<li><code>alu.v</code> 里 <code>add_cout</code> 声明后没有使用。综合工具会怎么处理它？如果无符号加法需要检测溢出，应该接哪个信号？</li>
+<li>寄存器堆的两个读端口如果同时读 x0 和 x5，输出分别是什么？如果往 x0 写数据再立刻读，会发生什么？</li>
+<li>本章的 ALU 没有 SLTU（无符号比较）。参照 SLT 的写法，给出它在 <code>case</code> 里应该增加的表达式。</li>
+<li><code>tb_regfile.v</code> 里改完 <code>rs1</code> 后为什么要插入 <code>#1</code>？把这一行删掉再跑一次，看看结果是否变化，并解释原因。</li>
+</ol>
+<hr />
+<p><em>下一章：第 6 章　用 Python 写模拟器：取指与译码。先用软件搭出一个 RV32I 的内存、寄存器和 PC，把指令字段逐位拆开。</em></p>
+</article></main>
+<footer>浙江工商大学　·　邢建国</footer>
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 2 章　RV32I 指令集</title>
+<style>
+:root { --red: #C8102E; --ink: #1f2328; --muted: #6b7280; --line: #e5e7eb; --bg: #ffffff; --soft: #faf9f7; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: var(--ink); background: var(--bg); line-height: 1.8;
+       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif; }
+a { color: var(--red); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.topbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.97);
+          border-bottom: 2px solid var(--red); padding: 10px 24px;
+          display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 700; color: var(--ink); font-size: 15px; }
+.topbar nav { display: flex; gap: 16px; font-size: 13px; align-items: center; flex-wrap: wrap; }
+.topbar nav a { color: #374151; }
+.topbar nav a:hover { color: var(--red); }
+.wrap { max-width: 900px; margin: 0 auto; padding: 32px 22px 90px; }
+.hero { display: flex; gap: 36px; align-items: flex-start; flex-wrap: wrap; margin: 18px 0 46px; }
+.hero .cover { width: 232px; max-width: 100%; border: 1px solid var(--line);
+               box-shadow: 0 8px 28px rgba(0,0,0,.12); border-radius: 2px; }
+.hero .info { flex: 1 1 360px; }
+.series { color: var(--red); font-size: 13px; letter-spacing: 2px; margin: 4px 0 10px; }
+.hero h1 { font-size: 32px; line-height: 1.3; margin: 0 0 6px; }
+.hero .subtitle { font-size: 21px; color: var(--red); margin: 0 0 18px; }
+.byline { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+.intro { color: #374151; font-size: 15px; margin: 0 0 24px; }
+.btn { display: inline-block; padding: 9px 20px; background: var(--red); color: #fff;
+       border-radius: 4px; font-size: 14px; margin-right: 10px; }
+.btn:hover { background: #a50e26; text-decoration: none; }
+.btn.ghost { background: #fff; color: var(--red); border: 1px solid var(--red); }
+.btn.ghost:hover { background: #fdf2f4; }
+.toc-group { margin: 30px 0; }
+.toc-group h2 { font-size: 18px; color: var(--ink); border-bottom: 2px solid var(--line);
+                padding-bottom: 8px; margin: 0 0 12px; }
+ol.toc-list { list-style: none; padding: 0; margin: 0; counter-reset: item; }
+ol.toc-list li { border-bottom: 1px dashed var(--line); padding: 7px 2px; font-size: 15px; }
+ol.toc-list li a { color: var(--ink); }
+ol.toc-list li a:hover { color: var(--red); }
+.article h1 { font-size: 28px; color: var(--red); border-bottom: 3px solid var(--red);
+              padding-bottom: 10px; margin: 0 0 28px; line-height: 1.4; }
+.article h2 { font-size: 21px; margin: 38px 0 12px; padding-left: 10px; border-left: 4px solid var(--red); }
+.article h3 { font-size: 17px; margin: 26px 0 8px; }
+.article p { text-align: justify; margin: 12px 0; }
+.article img { max-width: 100%; height: auto; display: block; margin: 22px auto 6px; }
+.article blockquote { border-left: 3px solid var(--line); background: var(--soft);
+                      margin: 16px 0; padding: 10px 16px; color: #4b5563; }
+.article pre { background: #f6f6f4; border-left: 3px solid var(--red); padding: 14px 16px;
+               border-radius: 0 4px 4px 0; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+.article code { font-family: Consolas, "Courier New", monospace; background: #f2f2f0;
+                padding: 1px 4px; border-radius: 3px; font-size: .92em; }
+.article pre code { background: none; padding: 0; }
+.article table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: 14px; }
+.article th, .article td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+.article th { background: var(--soft); font-weight: 600; }
+.pagenav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+           border-top: 1px solid var(--line); margin-top: 54px; padding-top: 18px; font-size: 14px; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px 0 40px; }
+@media (max-width: 640px) { .hero h1 { font-size: 26px; } .wrap { padding: 20px 16px 60px; } }
+</style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="../index.html">RISC-V 处理器设计入门</a><nav><a href="../index.html">目录</a><a href="ch01.html">← 第 1 章</a><a href="ch03.html">第 3 章 →</a><a href="https://github.com/jgxing/riscv-intro-book">代码仓库</a></nav></header>
+<main class="wrap"><article class="article"><h1 id="第-2-章-rv32i-指令集">第 2 章　RV32I 指令集</h1>
+<blockquote>
+<p><strong>本章导读</strong> 上一章把指令集说成软件与硬件之间的契约。这一章就看这份契约写了什么。</p>
+<p>RV32I 是 RISC-V 最小的 32 位整数基础。它只有几十条指令，但它们已经足够支撑一个完整的程序：能算数、能比较、能读写内存、能跳转、能调用子程序。后面搭硬件时，数据通路要做的全部事情，就是兑现这一章讲的行为。</p>
+<p>学完本章，你应该能够： 1. 说出 32 个通用寄存器的分工，知道 <code>x0</code> 为什么特殊； 2. 看懂六种指令格式，能从一条机器码里找出操作码、寄存器号和立即数； 3. 分清算术、访存、分支跳转三类指令各自改变什么状态； 4. 解释伪指令为什么不是真正的指令，以及它怎么变成真指令。</p>
+</blockquote>
+<hr />
+<h2 id="操作数放在哪里">2.1　操作数放在哪里</h2>
+<p>一条指令要干活，先得知道去哪里拿数据。RV32I 提供了三种放数据的地方：寄存器、立即数和内存。</p>
+<p>寄存器在处理器内部，数量少但访问最快。RV32I 有 32 个通用寄存器，宽度都是 32 位，名字从 <code>x0</code> 到 <code>x31</code>。其中 <code>x0</code> 是特殊的：它永远等于 0，写进去的值会被丢弃。这个看似奇怪的设计非常有用，比如想丢掉一个结果，就把目的寄存器写成 <code>x0</code>；想拿常数 0，直接读 <code>x0</code>，不必先装。</p>
+<p>另外 31 个寄存器在汇编程序里通常用另一套名字，这套名字叫 ABI 名，体现的是用途而不是编号。写汇编时两种名字都能用，编译器生成的代码多用 ABI 名。</p>
+<figure>
+<img src="../figures/fig2-1-registers.svg" alt="图 2-1　RV32I 通用寄存器与 ABI 名称" />
+<figcaption aria-hidden="true">图 2-1　RV32I 通用寄存器与 ABI 名称</figcaption>
+</figure>
+<p><em>图 2-1　32 个通用寄存器。<code>x0</code> 恒为零，<code>sp</code> 指向栈顶，<code>ra</code> 保存函数返回地址。</em></p>
+<p>几个常用的要记住：</p>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>ABI 名</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x0</td>
+<td>zero</td>
+<td>恒为 0</td>
+</tr>
+<tr>
+<td>x1</td>
+<td>ra</td>
+<td>函数返回地址</td>
+</tr>
+<tr>
+<td>x2</td>
+<td>sp</td>
+<td>栈指针</td>
+</tr>
+<tr>
+<td>x8</td>
+<td>s0 / fp</td>
+<td>保存寄存器，也常作帧指针</td>
+</tr>
+<tr>
+<td>x10、x11</td>
+<td>a0、a1</td>
+<td>函数参数和返回值</td>
+</tr>
+<tr>
+<td>x5 - x7、x28 - x31</td>
+<td>t0 - t2、t3 - t6</td>
+<td>临时寄存器，用完不用保留</td>
+</tr>
+<tr>
+<td>x9、x18 - x27</td>
+<td>s1、s2 - s11</td>
+<td>保存寄存器，函数里用了要恢复</td>
+</tr>
+</tbody>
+</table>
+<p>程序计数器 PC 不算通用寄存器，它有独立的存在，指向当前正在执行的指令。PC 也是 32 位。内存按字节寻址，一个地址对应一个字节，RV32I 的地址空间是 2^32 字节。</p>
+<blockquote>
+<p>寄存器是手边的案板，内存是远处的仓库。案板地方小，拿取快；仓库容量大，跑一趟慢。指令设计时尽量把数据留在案板上，就是这个道理。</p>
+</blockquote>
+<p>立即数是直接写在指令里的常数。因为指令只有 32 位，还要留出别的信息，立即数的长度有限，I 型是 12 位，U 型是 20 位。写程序时想装一个大的常数，往往要两条指令配合，第 2.3 节会讲。</p>
+<hr />
+<h2 id="指令的六种格式">2.2　指令的六种格式</h2>
+<p>RV32I 的指令长度固定为 32 位，并且必须放在 4 字节对齐的地址上。32 位要装下操作种类、源寄存器号、目的寄存器号，有时还要装立即数，怎么安排这些位，就是指令格式要解决的问题。</p>
+<p>RV32I 有六种基本格式。</p>
+<figure>
+<img src="../figures/fig2-2-formats.svg" alt="图 2-2　RV32I 的六种指令格式" />
+<figcaption aria-hidden="true">图 2-2　RV32I 的六种指令格式</figcaption>
+</figure>
+<p><em>图 2-2　六种格式的字段安排。注意 <code>opcode</code>、<code>rs1</code>、<code>funct3</code>、<code>rs2</code>、<code>rd</code> 在多数格式里位置相同。</em></p>
+<p>每个字段的含义如下。</p>
+<ul>
+<li><code>opcode</code>（7 位）指出指令的大类，比如算术、访存、分支。</li>
+<li><code>rd</code>（5 位）是目的寄存器号，结果写到这里。</li>
+<li><code>rs1</code>、<code>rs2</code>（各 5 位）是两个源寄存器号。</li>
+<li><code>funct3</code>、<code>funct7</code> 是辅助操作码，在大类里进一步区分具体做什么。</li>
+<li><code>imm</code> 是立即数，在不同格式里位数和位置都不一样。</li>
+</ul>
+<p>六种格式分别用在什么地方：</p>
+<table>
+<thead>
+<tr>
+<th>格式</th>
+<th>典型用途</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R 型</td>
+<td>两个寄存器之间的运算</td>
+<td><code>add</code>、<code>sub</code>、<code>sll</code></td>
+</tr>
+<tr>
+<td>I 型</td>
+<td>短立即数运算、读内存</td>
+<td><code>addi</code>、<code>lw</code>、<code>jalr</code></td>
+</tr>
+<tr>
+<td>S 型</td>
+<td>写内存</td>
+<td><code>sw</code></td>
+</tr>
+<tr>
+<td>B 型</td>
+<td>条件分支</td>
+<td><code>beq</code>、<code>blt</code></td>
+</tr>
+<tr>
+<td>U 型</td>
+<td>装入高 20 位立即数</td>
+<td><code>lui</code>、<code>auipc</code></td>
+</tr>
+<tr>
+<td>J 型</td>
+<td>长跳转</td>
+<td><code>jal</code></td>
+</tr>
+</tbody>
+</table>
+<p>这张表里有个值得留意的设计：<code>rs1</code> 总在 19 到 15 位，<code>funct3</code> 总在 14 到 12 位，<code>opcode</code> 总在最低 7 位。硬件译码时，不管来的是哪种指令，从同样的位置取同样的字段就行。这省掉了一大堆判断，第 8 章画译码电路时会直接受益。</p>
+<p>还有两个边界情况：32 位全为 0 和全为 1 的指令都是非法的。另外，基本整数指令只占了 32 位编码空间里很小一部分，剩下的位置留给标准扩展和自定义指令。这也是 RISC-V 容易扩展的一个原因。</p>
+<hr />
+<h2 id="算术与逻辑指令">2.3　算术与逻辑指令</h2>
+<p>先看最直接的一类：两个寄存器相加。</p>
+<pre class="asm"><code>add  t0, t1, t2      # t0 = t1 + t2</code></pre>
+<p>这是一条 R 型指令。<code>opcode</code> 表明它属于寄存器-寄存器运算，<code>funct3</code> 和 <code>funct7</code> 一起指出是加法，三个寄存器号分别给出结果放在哪、两个数从哪来。</p>
+<p>减法只有 R 型版本：</p>
+<pre class="asm"><code>sub  t0, t1, t2      # t0 = t1 - t2</code></pre>
+<p>没有 <code>subi</code> 这条指令。要减一个常数，用 <code>addi</code> 加一个负的立即数就行：</p>
+<pre class="asm"><code>addi t0, t1, -5      # t0 = t1 + (-5)</code></pre>
+<p>算术运算按 32 位补码进行。加法溢出时不做特殊处理，结果按 32 位截断；需要判断溢出的程序得自己用比较指令检查。这个选择让硬件简单了不少，代价是把麻烦留给了软件。</p>
+<p>带立即数的运算属于 I 型：</p>
+<pre class="asm"><code>addi  t0, t1, 100     # 加
+slti  t0, t1, 100     # 有符号小于则置 1
+sltiu t0, t1, 100     # 无符号小于则置 1
+andi  t0, t1, 0xff    # 按位与
+ori   t0, t1, 0xff    # 按位或
+xori  t0, t1, -1      # 按位异或，等价于取反</code></pre>
+<p>12 位立即数按补码解释，取出来后要符号扩展到 32 位再参与运算。比如 <code>0xfff</code> 表示 -1，而不是 4095。这一点在写汇编时容易弄错。</p>
+<p>逻辑运算的 R 型版本是 <code>and</code>、<code>or</code>、<code>xor</code>。移位指令有两种版本：</p>
+<pre class="asm"><code>sll  t0, t1, t2      # 逻辑左移，低位补 0
+srl  t0, t1, t2      # 逻辑右移，高位补 0
+sra  t0, t1, t2      # 算术右移，高位补符号位
+slli t0, t1, 3       # 立即数移位</code></pre>
+<p>移位数只看低 5 位，所以最多移 31 位。<code>sra</code> 保留符号位，适合对有符号数做除法式的右移；<code>srl</code> 补 0，适合看成一个无符号的位串。</p>
+<p>比较指令不产生真正的布尔类型，而是往寄存器里写 0 或 1：</p>
+<pre class="asm"><code>slt  t0, t1, t2      # t1 &lt; t2（有符号）时 t0 = 1
+sltu t0, t1, t2      # t1 &lt; t2（无符号）时 t0 = 1</code></pre>
+<p>RV32I 没有专门的等于、大于等于指令。要比较相等，可以用 <code>sub</code> 加 <code>sltu</code> 组合，或者直接用分支指令，第 2.5 节会讲。汇编器也提供了对应的伪指令，写起来更像人话。</p>
+<h3 id="装入大常数">装入大常数</h3>
+<p>I 型的立即数只有 12 位，装不下像 <code>0x12345678</code> 这样的数。U 型指令就是为这件事准备的：</p>
+<pre class="asm"><code>lui  t0, 0x12345      # t0 = 0x12345 &lt;&lt; 12 = 0x12345000
+addi t0, t0, 0x678    # t0 = 0x12345678</code></pre>
+<p><code>lui</code> 把 20 位立即数放到高 20 位，低 12 位清零；<code>addi</code> 再补上低 12 位。注意 <code>addi</code> 的立即数会符号扩展，如果低 12 位的最高位是 1，第二条指令要写成加上一个负数并给高位补 1。汇编器处理 <code>li</code> 伪指令时会替我们做这件事：</p>
+<pre class="asm"><code>li   t0, 0x12345678   # 汇编器展开成 lui + addi</code></pre>
+<p><code>auipc</code> 与 <code>lui</code> 很像，区别是它把立即数加到 PC 上，常用来实现位置无关代码。现在只需知道它的存在，第 13 章讲链接脚本时会用到。</p>
+<hr />
+<h2 id="访存指令">2.4　访存指令</h2>
+<p>RV32I 采用 load-store 结构：算术指令只在寄存器之间算，读写内存必须走专门的访存指令。这样数据通路比较规整，硬件不必支持”一个操作数直接在内存里”的运算。</p>
+<p>读内存用 load，写内存用 store：</p>
+<pre class="asm"><code>lw   t0, 4(sp)        # 从 sp+4 读一个字（32 位）到 t0
+lb   t0, 0(sp)        # 读一个字节，符号扩展到 32 位
+lbu  t0, 0(sp)        # 读一个字节，零扩展到 32 位
+lh   t0, 2(sp)        # 读一个半字，符号扩展
+lhu  t0, 2(sp)        # 读一个半字，零扩展
+
+sw   t0, 4(sp)        # 把 t0 的低 32 位写到 sp+4
+sh   t0, 2(sp)        # 写低 16 位
+sb   t0, 0(sp)        # 写低 8 位</code></pre>
+<p>有效地址一律是 <code>rs1</code> 的内容加上符号扩展后的 12 位偏移量。所以偏移量的范围是 -2048 到 2047，足够覆盖一个栈帧或者一个结构体的字段。</p>
+<p>有符号和无符号的区别只在读取小于 32 位的数据时才出现。比如内存里存着一个字节 <code>0x80</code>，<code>lb</code> 读出来的结果是 <code>0xffffff80</code>，<code>lbu</code> 读出来是 <code>0x00000080</code>。前者把它当成 -128，后者当成 128。</p>
+<p>RV32I 采用小端字节序。一个 32 位数 <code>0x12345678</code> 存到地址 0x1000，内存里从低地址到高地址依次是 <code>78 56 34 12</code>，最低有效字节放在最低地址。</p>
+<p>指令集允许不对齐访问，但硬件实现起来更麻烦，可能要拆成几次内存操作。实际程序里，读字按 4 字节对齐、读半字按 2 字节对齐，是通常的做法。第 12 章给处理器接外设时，寄存器地址都按字对齐。</p>
+<hr />
+<h2 id="分支与跳转">2.5　分支与跳转</h2>
+<p>程序要能改变执行顺序。RV32I 用两条路子：条件分支和有条件/无条件跳转。</p>
+<h3 id="条件分支">条件分支</h3>
+<pre class="asm"><code>beq  t0, t1, label    # 相等则跳
+bne  t0, t1, label    # 不等则跳
+blt  t0, t1, label    # 有符号小于则跳
+bge  t0, t1, label    # 有符号大于等于则跳
+bltu t0, t1, label    # 无符号小于则跳
+bgeu t0, t1, label    # 无符号大于等于则跳</code></pre>
+<p>这六条都是 B 型指令。目标地址的计算方式是：把编码后的 13 位偏移量（最低位固定为 0，所以总是偶数，实际存在指令里的是 12 位）符号扩展，加到当前 PC 上。因为指令地址必然是 4 的倍数，偏移量用 2 字节为单位就能覆盖足够远的地方。实际范围是相对 PC 的 -4096 到 +4094 字节。</p>
+<p>跳转范围有限这件事，写汇编时会以报错的形式遇到：目标标号离得太远，汇编器说分支超出范围。解决的办法是先跳到一个近处的中转点，或者改用 <code>jal</code>。</p>
+<h3 id="无条件跳转">无条件跳转</h3>
+<pre class="asm"><code>jal  ra, label        # 跳到 label，同时把 PC+4 写进 ra
+jal  x0, label        # 只跳，不保存返回地址</code></pre>
+<p><code>jal</code> 的全称是跳转并链接，这里的链接指的是它会把下一条指令的地址存进目的寄存器。存进 <code>ra</code> 时，函数末尾就能用一条指令返回：</p>
+<pre class="asm"><code>jalr x0, ra, 0        # 跳到 ra 指向的地方，不写返回地址</code></pre>
+<p><code>jalr</code> 的目标地址是 <code>rs1</code> 加 12 位符号扩展的偏移量，最低位强制清零。它支持任意远的目标，也支持运行时才知道地址的情况，比如函数指针。<code>jal</code> 用 J 型格式，偏移范围约 ±1 MB。</p>
+<p>汇编器提供了几条常用的伪指令：</p>
+<table>
+<thead>
+<tr>
+<th>伪指令</th>
+<th>展开成</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>j label</code></td>
+<td><code>jal x0, label</code></td>
+<td>无条件跳</td>
+</tr>
+<tr>
+<td><code>call label</code></td>
+<td><code>jal ra, label</code></td>
+<td>函数调用</td>
+</tr>
+<tr>
+<td><code>ret</code></td>
+<td><code>jalr x0, ra, 0</code></td>
+<td>函数返回</td>
+</tr>
+</tbody>
+</table>
+<h3 id="立即数为什么被打散">立即数为什么被打散</h3>
+<p>看机器码的时候会有一个奇怪的发现：B 型和 J 型的立即数位不是连着的，而是被拆成几段塞进不同位置。</p>
+<figure>
+<img src="../figures/fig2-3-immediates.svg" alt="图 2-3　六种格式的立即数排布" />
+<figcaption aria-hidden="true">图 2-3　六种格式的立即数排布</figcaption>
+</figure>
+<p><em>图 2-3　立即数在指令里的位置。B 型和 J 型把某些位固定放好，译码时不必搬动太多。</em></p>
+<p>这样做是为了硬件省事。如果立即数总是连续地放在一个地方，译码器就得为不同格式准备不同的提取和重排电路。RISC-V 的设计者让 <code>rs1</code>、<code>rs2</code>、<code>rd</code>、<code>funct3</code> 尽量待在固定位置，立即数的各位也按使用频率安排，结果是指令选择逻辑简单了一大截。代价是看机器码时得多算一步。</p>
+<p>对写汇编的人，这件事完全透明；对做硬件的人，它能省下可观的面积。第 8 章设计立即数生成电路时，会照着这张图接线。</p>
+<hr />
+<h2 id="系统指令与-csr">2.6　系统指令与 CSR</h2>
+<p>剩下几条指令不直接算数，而是和处理器本身的状态打交道。这里只做认识，第 11 章再展开。</p>
+<p><code>ecall</code> 用来向执行环境发出请求。在操作系统上跑时，它是系统调用；在 RARS 里跑时，它是 RARS 提供的服务调用。用法是先把服务号放进 <code>a7</code>，参数放进 <code>a0</code>、<code>a1</code>，然后执行 <code>ecall</code>：</p>
+<pre class="asm"><code>li   a7, 1            # RARS 服务号 1：打印整数
+li   a0, 42           # 参数
+ecall                 # 输出 42</code></pre>
+<p><code>ebreak</code> 是给调试器用的断点指令。<code>fence</code> 和 <code>fence.i</code> 是内存和指令流的屏障，在单核、顺序执行的简单系统里几乎用不到，但多核和设备交互时很重要。</p>
+<p>CSR 是控制与状态寄存器的统称，有自己的编号空间，不属于那 32 个通用寄存器。读写它们的指令有六条，基本的是三条：</p>
+<pre class="asm"><code>csrrw  rd, csr, rs1   # 读 CSR 到 rd，同时把 rs1 写进 CSR
+csrrs  rd, csr, rs1   # 读 CSR 到 rd，并把 rs1 中为 1 的位对应的 CSR 位置 1
+csrrc  rd, csr, rs1   # 读 CSR 到 rd，并把 rs1 中为 1 的位对应的 CSR 位清零</code></pre>
+<p>汇编器还提供了 <code>csrr</code>、<code>csrw</code>、<code>csrs</code>、<code>csrc</code> 这些更好记的伪指令。异常处理要读 <code>mcause</code>、写 <code>mepc</code>，靠的就是它们。第 11 章会用到。</p>
+<hr />
+<h2 id="伪指令">2.7　伪指令</h2>
+<p>前面已经遇到过 <code>li</code>、<code>j</code>、<code>ret</code> 这些写法。它们不是 RV32I 真正的指令，而是汇编器提供的简写，叫做伪指令。汇编器会把每条伪指令翻译成一条或多条基本指令。</p>
+<p>常见的伪指令有：</p>
+<table>
+<thead>
+<tr>
+<th>伪指令</th>
+<th>展开</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nop</code></td>
+<td><code>addi x0, x0, 0</code></td>
+<td>什么都不做</td>
+</tr>
+<tr>
+<td><code>li rd, imm</code></td>
+<td><code>addi</code> 或 <code>lui</code> + <code>addi</code></td>
+<td>装入常数</td>
+</tr>
+<tr>
+<td><code>mv rd, rs</code></td>
+<td><code>addi rd, rs, 0</code></td>
+<td>寄存器间搬数</td>
+</tr>
+<tr>
+<td><code>not rd, rs</code></td>
+<td><code>xori rd, rs, -1</code></td>
+<td>按位取反</td>
+</tr>
+<tr>
+<td><code>seqz rd, rs</code></td>
+<td><code>sltiu rd, rs, 1</code></td>
+<td>等于 0 则置 1</td>
+</tr>
+<tr>
+<td><code>snez rd, rs</code></td>
+<td><code>sltu rd, x0, rs</code></td>
+<td>不等于 0 则置 1</td>
+</tr>
+<tr>
+<td><code>ble rs1, rs2, label</code></td>
+<td><code>bge rs2, rs1, label</code></td>
+<td>小于等于则跳</td>
+</tr>
+<tr>
+<td><code>bgt rs1, rs2, label</code></td>
+<td><code>blt rs2, rs1, label</code></td>
+<td>大于则跳</td>
+</tr>
+</tbody>
+</table>
+<p>伪指令不改变指令集本身，只是让程序好写。判断一条写法是不是真指令，可以看 RARS 的反汇编结果：伪指令在那里面会变成展开后的基本指令。</p>
+<blockquote>
+<p>这条边界值得留意：汇编器能做的事，不等于硬件要做的事。<code>nop</code> 看起来像一条”空指令”，其实是一条正规的 <code>addi</code>，只不过目的寄存器是 <code>x0</code>，写进去的结果被丢掉了。</p>
+</blockquote>
+<hr />
+<h2 id="数组求和的完整例子">2.8　数组求和的完整例子</h2>
+<p>把这一章的东西合起来看一段程序。它计算一个数组的和，结果放到 <code>a0</code>：</p>
+<pre class="asm"><code># a0 = 数组首地址，a1 = 元素个数
+# 返回时 a0 = 元素之和
+loop:
+    beq     a1, zero, done    # 个数为 0，结束
+    lw      t0, 0(a0)         # 读当前元素
+    add     t1, t1, t0        # 累加到 t1
+    addi    a0, a0, 4         # 地址后移一个字
+    addi    a1, a1, -1        # 计数减一
+    j       loop             # 回去继续
+done:
+    mv      a0, t1            # 结果放进 a0
+    ret                      # 返回</code></pre>
+<p>逐条看它们属于哪种格式：</p>
+<ul>
+<li><code>beq</code> 是 B 型，比较 <code>a1</code> 和 <code>x0</code>，相等就跳到 <code>done</code>。这里用 <code>x0</code> 代替常数 0，省了一条装常数的指令。</li>
+<li><code>lw</code> 是 I 型，地址是 <code>a0 + 0</code>，读出的 32 位数放进 <code>t0</code>。</li>
+<li><code>add</code> 是 R 型，三个寄存器分别是指令里的 <code>rd</code>、<code>rs1</code>、<code>rs2</code>。</li>
+<li>两条 <code>addi</code> 是 I 型，立即数 4 和 -1 都在 12 位范围内。</li>
+<li><code>j</code> 是伪指令，展开成 <code>jal x0, loop</code>，向后跳。</li>
+<li><code>mv</code> 和 <code>ret</code> 也是伪指令。</li>
+</ul>
+<p>把这段程序输进 RARS，单步执行几轮，观察 <code>a0</code>、<code>a1</code>、<code>t0</code>、<code>t1</code> 的变化。可以看到循环体每走一遍，地址加 4、计数减 1、累加值增加。这条观察路线在第 3 章还会重复，那时会加入栈和函数调用。</p>
+<hr />
+<h2 id="重点与权衡">2.9　重点与权衡</h2>
+<p><strong>格式规整换来了简单的译码。</strong> 六种格式里，操作码、三个寄存器号字段和 <code>funct3</code> 大多位置固定。硬件取字段时不必先看是哪种格式，这在简单处理器上能省下不少逻辑。</p>
+<p><strong>立即数打散是主动的取舍。</strong> B 型和 J 型的立即数位看起来乱，实际是为了让常用字段待在固定位置，减少译码时的选择电路。写汇编的人看不到这个代价，做硬件的人能拿到好处。</p>
+<p><strong>load-store 结构让数据通路整齐。</strong> 内存访问集中到 load 和 store 两条路上，运算部件只面对寄存器，控制逻辑因此简单。代价是访问内存前必须先把地址算进寄存器，指令数会多一些。</p>
+<p><strong>溢出不处理、只有 <code>slt</code> 没有 <code>sgt</code>。</strong> 这些选择都指向同一个方向：指令集尽量少做事，把方便留给汇编器和编译器，把简单留给硬件。</p>
+<hr />
+<h2 id="本章小结">2.10　本章小结</h2>
+<ul>
+<li>RV32I 有 32 个 32 位通用寄存器，<code>x0</code> 恒为零，其余有约定的 ABI 名。</li>
+<li>指令固定 32 位，共六种格式；<code>opcode</code>、寄存器号、<code>funct3</code> 的位置基本一致，便于译码。</li>
+<li>算术逻辑指令分 R 型和 I 型；大常数用 <code>lui</code> 加 <code>addi</code> 两步装入。</li>
+<li>访存指令按字节寻址，采用小端字节序，读取短数据时区分符号扩展和零扩展。</li>
+<li>分支用 B 型，跳转用 J 型，两者都用 PC 相对寻址，偏移按 2 字节为单位。</li>
+<li><code>ecall</code>、<code>ebreak</code> 和 CSR 指令处理执行环境相关的事务，本书第 11 章展开。</li>
+<li>伪指令由汇编器展开，不增加硬件负担。</li>
+</ul>
+<h2 id="思考题">思考题</h2>
+<ol type="1">
+<li><code>x0</code> 恒为零这个设计带来了哪些方便？如果去掉它，哪些指令会变得难写？</li>
+<li>把 <code>0x80000000</code> 装进一个寄存器，只用 <code>addi</code> 能不能做到？为什么？</li>
+<li><code>lw</code> 和 <code>lwu</code> 的区别是什么？RV32I 为什么没有 <code>lwu</code>？</li>
+<li>一条 <code>beq</code> 指令最多能向前或向后跳多远？如果目标超出范围，汇编器会怎么处理？</li>
+<li><code>jalr x0, ra, 0</code> 为什么能实现函数返回？把目的寄存器换成 <code>t0</code> 会怎样？</li>
+<li>在 RARS 里写出第 2.8 节的数组求和程序，用不同的数组内容跑几遍，记录每轮循环后 <code>a0</code>、<code>a1</code>、<code>t1</code> 的值。</li>
+</ol>
+<hr />
+<p><em>下一章：第 3 章　汇编语言编程。用 RARS 写完整的程序，处理栈、函数调用和调用约定。</em></p>
+</article></main>
+<footer>浙江工商大学　·　邢建国</footer>
+</body>
+</html>

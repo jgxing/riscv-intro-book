@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>附录 C　工具链与环境搭建</title>
+<style>
+:root { --red: #C8102E; --ink: #1f2328; --muted: #6b7280; --line: #e5e7eb; --bg: #ffffff; --soft: #faf9f7; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: var(--ink); background: var(--bg); line-height: 1.8;
+       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif; }
+a { color: var(--red); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.topbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.97);
+          border-bottom: 2px solid var(--red); padding: 10px 24px;
+          display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 700; color: var(--ink); font-size: 15px; }
+.topbar nav { display: flex; gap: 16px; font-size: 13px; align-items: center; flex-wrap: wrap; }
+.topbar nav a { color: #374151; }
+.topbar nav a:hover { color: var(--red); }
+.wrap { max-width: 900px; margin: 0 auto; padding: 32px 22px 90px; }
+.hero { display: flex; gap: 36px; align-items: flex-start; flex-wrap: wrap; margin: 18px 0 46px; }
+.hero .cover { width: 232px; max-width: 100%; border: 1px solid var(--line);
+               box-shadow: 0 8px 28px rgba(0,0,0,.12); border-radius: 2px; }
+.hero .info { flex: 1 1 360px; }
+.series { color: var(--red); font-size: 13px; letter-spacing: 2px; margin: 4px 0 10px; }
+.hero h1 { font-size: 32px; line-height: 1.3; margin: 0 0 6px; }
+.hero .subtitle { font-size: 21px; color: var(--red); margin: 0 0 18px; }
+.byline { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+.intro { color: #374151; font-size: 15px; margin: 0 0 24px; }
+.btn { display: inline-block; padding: 9px 20px; background: var(--red); color: #fff;
+       border-radius: 4px; font-size: 14px; margin-right: 10px; }
+.btn:hover { background: #a50e26; text-decoration: none; }
+.btn.ghost { background: #fff; color: var(--red); border: 1px solid var(--red); }
+.btn.ghost:hover { background: #fdf2f4; }
+.toc-group { margin: 30px 0; }
+.toc-group h2 { font-size: 18px; color: var(--ink); border-bottom: 2px solid var(--line);
+                padding-bottom: 8px; margin: 0 0 12px; }
+ol.toc-list { list-style: none; padding: 0; margin: 0; counter-reset: item; }
+ol.toc-list li { border-bottom: 1px dashed var(--line); padding: 7px 2px; font-size: 15px; }
+ol.toc-list li a { color: var(--ink); }
+ol.toc-list li a:hover { color: var(--red); }
+.article h1 { font-size: 28px; color: var(--red); border-bottom: 3px solid var(--red);
+              padding-bottom: 10px; margin: 0 0 28px; line-height: 1.4; }
+.article h2 { font-size: 21px; margin: 38px 0 12px; padding-left: 10px; border-left: 4px solid var(--red); }
+.article h3 { font-size: 17px; margin: 26px 0 8px; }
+.article p { text-align: justify; margin: 12px 0; }
+.article img { max-width: 100%; height: auto; display: block; margin: 22px auto 6px; }
+.article blockquote { border-left: 3px solid var(--line); background: var(--soft);
+                      margin: 16px 0; padding: 10px 16px; color: #4b5563; }
+.article pre { background: #f6f6f4; border-left: 3px solid var(--red); padding: 14px 16px;
+               border-radius: 0 4px 4px 0; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+.article code { font-family: Consolas, "Courier New", monospace; background: #f2f2f0;
+                padding: 1px 4px; border-radius: 3px; font-size: .92em; }
+.article pre code { background: none; padding: 0; }
+.article table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: 14px; }
+.article th, .article td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+.article th { background: var(--soft); font-weight: 600; }
+.pagenav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+           border-top: 1px solid var(--line); margin-top: 54px; padding-top: 18px; font-size: 14px; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px 0 40px; }
+@media (max-width: 640px) { .hero h1 { font-size: 26px; } .wrap { padding: 20px 16px 60px; } }
+</style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="index.html">RISC-V 处理器设计入门</a><nav><a href="index.html">目录</a><a href="appendix-b.html">← 附录B</a><a href="references.html">参考书目 →</a><a href="https://github.com/jgxing/riscv-intro-book">代码仓库</a></nav></header>
+<main class="wrap"><article class="article"><h1 id="附录-c-工具链与环境搭建">附录 C　工具链与环境搭建</h1>
+<p>全书只用四组软件：RARS、Digital 与 Icarus Verilog、RISC-V GCC 交叉编译工具链、QEMU。这一章讲它们怎么装、怎么跑，以及出了问题先看哪里。</p>
+<p>先说明一件事：本书的核心实验不依赖全部工具。RARS 用于第 3 章，Digital 与 Icarus Verilog 从第 4 章起贯穿硬件部分，这两组免费、体积不大，装好就能走完从指令到五级流水线的主要路线。RISC-V GCC 和 QEMU 主要用于第 11、13、14 章的软件对照实验，这组脚本在编写本书的机器上没有实跑，因为那台机器没有安装它们；文中给出的是标准命令和预期现象，在装好工具的机器上应当能复现。</p>
+<h2 id="c.1-rars-的安装与汇编程序调试">C.1 RARS 的安装与汇编程序调试</h2>
+<h3 id="rars-是什么">RARS 是什么</h3>
+<p>RARS 是 RISC-V Assembler and Runtime Simulator 的缩写，一个用 Java 写的 RISC-V 汇编器和模拟器。它能把汇编翻译成机器码，也能单步执行、查看寄存器和内存。第 3 章写汇编程序时一直用它。</p>
+<p>它能看到的是指令集这一层，看不到时钟和电路。这正是它的用处：先把程序在指令集层调试对，再去硬件里跑，出问题就知道是程序错了还是电路错了。</p>
+<h3 id="安装">安装</h3>
+<p>RARS 是一个独立的 jar 文件，从它的官方发布页下载 <code>rars.jar</code>，放到任意目录即可。运行需要 Java 运行环境，Java 8 或更新版本都行：</p>
+<pre class="bash"><code>java -jar rars.jar</code></pre>
+<p>如果双击 jar 文件打不开，多半是系统没有关联 Java，用上面这条命令最稳妥。启动时可能出现一个设置窗口，问是否开启伪指令、是否允许自修改代码，保持默认即可。</p>
+<h3 id="跑一个程序">跑一个程序</h3>
+<p>以第 3 章的最小程序为例。在 RARS 里新建文件，输入：</p>
+<pre class="asm"><code>.text
+.globl main
+main:
+    li   a7, 10          # 服务号 10：退出程序
+    ecall</code></pre>
+<p>按汇编按钮（或 F3），再按运行按钮（或 F5）。程序会立刻结束，因为服务号 10 就是让 RARS 退出。想看执行过程，改用单步按钮（F7 或 F8），每按一次执行一条指令。</p>
+<p>调试时最有用的是三个窗口：</p>
+<ul>
+<li><strong>Registers</strong> 显示 32 个通用寄存器和 <code>pc</code> 的当前值，变化的值会高亮；</li>
+<li><strong>Memory</strong> 显示数据内存，可以按字节、半字、字查看；</li>
+<li><strong>Execute</strong> 是主界面，能看到源码、机器码和当前执行位置。</li>
+</ul>
+<p>用 <code>li a0, 42</code> 加 <code>ecall</code>（服务号 1）打印整数，单步走到 <code>ecall</code> 时，先在 Registers 窗口确认 <code>a0</code> 确实是 42，再执行，就能把”数据准备”和”服务调用”两件事分开看。</p>
+<h3 id="常见问题">常见问题</h3>
+<p><strong>汇编报错 <code>Illegal operand</code>。</strong> 先检查是不是把 RARS 不认识的写法当成真指令了。<code>li</code>、<code>la</code>、<code>mv</code>、<code>ret</code> 都是伪指令，RARS 默认开启伪指令支持；如果关掉了，就会报这类错。</p>
+<p><strong>中文注释变成乱码。</strong> 把源文件存成 UTF-8，RARS 的编辑器对中文注释支持不稳定，必要时可以把注释写成英文，或者只在正文里对照阅读。</p>
+<p><strong><code>ecall</code> 没有输出。</strong> 检查 <code>a7</code> 里的服务号对不对。服务号放错寄存器是最常见的失误，RARS 只认 <code>a7</code>。</p>
+<h2 id="c.2-digital-与-icarus-verilog-的配合使用">C.2 Digital 与 Icarus Verilog 的配合使用</h2>
+<h3 id="两者分工">两者分工</h3>
+<p>Digital 是图形化的数字电路仿真器，用鼠标连线搭门电路，能单步看信号沿导线传播。Icarus Verilog 是命令行仿真器，跑 Verilog 测试台，适合验证复杂模块并自动检查几十项断言。</p>
+<p>本书让两者做同一件事。第 4 章先用 Digital 搭一个带使能的 D 触发器，看清时钟沿和数据锁存的关系，再用 Verilog 描述同一个触发器，用测试台检查 7 项行为。图形给直觉，代码给效率，谁也替代不了谁。</p>
+<h3 id="安装-1">安装</h3>
+<p>Digital 从它的官方发布页下载，解压后运行 <code>Digital.jar</code> 即可，同样需要 Java。也可以直接双击发行包里的启动脚本。</p>
+<p>Icarus Verilog 在 Windows、Linux、macOS 上都有安装包。Windows 下从官方发布页下载安装程序，安装时勾上把可执行文件加入 PATH 的选项。装完后打开终端验证：</p>
+<pre class="bash"><code>iverilog -v</code></pre>
+<p>能打印版本信息就说明装好了。本书的代码用 <code>-g2012</code> 选项编译，对应 Verilog-2012 语法。</p>
+<h3 id="跑一个测试台">跑一个测试台</h3>
+<p>到第 4 章的代码目录，编译并运行：</p>
+<pre class="bash"><code>cd code/verilog/04_digital
+iverilog -g2012 -o sim.out dff_en.v tb_dff_en.v
+vvp sim.out</code></pre>
+<p>输出应当是一串 <code>PASS</code> 和最后的 <code>ALL TESTS PASSED</code>。<code>iverilog</code> 负责编译，生成 <code>sim.out</code>；<code>vvp</code> 负责运行这个编译产物。两条命令分开写，方便在改了代码之后只重跑第二步——当然第一步也得重编译才生效。</p>
+<p>附录 B 的三个测试台命令在第 B.6 节列出，可以直接拿去验证环境。</p>
+<h3 id="digital-电路的用法">Digital 电路的用法</h3>
+<p><code>code/digital/</code> 下是 <code>.dig</code> 文件，本质上是 XML，用文本编辑器也能打开，但通常用 Digital 打开。打开后按单步按钮，电路里的每个门都会显示当前输入和输出值。</p>
+<p>本书的电路从简单到复杂：第 4 章是与门和带使能的触发器，第 5 章是半加器和一位 ALU，第 8 章是分支相等判据，第 10 章是转发二选一，第 12 章是地址译码器，第 14 章是定时器中断判据。多数电路带真值表，可以用 Digital 的测试功能逐行验证。</p>
+<h3 id="常见问题-1">常见问题</h3>
+<p><strong><code>iverilog</code> 不认识 <code>$clog2</code>。</strong> 老版本不支持这个系统函数，升级到 10 版以上即可。本书写作时用的是 12.0 版。</p>
+<p><strong>数组上界报错。</strong> Icarus Verilog 不接受在数组声明的方括号里直接写参数表达式。先转成 <code>localparam</code>，例如 <code>localparam DEPTH_M1 = DEPTH - 1;</code>，再用 <code>mem [0:DEPTH_M1]</code>。</p>
+<p><strong>编译报 <code>Unknown module type</code>。</strong> 某个子模块没有列进编译命令。检查是不是漏了文件，附录 B 的 ALU 测试台就需要同时编译 <code>alu.v</code>、<code>adder_32.v</code>、<code>full_adder.v</code> 和 <code>half_adder.v</code>。</p>
+<h2 id="c.3-risc-v-gcc-交叉编译elf链接脚本与-makefile">C.3 RISC-V GCC 交叉编译、ELF、链接脚本与 Makefile</h2>
+<h3 id="什么是交叉编译">什么是交叉编译</h3>
+<p>在一台 x86 电脑上编译出能在 RISC-V 处理器上运行的程序，叫交叉编译。完成这件事的工具链叫 RISC-V GCC，里面包含编译器 <code>gcc</code>、汇编器 <code>as</code>、链接器 <code>ld</code>、反汇编工具 <code>objdump</code> 和格式转换工具 <code>objcopy</code>。</p>
+<p>工具链的名字里常带前缀，比如 <code>riscv64-unknown-elf-</code> 或 <code>riscv32-unknown-elf-</code>。这两个都能编译 32 位 RV32I 程序，用 <code>-march=rv32i -mabi=ilp32</code> 指定目标和 ABI 即可。本书两个前缀都用过，以实际安装为准；Makefile 第一行是 <code>CROSS =</code>，改这一处就能切换。</p>
+<h3 id="安装-2">安装</h3>
+<p>不同的系统安装方式不一样：</p>
+<ul>
+<li><strong>Windows</strong>：可以安装 Windows 版 RISC-V GCC 工具链，下载后解压，把 <code>bin</code> 目录加入 PATH。也可以用 WSL 装 Linux 版。</li>
+<li><strong>Ubuntu 或 Debian</strong>：<code>sudo apt install gcc-riscv64-unknown-elf binutils-riscv64-unknown-elf</code></li>
+<li><strong>macOS</strong>：用 Homebrew 安装 <code>riscv-gnu-toolchain</code> 相关的配方，或从源码构建。</li>
+</ul>
+<p>装完后验证：</p>
+<pre class="bash"><code>riscv64-unknown-elf-gcc --version</code></pre>
+<p>能打印版本就行。GDB 调试还需要 <code>riscv64-unknown-elf-gdb</code>，它通常不在基础包里，要单独装。</p>
+<h3 id="编译参数的意思">编译参数的意思</h3>
+<p>以 <code>code/c/13_baremetal/Makefile</code> 为例：</p>
+<pre class="makefile"><code>CROSS   = riscv32-unknown-elf-
+CC      = $(CROSS)gcc
+OBJDUMP = $(CROSS)objdump
+OBJCOPY = $(CROSS)objcopy
+
+CFLAGS = -march=rv32i -mabi=ilp32 -nostdlib -O1 -g -Wall -T link.ld</code></pre>
+<p>逐个看这些参数。<code>-march=rv32i</code> 指定只生成基本整数指令，不用乘法和压缩指令，正好和本书的硬件一致；<code>-mabi=ilp32</code> 指定整数和指针都是 32 位；<code>-nostdlib</code> 告诉编译器不要链接标准库，因为裸机程序没有操作系统，也没有 C 运行时的启动代码；<code>-O1</code> 是轻度优化，保留了一些可读性，反汇编时容易和源码对上；<code>-g</code> 加入调试信息；<code>-Wall</code> 打开常见警告；<code>-T link.ld</code> 指定链接脚本。</p>
+<p><code>make</code> 之后会生成三个文件：<code>main.elf</code> 是带符号和段信息的可执行文件，<code>main.bin</code> 是要装进内存的纯二进制镜像，<code>main.dis</code> 是反汇编，用来对照 C 源码和机器码。</p>
+<h3 id="链接脚本做什么">链接脚本做什么</h3>
+<p>链接脚本决定程序各段放在哪个地址。第 13 章的 <code>link.ld</code> 把代码放在 Flash 区 <code>0x00400000</code>，把数据放在内存区 <code>0x10000000</code>，并定义了 <code>sp</code> 的初值和 bss 段的起止符号，启动代码靠它们设栈和清零 bss。</p>
+<p>这里最容易出的错是只读数据被丢掉。<code>objcopy -j .text</code> 只提取 <code>.text</code> 段，如果字符串常量单独落在 <code>.rodata</code> 段，镜像里就没有它们，程序跑起来会打印乱码。第 14 章的链接脚本因此把 <code>.rodata</code> 并进了 <code>.text</code>：</p>
+<pre><code>    .text : {
+        *(.text.start)
+        *(.text*)
+        *(.rodata*)
+    }</code></pre>
+<p>链接脚本的语法细节可以查 GNU ld 手册，本书只用到了 <code>SECTIONS</code>、段匹配和几个符号定义，够用即可。</p>
+<h3 id="从-elf-到硬件镜像">从 ELF 到硬件镜像</h3>
+<p>第 14 章的综合实验把整条链串了起来：</p>
+<pre class="makefile"><code>program.elf: start.S program.c program.ld
+    $(CC) $(CFLAGS) -o $@ start.S program.c
+
+program.dump: program.elf
+    $(OBJDUMP) -d -s program.elf &gt; $@
+
+program.bin: program.elf
+    $(OBJCOPY) -O binary -j .text program.elf $@
+
+# 把二进制镜像转成 Icarus Verilog 能读的 code.hex（每行一个 32 位字）
+code.hex: program.bin
+    $(PYTHON) ../../../tools/bin_to_hex.py program.bin code.hex</code></pre>
+<p><code>objdump</code> 出来的 <code>.dump</code> 给人看，<code>objcopy</code> 出来的 <code>.bin</code> 给机器用，<code>bin_to_hex.py</code> 再把它转成 Icarus Verilog 能读的 <code>code.hex</code>，每行一个 32 位字。转换脚本按小端序读四个字节合成一个字，这和 RV32I 的内存序一致。</p>
+<p>在 <code>code/c/14_integration/</code> 下执行 <code>make</code>，会一次生成 elf、dump、bin 和 hex；执行 <code>make sim</code>，会把 hex 拷给第 8 章的单周期核并跑仿真。</p>
+<h3 id="makefile-常见问题">Makefile 常见问题</h3>
+<p><strong>提示 <code>CROSS</code> 找不到。</strong> 本机装的工具链前缀和 Makefile 第一行不一致，改 <code>CROSS</code> 的值。</p>
+<p><strong><code>make</code> 不重新生成。</strong> 目标文件的时间戳比依赖文件新时 make 会跳过。改了链接脚本却没重新链接，删掉 elf 再来一次，或者用 <code>make -B</code> 强制重建。</p>
+<p><strong>反汇编里看不到 C 源码。</strong> 编译时没加 <code>-g</code>，或者用了 <code>-O2</code> 以上的优化导致代码被重排。用 <code>-O1 -g</code> 最容易对照。</p>
+<h2 id="c.4-qemu-与-opensbi-运行裸机程序gdb-调试">C.4 QEMU 与 OpenSBI 运行裸机程序，GDB 调试</h2>
+<h3 id="qemu-在这本书里的角色">QEMU 在这本书里的角色</h3>
+<p>QEMU 是一个完整的机器模拟器。本书用它演示异常、中断和多任务在真实软件环境里是什么样，不拿它替代自己搭的处理器。两条线是并行的：Verilog 那边看信号怎么走，QEMU 这边看程序在完整系统里怎么跑。</p>
+<p>本书的 QEMU 实验都跑在 <code>virt</code> 机器上，这是一个通用的 RISC-V 虚拟平台，带串口、CLINT 定时器等外设。外设地址和本书自己搭的核不同：QEMU 的串口在 <code>0x10000000</code>，CLINT 在 <code>0x02000000</code>；本书的第 12 章用的是 <code>0xffff0000</code> 区。读代码时要先确认在哪一边。</p>
+<h3 id="安装-3">安装</h3>
+<p>Ubuntu 或 Debian 下：</p>
+<pre class="bash"><code>sudo apt install qemu-system-misc</code></pre>
+<p>macOS 用 Homebrew 安装 <code>qemu</code>，Windows 可以从 QEMU 官网下载安装包。装完后验证：</p>
+<pre class="bash"><code>qemu-system-riscv32 --version</code></pre>
+<p>OpenSBI 是 RISC-V 的固件，为上层软件提供引导和机器模式服务。本书的裸机例子直接从 <code>-kernel</code> 加载 ELF，用 <code>-bios none</code> 跳过固件，所以不装 OpenSBI 也能跑最小示例。想观察 S 模式程序通过 OpenSBI 进入 M 模式，需要另外准备固件，那已经超出本书主线。</p>
+<h3 id="跑最小示例">跑最小示例</h3>
+<p><code>code/qemu/hello/</code> 是最小例子，一个 C 程序通过串口打印一行字。在装有工具的机器上：</p>
+<pre class="bash"><code>cd code/qemu/hello
+make
+make run</code></pre>
+<p><code>make run</code> 执行的命令是：</p>
+<pre class="bash"><code>qemu-system-riscv32 -machine virt -nographic -monitor none -serial stdio -bios none -kernel hello.elf</code></pre>
+<p>逐项看这几个参数。<code>-machine virt</code> 选虚拟平台；<code>-nographic</code> 不开图形窗口；<code>-serial stdio</code> 把串口接到当前终端，没有它就看不打印内容；<code>-monitor none</code> 关掉 QEMU 自己的监控台；<code>-bios none</code> 不加载固件；<code>-kernel hello.elf</code> 指定要运行的程序。</p>
+<p>预期输出是一行：</p>
+<pre><code>Hello from RISC-V</code></pre>
+<p>程序最后进入死循环，QEMU 不会自己退出。按 <code>Ctrl+A</code> 再按 <code>X</code> 退出。</p>
+<h3 id="跑多任务示例">跑多任务示例</h3>
+<p><code>code/qemu/multitask/</code> 是第 14 章的多任务工程，包含 PCB、上下文切换、CLINT 定时器中断和轮转调度：</p>
+<pre class="bash"><code>cd code/qemu/multitask
+make
+make run</code></pre>
+<p>预期串口交替输出 A 和 B，表明两个任务在定时器中断下轮流运行。这和 <code>code/python/14_multitask/run.py</code> 在本机跑出的 ABAB 是同一件事，只是一个在完整模拟器里，一个在本书自己写的教学模拟器里。</p>
+<h3 id="gdb-调试">GDB 调试</h3>
+<p>GDB 能在 QEMU 里单步执行、设断点、看寄存器。需要两个终端。</p>
+<p>第一个终端启动 QEMU 并等 GDB 连接：</p>
+<pre class="bash"><code>qemu-system-riscv32 -machine virt -nographic -serial stdio -bios none \
+    -kernel hello.elf -S -gdb tcp::1234</code></pre>
+<p><code>-S</code> 让 CPU 在启动时暂停，<code>-gdb tcp::1234</code> 打开调试端口。</p>
+<p>第二个终端启动交叉调试器：</p>
+<pre class="bash"><code>riscv64-unknown-elf-gdb hello.elf
+(gdb) target remote :1234
+(gdb) break main
+(gdb) continue
+(gdb) info registers
+(gdb) step</code></pre>
+<p>连上之后，用法和本地调试一样。<code>break</code> 设断点，<code>continue</code> 跑到断点，<code>step</code> 单步进入，<code>info registers</code> 看寄存器。编译时要加 <code>-g</code>，否则 GDB 找不到源码行号。</p>
+<p>调试裸机程序有个特别有用的技巧：在陷阱处理程序入口设断点，每次异常或中断进来都会停住，可以直接看 <code>mcause</code>、<code>mepc</code> 和 <code>mstatus</code> 的值。第 11 章讲的现场保存，用这个办法能看得很清楚。</p>
+<h3 id="常见问题-2">常见问题</h3>
+<p><strong>屏幕没有任何输出。</strong> 先确认命令里有 <code>-serial stdio</code> 和 <code>-nographic</code>。再检查程序的串口地址和 <code>virt</code> 平台一致不一致，本书第 12 章的 <code>0xffff0030</code> 在 QEMU 里不是串口。</p>
+<p><strong>提示找不到 <code>qemu-system-riscv32</code>。</strong> 有些发行版只提供 <code>qemu-system-riscv64</code>，它也能跑 32 位客户机，把命令换过去即可。</p>
+<p><strong><code>make</code> 报找不到编译器。</strong> 改 Makefile 第一行的 <code>CROSS</code>，让它匹配机器上实际的前缀。用 <code>which riscv64-unknown-elf-gcc</code> 查一下就知道了。</p>
+<p><strong>GDB 连不上。</strong> 确认 QEMU 启动时带了 <code>-gdb tcp::1234</code>，且没有被防火墙拦住。端口号可以改，两端一致就行。</p>
+<h3 id="本机验证状况再说明一次">本机验证状况再说明一次</h3>
+<p>编写本书的机器上没有安装 RISC-V GCC 和 QEMU，所以 <code>code/qemu/</code> 与 <code>code/c/</code> 下的这两组工程没有在本机实跑。文中的命令来自项目 README，预期现象来自程序语义。如果按上面的步骤做遇到与预期不符的情况，先核对工具链前缀、外设地址和 QEMU 参数这三样，多数问题都出在这里。</p>
+<p>本书的核心实验不依赖它们：第 6、7 章的 Python 模拟器，第 8 至 12 章的 Verilog 仿真，都能用 Python 和 Icarus Verilog 在本机完成，第 14 章的多任务切换也有一个本机能跑的 Python 版本。工具凑不齐的时候，先用这些把原理走通，再找机会补上 QEMU 的对照实验。</p>
+</article></main>
+<footer>浙江工商大学　·　邢建国</footer>
+</body>
+</html>

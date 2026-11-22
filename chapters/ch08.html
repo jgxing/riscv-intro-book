@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 8 章　单周期处理器</title>
+<style>
+:root { --red: #C8102E; --ink: #1f2328; --muted: #6b7280; --line: #e5e7eb; --bg: #ffffff; --soft: #faf9f7; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: var(--ink); background: var(--bg); line-height: 1.8;
+       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif; }
+a { color: var(--red); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.topbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.97);
+          border-bottom: 2px solid var(--red); padding: 10px 24px;
+          display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 700; color: var(--ink); font-size: 15px; }
+.topbar nav { display: flex; gap: 16px; font-size: 13px; align-items: center; flex-wrap: wrap; }
+.topbar nav a { color: #374151; }
+.topbar nav a:hover { color: var(--red); }
+.wrap { max-width: 900px; margin: 0 auto; padding: 32px 22px 90px; }
+.hero { display: flex; gap: 36px; align-items: flex-start; flex-wrap: wrap; margin: 18px 0 46px; }
+.hero .cover { width: 232px; max-width: 100%; border: 1px solid var(--line);
+               box-shadow: 0 8px 28px rgba(0,0,0,.12); border-radius: 2px; }
+.hero .info { flex: 1 1 360px; }
+.series { color: var(--red); font-size: 13px; letter-spacing: 2px; margin: 4px 0 10px; }
+.hero h1 { font-size: 32px; line-height: 1.3; margin: 0 0 6px; }
+.hero .subtitle { font-size: 21px; color: var(--red); margin: 0 0 18px; }
+.byline { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+.intro { color: #374151; font-size: 15px; margin: 0 0 24px; }
+.btn { display: inline-block; padding: 9px 20px; background: var(--red); color: #fff;
+       border-radius: 4px; font-size: 14px; margin-right: 10px; }
+.btn:hover { background: #a50e26; text-decoration: none; }
+.btn.ghost { background: #fff; color: var(--red); border: 1px solid var(--red); }
+.btn.ghost:hover { background: #fdf2f4; }
+.toc-group { margin: 30px 0; }
+.toc-group h2 { font-size: 18px; color: var(--ink); border-bottom: 2px solid var(--line);
+                padding-bottom: 8px; margin: 0 0 12px; }
+ol.toc-list { list-style: none; padding: 0; margin: 0; counter-reset: item; }
+ol.toc-list li { border-bottom: 1px dashed var(--line); padding: 7px 2px; font-size: 15px; }
+ol.toc-list li a { color: var(--ink); }
+ol.toc-list li a:hover { color: var(--red); }
+.article h1 { font-size: 28px; color: var(--red); border-bottom: 3px solid var(--red);
+              padding-bottom: 10px; margin: 0 0 28px; line-height: 1.4; }
+.article h2 { font-size: 21px; margin: 38px 0 12px; padding-left: 10px; border-left: 4px solid var(--red); }
+.article h3 { font-size: 17px; margin: 26px 0 8px; }
+.article p { text-align: justify; margin: 12px 0; }
+.article img { max-width: 100%; height: auto; display: block; margin: 22px auto 6px; }
+.article blockquote { border-left: 3px solid var(--line); background: var(--soft);
+                      margin: 16px 0; padding: 10px 16px; color: #4b5563; }
+.article pre { background: #f6f6f4; border-left: 3px solid var(--red); padding: 14px 16px;
+               border-radius: 0 4px 4px 0; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+.article code { font-family: Consolas, "Courier New", monospace; background: #f2f2f0;
+                padding: 1px 4px; border-radius: 3px; font-size: .92em; }
+.article pre code { background: none; padding: 0; }
+.article table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: 14px; }
+.article th, .article td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+.article th { background: var(--soft); font-weight: 600; }
+.pagenav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+           border-top: 1px solid var(--line); margin-top: 54px; padding-top: 18px; font-size: 14px; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px 0 40px; }
+@media (max-width: 640px) { .hero h1 { font-size: 26px; } .wrap { padding: 20px 16px 60px; } }
+</style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="../index.html">RISC-V 处理器设计入门</a><nav><a href="../index.html">目录</a><a href="ch07.html">← 第 7 章</a><a href="ch09.html">第 9 章 →</a><a href="https://github.com/jgxing/riscv-intro-book">代码仓库</a></nav></header>
+<main class="wrap"><article class="article"><h1 id="第-8-章-单周期处理器">第 8 章　单周期处理器</h1>
+<h2 id="本章导读">本章导读</h2>
+<p>前面两章用 Python 写了一个能跑程序的模拟器。它把每条指令的动作写成函数，按顺序调用，改的是内存里的几个变量。这一章要做同样的事，但换一种实现方式：把每条指令的动作做成电路，让信号在导线里流动，用一个时钟把结果存下来。</p>
+<p>听起来跨度很大，其实两边讲的是同一件事。模拟器里的 <code>cpu.pc</code> 对应硬件里的 PC 寄存器，<code>cpu.regs[1]</code> 对应寄存器堆的第 1 项，<code>execute()</code> 函数里那一串 <code>if</code> 对应硬件里的控制逻辑。软件是一条一条执行，硬件是所有部件同时连着，靠控制信号决定这一拍谁起作用。</p>
+<p>这一章搭的是一个单周期处理器：每条指令占用一个完整的时钟周期，从取指到写回在这一拍里走完。它不快，但结构最清楚，是理解后面流水线的基础。</p>
+<h2 id="把软件模型换成电路变的是什么">8.1　把软件模型换成电路，变的是什么</h2>
+<p>先看第 7 章模拟器执行一条 <code>add</code> 指令的过程。伪代码大致是这样：</p>
+<pre class="python"><code>inst = cpu.fetch()         # 从内存取一条指令
+d = decode(inst)           # 拆出字段
+r1 = cpu.get_reg(d.rs1)    # 读寄存器
+r2 = cpu.get_reg(d.rs2)
+result = r1 + r2           # 运算
+cpu.set_reg(d.rd, result)  # 写回
+cpu.set_pc(cpu.pc + 4)     # 指向下一条</code></pre>
+<p>这几行在软件里是先后执行的，每一步都改一次 CPU 对象的状态。硬件不能这么写。硬件里没有”先执行这一行再执行下一行”的说法，所有门电路从通电那一刻起就一直在算。</p>
+<p>硬件的做法是把上面每一步变成一个部件：PC 寄存器保存当前地址，指令存储器按地址给出指令，译码器拆字段，寄存器堆读出两个操作数，ALU 做运算，最后在时钟沿把结果写回寄存器堆。这些部件从一开始就连在一起，同一时刻都在工作。控制信号的作用是让这一拍里只有该起作用的那条路通。</p>
+<p>这里有个重要区别。软件里改变量是立即生效的，硬件里寄存器只在时钟沿才更新。所以 <code>cpu.set_reg(d.rd, result)</code> 在硬件里对应的是：组合逻辑算出 <code>result</code>，连到寄存器堆的写数据口，等时钟沿到来才真正写进去。时钟沿之前，寄存器堆里还是旧值。</p>
+<p>理解了这一点，剩下的就是连线题。</p>
+<h2 id="先定几个基本部件">8.2　先定几个基本部件</h2>
+<p>搭处理器之前，先把装状态的几个箱子准备好。第 5 章课件里把它们叫基本部件：程序计数器、寄存器堆、指令存储器、数据存储器。它们共同保存了处理器的全部状态，一条指令的执行就是按控制信号修改这些状态。</p>
+<h3 id="程序计数器-pc">8.2.1　程序计数器 PC</h3>
+<p>PC 要做的事很简单：时钟来了，把 <code>next_pc</code> 存进去。先看接口。时钟和要存的数据是必须的，于是有 <code>clk</code> 和 <code>next_pc</code>，输出是当前的 <code>cur_pc</code>。但复位之后 PC 必须落在一个确定的地址，否则第一条指令会从未知地址去取，所以还要一个 <code>rst_n</code>。接口攒齐了。</p>
+<pre class="verilog"><code>module pc (
+    input  wire        clk,
+    input  wire        rst_n,
+    input  wire [31:0] next_pc,
+    output reg  [31:0] cur_pc
+);</code></pre>
+<p>复位地址取多少？代码段从 <code>0x00400000</code> 开始，这是课件里定的内存布局，也是后面测试程序链接的地址。所以复位时把 PC 指到这里。寄存器用同步复位，和寄存器堆保持一致。</p>
+<pre class="verilog"><code>    localparam [31:0] RESET_PC = 32&#39;h00400000;
+
+    always @(posedge clk) begin
+        if (!rst_n)
+            cur_pc &lt;= RESET_PC;
+        else
+            cur_pc &lt;= next_pc;
+    end</code></pre>
+<p>这个模块只有十几行，但它定义了处理器的一条时间轴：每个时钟沿，PC 前进一步。</p>
+<h3 id="寄存器堆直接拿来用">8.2.2　寄存器堆直接拿来用</h3>
+<p>第 5 章已经搭好了 32 个 32 位寄存器组成的寄存器堆，带两个读端口、一个写端口，<code>x0</code> 固定读出 0。单周期处理器需要的正是这个东西，直接把 <code>regfile.v</code> 复制过来即可，不必重写。</p>
+<p>它的接口是 <code>rs1</code>、<code>rs2</code> 两个读编号，<code>rd</code> 写编号，<code>we</code> 写使能，<code>wdata</code> 写数据，加上时钟和复位。读端口是组合的，给编号就出数据；写端口是时序的，时钟沿才写入。这个组合和时序的搭配，在单周期里刚好合适：同一拍里先读出旧值去运算，时钟沿再把新值写回去。</p>
+<h3 id="指令存储器">8.2.3　指令存储器</h3>
+<p>指令存储器装的是程序机器码。课堂上它由 RARS 导出成 <code>code.hex</code>，每行一个 32 位十六进制数。Verilog 用 <code>$readmemh</code> 把这个文件读进数组。接口上只要一个地址输入 <code>addr</code> 和一个指令输出 <code>instr</code>，因为它只读不写。</p>
+<pre class="verilog"><code>module imem (
+    input  wire [31:0] addr,
+    output reg  [31:0] instr
+);
+
+    localparam [31:0] BASE   = 32&#39;h00400000;
+    localparam        IDX_W  = 10;
+    localparam        DEPTH  = 1 &lt;&lt; IDX_W;
+
+    reg [31:0] mem [0:DEPTH-1];
+
+    initial begin
+        $readmemh(&quot;code.hex&quot;, mem);
+    end</code></pre>
+<p><code>BASE</code> 是代码段起始地址，<code>DEPTH</code> 是容量，这里取 1024 个字。地址减去基址得到字节偏移，再右移两位换成字地址，就是数组下标。</p>
+<pre class="verilog"><code>    wire [31:0] offset = addr - BASE;
+    wire [IDX_W-1:0] idx = offset[IDX_W+1:2];
+
+    always @(*) begin
+        if (addr &gt;= BASE &amp;&amp; offset &lt; DEPTH * 4)
+            instr = mem[idx];
+        else
+            instr = 32&#39;h00000013;
+    end
+
+endmodule</code></pre>
+<p>最后那个 <code>0x00000013</code> 是 <code>addi x0, x0, 0</code>，一条什么都不做的空指令。程序跑出代码段时给它这个，不会执行出乱子。</p>
+<p>有个细节值得留意：<code>idx</code> 用的是 <code>offset[IDX_W+1:2]</code>，忽略了低两位。因为指令是 4 字节对齐的，低两位本来就是 0。PC 每次加 4，正好落在字的边界上。</p>
+<h3 id="数据存储器">8.2.4　数据存储器</h3>
+<p>数据存储器比指令存储器麻烦一点，因为 load 和 store 有字节、半字、字三种宽度，还要区分有符号和无符号。接口上除了地址 <code>addr</code>、写使能 <code>we</code>、写数据 <code>wdata</code>、读数据 <code>rdata</code>，还得有一个 <code>funct3</code> 告诉它这次访问是什么宽度。</p>
+<pre class="verilog"><code>module dmem (
+    input  wire        clk,
+    input  wire [31:0] addr,
+    input  wire        we,
+    input  wire [2:0]  funct3,
+    input  wire [31:0] wdata,
+    output reg  [31:0] rdata
+);</code></pre>
+<p>数据区从 <code>0x10000000</code> 开始。这里按字节存，一个字节一个格子，容量 4096 字节。教学上够用，真实的内存当然大得多。</p>
+<pre class="verilog"><code>    localparam [31:0] BASE  = 32&#39;h10000000;
+    localparam        IDX_W = 12;
+    localparam        BYTES = 1 &lt;&lt; IDX_W;
+
+    reg [7:0] mem [0:BYTES-1];
+
+    wire [31:0] offset     = addr - BASE;
+    wire [IDX_W-1:0] byte_addr = offset[IDX_W-1:0];</code></pre>
+<p>写的时候要按宽度决定改几个字节。<code>sb</code> 只写最低字节，<code>sh</code> 写两个，<code>sw</code> 写四个。<code>be</code> 是四位的字节使能，哪一位为 1 就写哪个字节。</p>
+<pre class="verilog"><code>    reg [3:0] be;
+    always @(*) begin
+        case (funct3)
+            3&#39;b000: be = 4&#39;b0001;
+            3&#39;b001: be = 4&#39;b0011;
+            3&#39;b010: be = 4&#39;b1111;
+            default: be = 4&#39;b0000;
+        endcase
+    end</code></pre>
+<p>写操作发生在时钟沿，用 <code>for</code> 循环逐字节判断使能位。<code>wdata[i*8 +: 8]</code> 是 Verilog 的部分选择语法，取第 <code>i</code> 个字节。</p>
+<pre class="verilog"><code>    integer i;
+    always @(posedge clk) begin
+        if (we) begin
+            for (i = 0; i &lt; 4; i = i + 1)
+                if (be[i])
+                    mem[byte_addr + i] &lt;= wdata[i*8 +: 8];
+        end
+    end</code></pre>
+<p>读是组合的，取出字节后按 <code>funct3</code> 拼接和扩展。<code>lb</code> 要把第 8 位复制到高 24 位，<code>lbu</code> 直接补零；<code>lh</code> 和 <code>lhu</code> 同理；<code>lw</code> 四个字节原样排好。</p>
+<pre class="verilog"><code>    wire [7:0] b0 = (addr &gt;= BASE) ? mem[byte_addr]     : 8&#39;b0;
+    wire [7:0] b1 = (addr &gt;= BASE) ? mem[byte_addr + 1] : 8&#39;b0;
+    wire [7:0] b2 = (addr &gt;= BASE) ? mem[byte_addr + 2] : 8&#39;b0;
+    wire [7:0] b3 = (addr &gt;= BASE) ? mem[byte_addr + 3] : 8&#39;b0;
+
+    always @(*) begin
+        case (funct3)
+            3&#39;b000: rdata = {{24{b0[7]}}, b0};
+            3&#39;b001: rdata = {{16{b1[7]}}, b1, b0};
+            3&#39;b010: rdata = {b3, b2, b1, b0};
+            3&#39;b100: rdata = {24&#39;b0, b0};
+            3&#39;b101: rdata = {16&#39;b0, b1, b0};
+            default: rdata = 32&#39;b0;
+        endcase
+    end
+
+endmodule</code></pre>
+<p>这里复用了第 7 章讲过的小端规则：低地址放低字节。store 写的时候用 <code>wdata[i*8 +: 8]</code> 先写低位字节，load 读的时候把 <code>b0</code> 放在最低位，两边对得上。</p>
+<figure>
+<img src="../figures/fig8-1-datapath.svg" alt="单周期处理器数据通路" />
+<figcaption aria-hidden="true">单周期处理器数据通路</figcaption>
+</figure>
+<p><em>图 8-1　RV32I 单周期处理器数据通路</em></p>
+<h2 id="把部件连成一条通路">8.3　把部件连成一条通路</h2>
+<p>部件齐了，接下来连线。图 8-1 是完整的数据通路，看着线多，其实顺着一条指令走一遍就清楚了。</p>
+<p>取指：PC 的输出接到指令存储器的地址口，指令存储器给出 <code>instr</code>。</p>
+<p>译码：<code>instr</code> 一方面送进控制单元，另一方面把寄存器号字段直接接到寄存器堆的 <code>rs1</code>、<code>rs2</code>、<code>rd</code>。这三个字段在指令格式里的位置是固定的（第 2 章讲过），所以不用等译码结果就能接。</p>
+<p>执行：寄存器堆读出的 <code>r1</code>、<code>r2</code> 接到 ALU 的两个输入。第二个输入前面放一个选择开关 <code>alu_src_b</code>，I 型指令选立即数，R 型指令选 <code>r2</code>。</p>
+<p>访存：ALU 的结果接到数据存储器的地址口。store 指令要写的数据是 <code>r2</code>，直接接到数据存储器的 <code>wdata</code>。写使能和访问宽度来自控制单元。</p>
+<p>写回：数据存储器读出的 <code>rdata</code> 和 ALU 结果都接到写回开关 <code>wreg_src</code>，选中的一路接回寄存器堆的 <code>wdata</code>。时钟沿到来时，写使能若为 1，数据落进目标寄存器。</p>
+<p>还要算下一条指令的地址。pc+4、pc+imm、jalr 目标三路结果送进 pc_src 开关，选中的一路回到 PC 的输入。这就闭上了环。</p>
+<p>这里可以看出控制单元的位置：它自己不碰数据，只发出各种开关的选择信号和写使能。数据流和控制流分开，是处理器设计里常用的画法，后面讲流水线时这个习惯会帮上忙。</p>
+<h2 id="控制单元怎么想问题">8.4　控制单元怎么想问题</h2>
+<p>控制单元是这一章最费脑子的部件。它的工作是把一条 32 位指令翻译成十来根控制信号。为此它先看 <code>opcode</code> 认出指令类型，再用 <code>funct3</code>、<code>funct7</code> 细分，最后按类型把每根信号摆到正确位置。图 8-2 画出了它的输入输出。</p>
+<figure>
+<img src="../figures/fig8-2-control.svg" alt="控制单元的输入与输出" />
+<figcaption aria-hidden="true">控制单元的输入与输出</figcaption>
+</figure>
+<p><em>图 8-2　控制单元的输入与输出</em></p>
+<h3 id="先认出是哪一类指令">8.4.1　先认出是哪一类指令</h3>
+<p>指令类型由 <code>opcode</code> 唯一决定。把 7 位 opcode 和常量比一比就知道是不是这一类。</p>
+<pre class="verilog"><code>    wire [6:0] opcode = instr[6:0];
+    wire [2:0] funct3 = instr[14:12];
+    wire [6:0] funct7 = instr[31:25];
+
+    wire is_lui    = (opcode == 7&#39;b0110111);
+    wire is_auipc  = (opcode == 7&#39;b0010111);
+    wire is_jal    = (opcode == 7&#39;b1101111);
+    wire is_jalr   = (opcode == 7&#39;b1100111);
+    wire is_branch = (opcode == 7&#39;b1100011);
+    wire is_load   = (opcode == 7&#39;b0000011);
+    wire is_store  = (opcode == 7&#39;b0100011);
+    wire is_itype  = (opcode == 7&#39;b0010011);
+    wire is_rtype  = (opcode == 7&#39;b0110011);</code></pre>
+<p>这九根线搭起了一个骨架。后面每生成一个控制信号，基本上都是拿这些 <code>is_xxx</code> 做条件拼出来的。</p>
+<h3 id="立即数的五种拼法">8.4.2　立即数的五种拼法</h3>
+<p>第 2 章讲过六种指令格式里立即数的摆位。RV32I 有五种立即数：I、S、B、U、J。它们散落在指令的不同位置，控制单元要把各自的位捡出来，符号扩展到 32 位。</p>
+<pre class="verilog"><code>    wire [31:0] imm_i = {{20{instr[31]}}, instr[31:20]};
+    wire [31:0] imm_s = {{20{instr[31]}}, instr[31:25], instr[11:7]};
+    wire [31:0] imm_b = {{19{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1&#39;b0};
+    wire [31:0] imm_u = {instr[31:12], 12&#39;b0};
+    wire [31:0] imm_j = {{11{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21], 1&#39;b0};</code></pre>
+<p>B 型和 J 型最绕，因为它们的位被打散了。这么摆是为了让译码电路简单：同一个位置的位在不同格式里含义尽量一致。B 型最低位固定为 0，J 型也是，所以分支和跳转的目标总是偶数地址。</p>
+<p>五种都算好之后，按当前指令类型选一个输出。分支用 B 型，store 用 S 型，LUI 和 AUIPC 用 U 型，JAL 用 J 型，其余用 I 型。</p>
+<pre class="verilog"><code>    reg [31:0] imm_r;
+    always @(*) begin
+        case (opcode)
+            7&#39;b0110111, 7&#39;b0010111: imm_r = imm_u;
+            7&#39;b1101111:              imm_r = imm_j;
+            7&#39;b1100111, 7&#39;b0010011, 7&#39;b0000011: imm_r = imm_i;
+            7&#39;b0100011:              imm_r = imm_s;
+            7&#39;b1100011:              imm_r = imm_b;
+            default:                 imm_r = 32&#39;b0;
+        endcase
+    end
+    assign imm = imm_r;</code></pre>
+<h3 id="分支条件怎么判">8.4.3　分支条件怎么判</h3>
+<p>六条分支指令的条件各不一样。<code>beq</code> 判相等，<code>bne</code> 判不等，<code>blt</code> 和 <code>bge</code> 判有符号大小，<code>bltu</code> 和 <code>bgeu</code> 判无符号大小。先把三个基础比较算出来。</p>
+<pre class="verilog"><code>    wire eq  = (r1 == r2);
+    wire lt  = ($signed(r1) &lt; $signed(r2));
+    wire ltu = (r1 &lt; r2);</code></pre>
+<p>Verilog 里默认的比较是无符号的，所以有符号比较必须写 <code>$signed(r1)</code> 和 <code>$signed(r2)</code>。漏掉这个，<code>-1 &lt; 1</code> 会判成假，因为无符号的 <code>0xFFFFFFFF</code> 比 1 大得多。这是新手常踩的坑，第 5 章做 ALU 里的 <code>slt</code> 时也遇到过。</p>
+<p>有了三个基础比较，按 <code>funct3</code> 选条件。</p>
+<pre class="verilog"><code>    reg branch_taken_r;
+    always @(*) begin
+        case (funct3)
+            3&#39;b000: branch_taken_r = eq;
+            3&#39;b001: branch_taken_r = !eq;
+            3&#39;b100: branch_taken_r = lt;
+            3&#39;b101: branch_taken_r = !lt;
+            3&#39;b110: branch_taken_r = ltu;
+            3&#39;b111: branch_taken_r = !ltu;
+            default: branch_taken_r = 1&#39;b0;
+        endcase
+    end
+    assign branch_taken = branch_taken_r;</code></pre>
+<p>课堂实验里可以用 Digital 单步看这个判据。逐位异或再取反就能判断两个二进制数是否相等，<code>code/digital/08_branch_equal.dig</code> 搭的是一位的版本，拨动开关就能看到 XOr 输出和最终相等信号的关系。把它扩展到 32 位，就是 <code>beq</code> 的判据。</p>
+<h3 id="其余控制信号">8.4.4　其余控制信号</h3>
+<p>写寄存器这件事，除了 store、branch 和系统指令，其他类型都要写。用一根 <code>wreg</code> 表示。</p>
+<pre class="verilog"><code>    assign wreg = is_lui || is_auipc || is_jal || is_jalr || is_load || is_itype || is_rtype;</code></pre>
+<p>写什么进去？这由 <code>wreg_src</code> 决定。下条 PC 从哪来？由 <code>pc_src</code> 决定。这两处都是多路选择，先给每种来源编个号。</p>
+<pre class="verilog"><code>    localparam [2:0] WR_IMM   = 3&#39;d0;
+    localparam [2:0] WR_PCIMM = 3&#39;d1;
+    localparam [2:0] WR_PC4   = 3&#39;d2;
+    localparam [2:0] WR_ALU   = 3&#39;d3;
+    localparam [2:0] WR_MEM   = 3&#39;d4;
+
+    localparam [1:0] PC_PC4  = 2&#39;d0;
+    localparam [1:0] PC_IMM  = 2&#39;d1;
+    localparam [1:0] PC_JALR = 2&#39;d2;</code></pre>
+<p>LUI 写立即数，AUIPC 写 pc+imm，JAL 和 JALR 写 pc+4 作为链接地址，load 写访存结果，算术指令写 ALU 结果。按当前指令类型把编号摆到正确的位置。</p>
+<pre class="verilog"><code>    reg [2:0] wreg_src_r;
+    always @(*) begin
+        if (is_lui)                    wreg_src_r = WR_IMM;
+        else if (is_auipc)             wreg_src_r = WR_PCIMM;
+        else if (is_jal || is_jalr)    wreg_src_r = WR_PC4;
+        else if (is_load)              wreg_src_r = WR_MEM;
+        else                           wreg_src_r = WR_ALU;
+    end
+    assign wreg_src = wreg_src_r;</code></pre>
+<p>下条 PC 的逻辑类似。顺序执行是 pc+4，JAL 和转移成功的分支是 pc+imm，JALR 是 r1+imm。</p>
+<pre class="verilog"><code>    reg [1:0] pc_src_r;
+    always @(*) begin
+        if (is_jal || (is_branch &amp;&amp; branch_taken_r)) pc_src_r = PC_IMM;
+        else if (is_jalr)                            pc_src_r = PC_JALR;
+        else                                         pc_src_r = PC_PC4;
+    end
+    assign pc_src = pc_src_r;</code></pre>
+<p>ALU 的第二个操作数，I 型指令和访存指令用立即数，R 型和分支用 <code>r2</code>。分支比较用的是 <code>r1</code> 和 <code>r2</code>，而地址计算才用立即数，这两个用途由控制单元里的不同通路分别处理。</p>
+<pre class="verilog"><code>    assign alu_src_b = is_itype || is_load || is_store;</code></pre>
+<p>至此控制信号的来历都交代了。完整模块在 <code>code/verilog/08_single_cycle/control.v</code>，把上面这些片段按顺序拼起来就是它，另外还有 <code>alu_op</code>、<code>mem_write</code>、<code>mem_func</code> 三根信号的生成，它们同属这套编码约定。</p>
+<h2 id="alu-的小改动">8.5　ALU 的小改动</h2>
+<p>单周期处理器要执行全部 RV32I 整数指令，第 5 章那个 ALU 不够用了。它实现了加、减、与、或、异或、有符号小于、左移、逻辑右移八种运算，缺了无符号比较 <code>sltu</code> 和算术右移 <code>sra</code>。这两条在 RV32I 里都要用，补进运算表即可。</p>
+<pre class="verilog"><code>    localparam ALU_ADD  = 4&#39;d0;
+    localparam ALU_SUB  = 4&#39;d1;
+    localparam ALU_AND  = 4&#39;d2;
+    localparam ALU_OR   = 4&#39;d3;
+    localparam ALU_XOR  = 4&#39;d4;
+    localparam ALU_SLT  = 4&#39;d5;
+    localparam ALU_SLTU = 4&#39;d6;
+    localparam ALU_SLL  = 4&#39;d7;
+    localparam ALU_SRL  = 4&#39;d8;
+    localparam ALU_SRA  = 4&#39;d9;</code></pre>
+<p>运算体直接用 Verilog 的运算符写，不再逐层例化第 5 章的加法器。这是行为级描述，综合工具会把它变成对应的门电路，仿真结果一致。</p>
+<pre class="verilog"><code>    always @(*) begin
+        case (alu_op)
+            ALU_ADD:  result = a + b;
+            ALU_SUB:  result = a - b;
+            ALU_AND:  result = a &amp; b;
+            ALU_OR:   result = a | b;
+            ALU_XOR:  result = a ^ b;
+            ALU_SLT:  result = ($signed(a) &lt; $signed(b)) ? 32&#39;d1 : 32&#39;d0;
+            ALU_SLTU: result = (a &lt; b) ? 32&#39;d1 : 32&#39;d0;
+            ALU_SLL:  result = a &lt;&lt; b[4:0];
+            ALU_SRL:  result = a &gt;&gt; b[4:0];
+            ALU_SRA:  result = $signed(a) &gt;&gt;&gt; b[4:0];
+            default:  result = 32&#39;b0;
+        endcase
+    end</code></pre>
+<p><code>&gt;&gt;&gt;</code> 是算术右移，配合 <code>$signed(a)</code> 会在右移时补符号位。<code>alu_sltu</code> 用无符号比较，<code>alu_slt</code> 用 <code>$signed</code> 包一下。第 5 章讲过的道理在这里原样重现。</p>
+<p>控制单元要给 ALU 发正确的 <code>alu_op</code>。I 型看 <code>funct3</code>，移位指令还要看 <code>funct7</code> 的高位；R 型同时看 <code>funct3</code> 和 <code>funct7</code>。这是第 2 章指令格式表的直接翻译。</p>
+<pre class="verilog"><code>        if (is_itype) begin
+            case (funct3)
+                3&#39;b000: alu_op_r = ALU_ADD;
+                3&#39;b010: alu_op_r = ALU_SLT;
+                3&#39;b011: alu_op_r = ALU_SLTU;
+                3&#39;b100: alu_op_r = ALU_XOR;
+                3&#39;b110: alu_op_r = ALU_OR;
+                3&#39;b111: alu_op_r = ALU_AND;
+                3&#39;b001: alu_op_r = ALU_SLL;
+                3&#39;b101: alu_op_r = funct7[5] ? ALU_SRA : ALU_SRL;
+                default: alu_op_r = ALU_ADD;
+            endcase
+        end else if (is_rtype) begin
+            case (funct3)
+                3&#39;b000: alu_op_r = funct7[5] ? ALU_SUB : ALU_ADD;
+                3&#39;b001: alu_op_r = ALU_SLL;
+                3&#39;b010: alu_op_r = ALU_SLT;
+                3&#39;b011: alu_op_r = ALU_SLTU;
+                3&#39;b100: alu_op_r = ALU_XOR;
+                3&#39;b101: alu_op_r = funct7[5] ? ALU_SRA : ALU_SRL;
+                3&#39;b110: alu_op_r = ALU_OR;
+                3&#39;b111: alu_op_r = ALU_AND;
+                default: alu_op_r = ALU_ADD;
+            endcase
+        end else begin
+            alu_op_r = ALU_ADD;
+        end</code></pre>
+<p>最后那个 <code>else</code> 给 LUI、AUIPC、JAL 这类指令一个默认的加法。它们要么不用 ALU，要么地址计算本来就是加法，给个 <code>ALU_ADD</code> 不会出错。</p>
+<p>有个约定要记牢：ALU 模块里 <code>ALU_ADD=0</code>、<code>ALU_SUB=1</code> 这些编号，和控制单元里同名的 <code>localparam</code> 必须一致。两边各自定义了一份，改的时候要一起改。这是手写 Verilog 常见的小麻烦，第 9 章把控制逻辑并进流水线后，这个问题会自然消失。</p>
+<h2 id="顶层连接">8.6　顶层连接</h2>
+<p>部件和接口都齐了，剩下的工作是在顶层把它们接起来。图 8-3 把两个关键的选择点单独画出来：下条 PC 的来源，和写回数据的来源。</p>
+<figure>
+<img src="../figures/fig8-3-muxes.svg" alt="下条 PC 与写回数据的选择" />
+<figcaption aria-hidden="true">下条 PC 与写回数据的选择</figcaption>
+</figure>
+<p><em>图 8-3　下条 PC 与写回数据的选择</em></p>
+<p>顶层先声明一串连线，把各部件的输入输出接在一起。这里没有新的逻辑，全是连线。</p>
+<pre class="verilog"><code>    pc u_pc (
+        .clk     (clk),
+        .rst_n   (rst_n),
+        .next_pc (next_pc),
+        .cur_pc  (pc)
+    );
+
+    imem u_imem (
+        .addr  (pc),
+        .instr (instr)
+    );
+
+    control u_control (
+        .instr        (instr),
+        .r1           (r1),
+        .r2           (r2),
+        .imm          (imm),
+        .wreg         (wreg),
+        .wreg_src     (wreg_src),
+        .pc_src       (pc_src),
+        .branch_taken (branch_taken),
+        .alu_src_b    (alu_src_b),
+        .alu_op       (alu_op),
+        .mem_write    (mem_write),
+        .mem_func     (mem_func)
+    );</code></pre>
+<p>寄存器堆、ALU、数据存储器依次接上。注意 ALU 的 b 输入前面那个选择开关：<code>alu_src_b ? imm : r2</code>，一行条件表达式就是数据通路里的一个 MUX。</p>
+<pre class="verilog"><code>    regfile u_regfile (
+        .clk    (clk),
+        .rst_n  (rst_n),
+        .rs1    (instr[19:15]),
+        .rs2    (instr[24:20]),
+        .rd     (instr[11:7]),
+        .we     (wreg),
+        .wdata  (wdata),
+        .rdata1 (r1),
+        .rdata2 (r2)
+    );
+
+    alu u_alu (
+        .a      (r1),
+        .b      (alu_src_b ? imm : r2),
+        .alu_op (alu_op),
+        .result (alu_result)
+    );
+
+    dmem u_dmem (
+        .clk     (clk),
+        .addr    (alu_result),
+        .we      (mem_write),
+        .funct3  (mem_func),
+        .wdata   (r2),
+        .rdata   (rdata)
+    );</code></pre>
+<p>三个地址加法器都是组合逻辑。<code>jalr_target</code> 最后与上一个 <code>~32'd1</code>，把最低位清零，这是指令集的规定，第 7 章做模拟器时也这么处理。</p>
+<pre class="verilog"><code>    assign pc_plus_4   = pc + 32&#39;d4;
+    assign pc_plus_imm = pc + imm;
+    assign jalr_target = (r1 + imm) &amp; ~32&#39;d1;</code></pre>
+<p>两个选择开关用条件表达式实现。pc_src 三选一，wreg_src 五选一，和前面控制单元里的编码一一对应。</p>
+<pre class="verilog"><code>    assign next_pc = (pc_src == 2&#39;b00) ? pc_plus_4 :
+                     (pc_src == 2&#39;b01) ? pc_plus_imm :
+                     (pc_src == 2&#39;b10) ? jalr_target : pc_plus_4;
+
+    assign wdata = (wreg_src == 3&#39;d0) ? imm :
+                   (wreg_src == 3&#39;d1) ? pc_plus_imm :
+                   (wreg_src == 3&#39;d2) ? pc_plus_4 :
+                   (wreg_src == 3&#39;d3) ? alu_result :
+                   (wreg_src == 3&#39;d4) ? rdata : 32&#39;b0;</code></pre>
+<p>顶层代码不长，但它把前面所有部件串成了一台机器。PC 推动取指，指令驱动控制，控制拧动开关，数据在时钟沿落回寄存器，下一个周期重新开始。</p>
+<h2 id="实验跑通十条指令">8.7　实验：跑通十条指令</h2>
+<p>写代码不难，难的是确认它真的对。实验用的程序放在 <code>code/verilog/08_single_cycle/code.hex</code>，由 <code>tools/gen_code_hex.py</code> 生成，一共十条指令。</p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>指令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x00400000</td>
+<td><code>addi x1, x0, 5</code></td>
+<td>x1 = 5</td>
+</tr>
+<tr>
+<td>0x00400004</td>
+<td><code>addi x2, x0, 3</code></td>
+<td>x2 = 3</td>
+</tr>
+<tr>
+<td>0x00400008</td>
+<td><code>add x3, x1, x2</code></td>
+<td>x3 = 8</td>
+</tr>
+<tr>
+<td>0x0040000c</td>
+<td><code>lui x4, 0x10000</code></td>
+<td>x4 = 0x10000000</td>
+</tr>
+<tr>
+<td>0x00400010</td>
+<td><code>sw x3, 0(x4)</code></td>
+<td>把 8 写进数据区</td>
+</tr>
+<tr>
+<td>0x00400014</td>
+<td><code>lw x5, 0(x4)</code></td>
+<td>x5 = 8</td>
+</tr>
+<tr>
+<td>0x00400018</td>
+<td><code>beq x5, x3, +8</code></td>
+<td>相等，跳过下一条</td>
+</tr>
+<tr>
+<td>0x0040001c</td>
+<td><code>addi x6, x0, 99</code></td>
+<td>被跳过，不该执行</td>
+</tr>
+<tr>
+<td>0x00400020</td>
+<td><code>addi x7, x0, 42</code></td>
+<td>x7 = 42</td>
+</tr>
+<tr>
+<td>0x00400024</td>
+<td><code>jal x0, 0</code></td>
+<td>停在这里循环</td>
+</tr>
+</tbody>
+</table>
+<p>这段程序把几种典型指令都走了一遍：算术运算、装大常数、访存、条件分支、跳转。特别是中间那条分支，如果判错，x6 会被写成 99，测试立刻能发现。</p>
+<p>测试台在 <code>code/verilog/08_single_cycle/tb_core.v</code>。它在每个时钟周期后检查寄存器和 PC 的值。层次化引用可以直接看到处理器内部的寄存器和数据存储器，比如 <code>uut.u_regfile.regs[1]</code> 就是 x1 的内容。</p>
+<p>编译运行的命令是：</p>
+<pre class="bash"><code>cd code/verilog/08_single_cycle
+iverilog -g2012 -o sim.out alu.v pc.v control.v regfile.v imem.v dmem.v core.v tb_core.v
+vvp sim.out</code></pre>
+<p>十二项检查全部通过，包括复位地址、每一步的寄存器值、访存结果、分支是否跳过、最终是否停在自循环。测试台最后打印 <code>ALL TESTS PASSED</code>。</p>
+<p>如果仿真出来 x5 是 x 而不是 8，先查数据区的地址有没有对上，再看 <code>sw</code> 那一拍 <code>mem_write</code> 是否为 1。如果分支没跳过，用 <code>$display</code> 把 <code>r1</code>、<code>r2</code>、<code>branch_taken</code> 打出来，通常是 <code>$signed</code> 漏写或者立即数拼接错位。这两个地方最容易出问题。</p>
+<h2 id="单周期的代价">8.8　单周期的代价</h2>
+<p>单周期处理器的好处是简单。每条指令一拍走完，不用考虑指令之间的相互影响，时序关系一目了然。图 8-4 画出了它的节拍。</p>
+<figure>
+<img src="../figures/fig8-4-single-cycle-timing.svg" alt="单周期处理的时序与关键路径" />
+<figcaption aria-hidden="true">单周期处理的时序与关键路径</figcaption>
+</figure>
+<p><em>图 8-4　单周期处理的时序与关键路径</em></p>
+<p>代价也明显。时钟周期必须足够长，让最慢的那条指令也能走完全程。上面这段程序里，<code>lw</code> 要经过取指、译码、读寄存器、ALU 算地址、读数据存储器、写回选择，最后在时钟沿写进寄存器堆，这是最长的一条路。其他指令用不了这么久，但时钟不会为它们加快。</p>
+<p>算一笔账。假设取指 2 ns、译码 1 ns、读寄存器 1 ns、ALU 2 ns、读内存 3 ns、写回选择 1 ns，加起来 10 ns，时钟只能跑到 100 MHz。一条 <code>addi</code> 其实只用前四步，7 ns 就能做完，却也要等满 10 ns。处理器里大部分时间都浪费在等待上。</p>
+<p>这就是下一章要解决的问题。如果把一条指令的执行拆成几段，每段之间加寄存器，时钟就可以按最慢的那一段来定，而不是按最慢的整条指令。多条指令还能重叠执行，像流水线一样前一条没走完下一条就进来。第 9 章就把这一章的单周期版本切开，插成五级流水线。</p>
+<h2 id="本章小结">8.9　本章小结</h2>
+<ul>
+<li>单周期处理器把软件模型里的每个动作变成一个部件，用时钟把结果存进寄存器。软件按顺序改变量，硬件所有部件同时工作，靠控制信号决定哪条路通。</li>
+<li>基本部件包括 PC、寄存器堆、指令存储器、数据存储器。PC 和寄存器堆是时序的，指令存储器只读，数据存储器的写按字节使能在时钟沿进行。</li>
+<li>控制单元按 opcode 认出指令类型，用 funct3 和 funct7 细分，生成立即数、写使能、运算选择、访存宽度、下条 PC 来源等信号。</li>
+<li>立即数有五种拼法，B 型和 J 型的位被打散摆放；有符号比较必须显式使用 <code>$signed</code>，否则会按无符号处理。</li>
+<li>数据通路里有两个关键选择点：下条 PC 三选一，写回数据五选一。条件表达式就能描述这些多路选择器。</li>
+<li>单周期结构简单，但时钟周期由最慢的指令决定，短指令也要等待。这是引入流水线的直接动机。</li>
+</ul>
+<h2 id="思考题">思考题</h2>
+<ol type="1">
+<li>为什么寄存器堆的读端口用组合逻辑，写端口用时序逻辑？如果读端口也改成时钟沿触发，数据通路要怎么调整？</li>
+<li>控制单元里 <code>alu_src_b</code> 对 store 指令为 1，让 ALU 用立即数算地址。但 store 还要把 <code>r2</code> 写进数据存储器，这根数据线为什么不受 <code>alu_src_b</code> 影响？</li>
+<li><code>jalr_target</code> 为什么要与 <code>~32'd1</code>？如果忘掉这一步，程序可能出现什么现象？</li>
+<li>单周期里 <code>lw</code> 读到的内存数据，和同一拍 <code>sw</code> 写入的数据，会不会冲突？结合 <code>dmem.v</code> 里读是组合、写是时序这一点分析。</li>
+<li>如果往代码段之外取指，<code>imem</code> 会返回 <code>addi x0, x0, 0</code>。这个”空指令”会让处理器停不下来，还是一直往前跑？想要一个真正的停机办法，可以怎么做？</li>
+</ol>
+<p><em>下一章把这一章的单周期数据通路切成五级，让多条指令重叠执行，看看吞吐率能提高多少。</em></p>
+</article></main>
+<footer>浙江工商大学　·　邢建国</footer>
+</body>
+</html>
