@@ -4,6 +4,13 @@ github_pat.txt
 *.pat
 .env
 
+# PDF 构建中间文件与成品（本地按需生成）
+_book_all.md
+_book_body.html
+_book.html
+_book_base.pdf
+RISC-V处理器设计入门_从指令集到五级流水线.pdf
+
 # 仿真与编译产物
 *.vvp
 *.vcd
