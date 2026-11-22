@@ -1,0 +1,21 @@
+# 本地代理与会话数据
+.workbuddy/
+github_pat.txt
+*.pat
+.env
+
+# 仿真与编译产物
+*.vvp
+*.vcd
+*.pyc
+__pycache__/
+*.o
+*.elf
+*.bin
+*.dump
+*.log
+
+# 编辑器与系统文件
+.DS_Store
+Thumbs.db
+*.swp
