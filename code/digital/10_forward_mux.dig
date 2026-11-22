@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<circuit>
+  <version>1</version>
+  <attributes>
+    <entry>
+      <string>Description</string>
+      <string>第10章 转发路径的核心：一个二选一。
+hit 表示 EX/MEM 级要写的寄存器正好是当前 EX 级要读的源寄存器，由寄存器号比较电路产生（对应 core.v 里的 exmem_hit_a）。
+hit=0 时取寄存器堆读出的旧值 reg_data；hit=1 时取 EX/MEM 送来的新结果 fwd_data。
+用 8 位数据演示：旧值 23(0x17)、新值 42(0x2a)，拨动 hit 看 src 的变化。
+命中判据用输入开关代替，是为了把"选择"这个动作单独看清楚。真值表可直接运行验证。</string>
+    </entry>
+    <entry>
+      <string>Width</string>
+      <int>5</int>
+    </entry>
+  </attributes>
+  <visualElements>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>寄存器堆在 ID 级读出的值，可能已经过时。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>reg_data</string>
+        </entry>
+        <entry>
+          <string>Bits</string>
+          <int>8</int>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="140"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>EX/MEM 级刚算出的 ALU 结果。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>fwd_data</string>
+        </entry>
+        <entry>
+          <string>Bits</string>
+          <int>8</int>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="200"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>EX/MEM 要写的 rd 等于当前 EX 的源寄存器。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>hit</string>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="300"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Multiplexer</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Bits</string>
+          <int>8</int>
+        </entry>
+      </elementAttributes>
+      <pos x="300" y="140"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>最终送给 ALU 的源操作数。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>src</string>
+        </entry>
+        <entry>
+          <string>Bits</string>
+          <int>8</int>
+        </entry>
+      </elementAttributes>
+      <pos x="560" y="160"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>reg_data fwd_data hit src
+23 42 0 23
+23 42 1 42
+17 48 0 17
+17 48 1 48
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="360" y="320"/>
+    </visualElement>
+  </visualElements>
+  <wires>
+    <wire>
+      <p1 x="100" y="140"/>
+      <p2 x="280" y="140"/>
+    </wire>
+    <wire>
+      <p1 x="100" y="200"/>
+      <p2 x="260" y="200"/>
+    </wire>
+    <wire>
+      <p1 x="260" y="200"/>
+      <p2 x="260" y="180"/>
+    </wire>
+    <wire>
+      <p1 x="260" y="180"/>
+      <p2 x="300" y="180"/>
+    </wire>
+    <wire>
+      <p1 x="100" y="300"/>
+      <p2 x="320" y="300"/>
+    </wire>
+    <wire>
+      <p1 x="320" y="300"/>
+      <p2 x="320" y="260"/>
+    </wire>
+    <wire>
+      <p1 x="340" y="160"/>
+      <p2 x="560" y="160"/>
+    </wire>
+  </wires>
+</circuit>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 1-2　RISC-V 规范的模块结构</title>
+  <desc>RV32I 基本整数指令集作为地基，M、A、F、D、C 五个标准扩展按需叠加在其上，右侧是规定特权级和 CSR 的特权架构。</desc>
+  <rect x="0" y="0" width="900" height="520" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#1f2937">图 1-2　RISC-V 规范的模块结构</text>
+  <text x="30" y="64" font-size="12.5" fill="#5F5E5A">基本集小而固定，扩展按需添加</text>
+
+  <!-- 五个扩展 -->
+  <g font-size="13" text-anchor="middle">
+    <rect x="45" y="160" width="95" height="84" rx="7" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.3"/>
+    <text x="92" y="192" font-size="22" font-weight="bold" fill="#0C447C">M</text>
+    <text x="92" y="218" fill="#3a3a38">乘除法</text>
+
+    <rect x="155" y="160" width="95" height="84" rx="7" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.3"/>
+    <text x="202" y="192" font-size="22" font-weight="bold" fill="#0C447C">A</text>
+    <text x="202" y="218" fill="#3a3a38">原子操作</text>
+
+    <rect x="265" y="160" width="95" height="84" rx="7" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.3"/>
+    <text x="312" y="192" font-size="22" font-weight="bold" fill="#0C447C">F</text>
+    <text x="312" y="218" fill="#3a3a38">单精度浮点</text>
+
+    <rect x="375" y="160" width="95" height="84" rx="7" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.3"/>
+    <text x="422" y="192" font-size="22" font-weight="bold" fill="#0C447C">D</text>
+    <text x="422" y="218" fill="#3a3a38">双精度浮点</text>
+
+    <rect x="485" y="160" width="95" height="84" rx="7" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.3"/>
+    <text x="532" y="192" font-size="22" font-weight="bold" fill="#0C447C">C</text>
+    <text x="532" y="218" fill="#3a3a38">压缩指令</text>
+  </g>
+
+  <!-- 扩展指向基座的箭头 -->
+  <g stroke="#185FA5" stroke-width="1.6" marker-end="url(#arrowBlue)">
+    <line x1="92" y1="246" x2="120" y2="316"/>
+    <line x1="202" y1="246" x2="215" y2="316"/>
+    <line x1="312" y1="246" x2="310" y2="316"/>
+    <line x1="422" y1="246" x2="405" y2="316"/>
+    <line x1="532" y1="246" x2="500" y2="316"/>
+  </g>
+  <text x="300" y="292" font-size="12" fill="#5F5E5A">按需叠加</text>
+
+  <!-- 基座 -->
+  <rect x="45" y="320" width="535" height="120" rx="9" fill="#FCE8E6" stroke="#A32D2D" stroke-width="1.8"/>
+  <text x="70" y="358" font-size="21" font-weight="bold" fill="#7a2020">RV32I 基本整数指令集</text>
+  <text x="70" y="388" font-size="14" fill="#2C2C2A">32 个 32 位通用寄存器，32 位地址空间</text>
+  <text x="70" y="414" font-size="14" fill="#2C2C2A">所有实现必须支持，定义好之后不能改</text>
+
+  <!-- 特权架构 -->
+  <rect x="630" y="160" width="230" height="280" rx="9" fill="#F3E8F6" stroke="#7B4A8A" stroke-width="1.5"/>
+  <text x="650" y="192" font-size="17" font-weight="bold" fill="#5E2E6E">特权架构</text>
+  <text x="650" y="224" font-size="13" fill="#2C2C2A">机器模式 M</text>
+  <text x="650" y="252" font-size="13" fill="#2C2C2A">监督者模式 S</text>
+  <text x="650" y="280" font-size="13" fill="#2C2C2A">用户模式 U</text>
+  <line x1="650" y1="300" x2="840" y2="300" stroke="#D3D1C8" stroke-width="1"/>
+  <text x="650" y="328" font-size="13" fill="#2C2C2A">控制与状态寄存器 CSR</text>
+  <text x="650" y="356" font-size="13" fill="#2C2C2A">异常、中断、内存保护</text>
+  <text x="650" y="398" font-size="11.5" fill="#7B4A8A">本书只用到机器模式的最小部分</text>
+
+  <!-- 底部说明 -->
+  <text x="45" y="476" font-size="14" fill="#1f2937">组合示例：RV32I + M 扩展 = RV32IM</text>
+  <text x="45" y="499" font-size="12" fill="#5F5E5A">基本集与扩展的名字拼在一起，就表示这颗核支持哪些能力</text>
+
+  <defs>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#185FA5"/>
+    </marker>
+  </defs>
+</svg>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<circuit>
+  <version>1</version>
+  <attributes>
+    <entry>
+      <string>Description</string>
+      <string>第5章 半加器：一个 XOr 门产生 sum，一个 And 门产生 carry。
+把 a、b 拨成四种组合，核对教材图 5-1 的真值表。
+半加器只看两个加数，不管低位送来的进位；全加器才补上 cin。
+对照教材第5章 5.1 节与 code/verilog/05_arith/half_adder.v。</string>
+    </entry>
+    <entry>
+      <string>Width</string>
+      <int>4</int>
+    </entry>
+  </attributes>
+  <visualElements>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>加数 a。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>a</string>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="120"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>加数 b。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>b</string>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="300"/>
+    </visualElement>
+    <visualElement>
+      <elementName>XOr</elementName>
+      <elementAttributes/>
+      <pos x="300" y="140"/>
+    </visualElement>
+    <visualElement>
+      <elementName>And</elementName>
+      <elementAttributes/>
+      <pos x="300" y="260"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>本位和 sum = a ^ b。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>sum</string>
+        </entry>
+      </elementAttributes>
+      <pos x="480" y="150"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>进位 carry = a &amp; b。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>carry</string>
+        </entry>
+      </elementAttributes>
+      <pos x="480" y="270"/>
+    </visualElement>
+  </visualElements>
+  <wires>
+    <wire><p1 x="100" y="120"/><p2 x="280" y="120"/></wire>
+    <wire><p1 x="280" y="120"/><p2 x="280" y="140"/></wire>
+    <wire><p1 x="280" y="140"/><p2 x="300" y="140"/></wire>
+    <wire><p1 x="100" y="120"/><p2 x="200" y="120"/></wire>
+    <wire><p1 x="200" y="120"/><p2 x="200" y="260"/></wire>
+    <wire><p1 x="200" y="260"/><p2 x="300" y="260"/></wire>
+    <wire><p1 x="100" y="300"/><p2 x="60" y="300"/></wire>
+    <wire><p1 x="60" y="300"/><p2 x="60" y="100"/></wire>
+    <wire><p1 x="60" y="100"/><p2 x="290" y="100"/></wire>
+    <wire><p1 x="290" y="100"/><p2 x="290" y="160"/></wire>
+    <wire><p1 x="290" y="160"/><p2 x="300" y="160"/></wire>
+    <wire><p1 x="100" y="300"/><p2 x="280" y="300"/></wire>
+    <wire><p1 x="280" y="300"/><p2 x="280" y="280"/></wire>
+    <wire><p1 x="280" y="280"/><p2 x="300" y="280"/></wire>
+    <wire><p1 x="330" y="150"/><p2 x="480" y="150"/></wire>
+    <wire><p1 x="330" y="270"/><p2 x="480" y="270"/></wire>
+  </wires>
+</circuit>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 380" width="940" height="380" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 14-2　全书走过的一圈</title>
+  <desc>从指令与汇编出发，经过数字电路、模拟器、处理器硬件，最后回到异常、外设和 C 程序，软硬两条线在收尾章交汇。</desc>
+  <rect x="0" y="0" width="940" height="380" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 14-2　全书走过的一圈</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">从软件出发，落到硬件，再带着硬件的眼光回到软件</text>
+
+  <!-- 软件侧 -->
+  <rect x="30" y="100" width="410" height="120" rx="10" fill="#DBEAFE" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="235" y="130" font-size="14" font-weight="bold" fill="#0B3D6E" text-anchor="middle">软件侧</text>
+  <text x="235" y="156" font-size="12" fill="#1f2937" text-anchor="middle">第 1-3 章　指令与汇编</text>
+  <text x="235" y="178" font-size="12" fill="#1f2937" text-anchor="middle">第 6-7 章　Python 模拟器</text>
+  <text x="235" y="200" font-size="12" fill="#1f2937" text-anchor="middle">第 13 章　裸机 C 程序</text>
+
+  <!-- 硬件侧 -->
+  <rect x="500" y="100" width="410" height="120" rx="10" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="705" y="130" font-size="14" font-weight="bold" fill="#92400E" text-anchor="middle">硬件侧</text>
+  <text x="705" y="156" font-size="12" fill="#1f2937" text-anchor="middle">第 4-5 章　门电路与 ALU</text>
+  <text x="705" y="178" font-size="12" fill="#1f2937" text-anchor="middle">第 8-10 章　单周期与流水线</text>
+  <text x="705" y="200" font-size="12" fill="#1f2937" text-anchor="middle">第 11-12 章　异常与外设</text>
+
+  <!-- 中间双向箭头 -->
+  <path d="M445 150 L495 150" stroke="#6B7280" stroke-width="2" marker-end="url(#arr)"/>
+  <path d="M495 175 L445 175" stroke="#6B7280" stroke-width="2" marker-end="url(#arr)"/>
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#6B7280"/>
+    </marker>
+  </defs>
+
+  <!-- 收尾 -->
+  <rect x="200" y="265" width="540" height="80" rx="10" fill="#D1FAE5" stroke="#047857" stroke-width="2"/>
+  <text x="470" y="296" font-size="15" font-weight="bold" fill="#065F46" text-anchor="middle">第 14 章　把系统跑起来</text>
+  <text x="470" y="322" font-size="12" fill="#065F46" text-anchor="middle">定时器中断 + 多任务切换，把异常、外设、C 程序串成一条线</text>
+
+  <path d="M235 222 L420 260" stroke="#047857" stroke-width="2" marker-end="url(#arr)"/>
+  <path d="M705 222 L520 260" stroke="#047857" stroke-width="2" marker-end="url(#arr)"/>
+
+  <text x="30" y="368" font-size="12" fill="#6B7280">合上书时应当能回答：一条 C 语句怎样变成门电路上的电平变化，又怎样被定时器打断。</text>
+</svg>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 11-3　外部中断的响应判据</title>
+  <desc>外部中断请求、全局中断使能和 mie 中对应位的使能三者同时满足时，处理器才响应中断。</desc>
+  <rect x="0" y="0" width="900" height="400" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 11-3　外部中断的响应判据</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">三个条件缺一不可，任何一个没满足就继续顺序执行</text>
+
+  <rect x="40" y="100" width="210" height="76" rx="6" fill="#FEF2F2" stroke="#B91C1C" stroke-width="1.5"/>
+  <text x="56" y="128" font-size="13" font-weight="bold" fill="#991B1B">有中断请求</text>
+  <text x="56" y="154" font-size="12" fill="#374151" font-family="monospace">irq_i = 1</text>
+
+  <rect x="40" y="196" width="210" height="76" rx="6" fill="#EFF6FF" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="56" y="224" font-size="13" font-weight="bold" fill="#0B3D6E">全局中断打开</text>
+  <text x="56" y="250" font-size="12" fill="#374151" font-family="monospace">mstatus.MIE = 1</text>
+
+  <rect x="40" y="292" width="210" height="76" rx="6" fill="#F5F3FF" stroke="#7E22CE" stroke-width="1.5"/>
+  <text x="56" y="320" font-size="13" font-weight="bold" fill="#581C87">这一类被允许</text>
+  <text x="56" y="346" font-size="12" fill="#374151" font-family="monospace">mie[11] = 1</text>
+
+  <path d="M 250 138 L 330 138 L 330 215 L 388 215" stroke="#6B7280" stroke-width="2" fill="none" marker-end="url(#arrow4)"/>
+  <path d="M 250 234 L 388 234" stroke="#6B7280" stroke-width="2" marker-end="url(#arrow4)"/>
+  <path d="M 250 330 L 330 330 L 330 253 L 388 253" stroke="#6B7280" stroke-width="2" fill="none" marker-end="url(#arrow4)"/>
+  <defs>
+    <marker id="arrow4" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#6B7280"/>
+    </marker>
+  </defs>
+
+  <rect x="392" y="196" width="106" height="76" rx="38" fill="#FFFFF7" stroke="#B45309" stroke-width="2"/>
+  <text x="445" y="243" font-size="20" font-weight="bold" fill="#92400E" text-anchor="middle">&amp;</text>
+
+  <path d="M 498 234 L 554 234" stroke="#6B7280" stroke-width="2" marker-end="url(#arrow4)"/>
+
+  <rect x="558" y="116" width="312" height="236" rx="8" fill="#ECFDF5" stroke="#047857" stroke-width="1.5"/>
+  <text x="576" y="146" font-size="14" font-weight="bold" fill="#065F46">响应中断</text>
+  <text x="576" y="178" font-size="12" fill="#374151" font-family="monospace">mepc  &lt;= pc + 4</text>
+  <text x="576" y="204" font-size="11.5" fill="#6B7280">当前指令已经做完</text>
+  <text x="576" y="234" font-size="12" fill="#374151" font-family="monospace">mcause &lt;= 0x8000000b</text>
+  <text x="576" y="260" font-size="11.5" fill="#6B7280">最高位 1 表示中断，低位是 11</text>
+  <text x="576" y="290" font-size="12" fill="#374151" font-family="monospace">pc &lt;= mtvec</text>
+  <text x="576" y="316" font-size="12" fill="#374151" font-family="monospace">MIE &lt;= 0</text>
+  <text x="576" y="340" font-size="11.5" fill="#6B7280">进入处理程序后先屏蔽中断</text>
+
+  <text x="40" y="390" font-size="12.5" fill="#374151">mstatus.MIE 是总开关，mie[11] 是外部中断这一类的开关。等价于家里总闸和房间灯开关都要合上。</text>
+</svg>

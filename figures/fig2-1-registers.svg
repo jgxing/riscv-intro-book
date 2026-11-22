@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 2-1　RV32I 通用寄存器与 ABI 名称</title>
+  <desc>32 个通用寄存器按四列排布，每格给出编号和 ABI 名称。x0 恒为零，t 系列为临时寄存器，s 系列为保存寄存器，a 系列用于函数参数和返回值。</desc>
+  <rect x="0" y="0" width="900" height="560" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#1f2937">图 2-1　RV32I 通用寄存器与 ABI 名称</text>
+  <text x="30" y="64" font-size="12.5" fill="#5F5E5A">每格左边是编号，右边是汇编程序常用的名字</text>
+
+  <!-- 列 1: x0-x7 -->
+  <g font-size="13">
+    <rect x="40" y="90" width="180" height="44" rx="5" fill="#FCE8E6" stroke="#A32D2D" stroke-width="1.2"/>
+    <text x="54" y="118" font-weight="bold" fill="#7a2020">x0</text><text x="110" y="118" fill="#2C2C2A">zero　恒为 0</text>
+    <rect x="40" y="138" width="180" height="44" rx="5" fill="#FAFAF8" stroke="#D3D1C8"/>
+    <text x="54" y="166" font-weight="bold" fill="#1f2937">x1</text><text x="110" y="166" fill="#2C2C2A">ra　返回地址</text>
+    <rect x="40" y="186" width="180" height="44" rx="5" fill="#FAFAF8" stroke="#D3D1C8"/>
+    <text x="54" y="214" font-weight="bold" fill="#1f2937">x2</text><text x="110" y="214" fill="#2C2C2A">sp　栈指针</text>
+    <rect x="40" y="234" width="180" height="44" rx="5" fill="#FAFAF8" stroke="#D3D1C8"/>
+    <text x="54" y="262" font-weight="bold" fill="#1f2937">x3</text><text x="110" y="262" fill="#2C2C2A">gp　全局指针</text>
+    <rect x="40" y="282" width="180" height="44" rx="5" fill="#FAFAF8" stroke="#D3D1C8"/>
+    <text x="54" y="310" font-weight="bold" fill="#1f2937">x4</text><text x="110" y="310" fill="#2C2C2A">tp　线程指针</text>
+    <rect x="40" y="330" width="180" height="44" rx="5" fill="#E6F1FB" stroke="#185FA5"/>
+    <text x="54" y="358" font-weight="bold" fill="#0C447C">x5</text><text x="110" y="358" fill="#2C2C2A">t0　临时</text>
+    <rect x="40" y="378" width="180" height="44" rx="5" fill="#E6F1FB" stroke="#185FA5"/>
+    <text x="54" y="406" font-weight="bold" fill="#0C447C">x6</text><text x="110" y="406" fill="#2C2C2A">t1　临时</text>
+    <rect x="40" y="426" width="180" height="44" rx="5" fill="#E6F1FB" stroke="#185FA5"/>
+    <text x="54" y="454" font-weight="bold" fill="#0C447C">x7</text><text x="110" y="454" fill="#2C2C2A">t2　临时</text>
+  </g>
+
+  <!-- 列 2: x8-x15 -->
+  <g font-size="13">
+    <rect x="245" y="90" width="180" height="44" rx="5" fill="#E7F3EC" stroke="#3B7A57"/>
+    <text x="259" y="118" font-weight="bold" fill="#2d5c43">x8</text><text x="315" y="118" fill="#2C2C2A">s0 / fp　帧指针</text>
+    <rect x="245" y="138" width="180" height="44" rx="5" fill="#E7F3EC" stroke="#3B7A57"/>
+    <text x="259" y="166" font-weight="bold" fill="#2d5c43">x9</text><text x="315" y="166" fill="#2C2C2A">s1　保存</text>
+    <rect x="245" y="186" width="180" height="44" rx="5" fill="#FDF2E4" stroke="#BA7517"/>
+    <text x="259" y="214" font-weight="bold" fill="#7a4f00">x10</text><text x="322" y="214" fill="#2C2C2A">a0　参数/返回值</text>
+    <rect x="245" y="234" width="180" height="44" rx="5" fill="#FDF2E4" stroke="#BA7517"/>
+    <text x="259" y="262" font-weight="bold" fill="#7a4f00">x11</text><text x="322" y="262" fill="#2C2C2A">a1　参数/返回值</text>
+    <rect x="245" y="282" width="180" height="44" rx="5" fill="#FDF2E4" stroke="#BA7517"/>
+    <text x="259" y="310" font-weight="bold" fill="#7a4f00">x12</text><text x="322" y="310" fill="#2C2C2A">a2　参数</text>
+    <rect x="245" y="330" width="180" height="44" rx="5" fill="#FDF2E4" stroke="#BA7517"/>
+    <text x="259" y="358" font-weight="bold" fill="#7a4f00">x13</text><text x="322" y="358" fill="#2C2C2A">a3　参数</text>
+    <rect x="245" y="378" width="180" height="44" rx="5" fill="#FDF2E4" stroke="#BA7517"/>
+    <text x="259" y="406" font-weight="bold" fill="#7a4f00">x14</text><text x="322" y="406" fill="#2C2C2A">a4　参数</text>
+    <rect x="245" y="426" width="180" height="44" rx="5" fill="#FDF2E4" stroke="#BA7517"/>
+    <text x="259" y="454" font-weight="bold" fill="#7a4f00">x15</text><text x="322" y="454" fill="#2C2C2A">a5　参数</text>
+  </g>
+
+  <!-- 列 3: x16-x23 -->
+  <g font-size="13">
+    <rect x="450" y="90" width="180" height="44" rx="5" fill="#FDF2E4" stroke="#BA7517"/>
+    <text x="464" y="118" font-weight="bold" fill="#7a4f00">x16</text><text x="527" y="118" fill="#2C2C2A">a6　参数</text>
+    <rect x="450" y="138" width="180" height="44" rx="5" fill="#FDF2E4" stroke="#BA7517"/>
+    <text x="464" y="166" font-weight="bold" fill="#7a4f00">x17</text><text x="527" y="166" fill="#2C2C2A">a7　系统调用号</text>
+    <rect x="450" y="186" width="180" height="44" rx="5" fill="#E7F3EC" stroke="#3B7A57"/>
+    <text x="464" y="214" font-weight="bold" fill="#2d5c43">x18</text><text x="527" y="214" fill="#2C2C2A">s2　保存</text>
+    <rect x="450" y="234" width="180" height="44" rx="5" fill="#E7F3EC" stroke="#3B7A57"/>
+    <text x="464" y="262" font-weight="bold" fill="#2d5c43">x19</text><text x="527" y="262" fill="#2C2C2A">s3　保存</text>
+    <rect x="450" y="282" width="180" height="44" rx="5" fill="#E7F3EC" stroke="#3B7A57"/>
+    <text x="464" y="310" font-weight="bold" fill="#2d5c43">x20</text><text x="527" y="310" fill="#2C2C2A">s4　保存</text>
+    <rect x="450" y="330" width="180" height="44" rx="5" fill="#E7F3EC" stroke="#3B7A57"/>
+    <text x="464" y="358" font-weight="bold" fill="#2d5c43">x21</text><text x="527" y="358" fill="#2C2C2A">s5　保存</text>
+    <rect x="450" y="378" width="180" height="44" rx="5" fill="#E7F3EC" stroke="#3B7A57"/>
+    <text x="464" y="406" font-weight="bold" fill="#2d5c43">x22</text><text x="527" y="406" fill="#2C2C2A">s6　保存</text>
+    <rect x="450" y="426" width="180" height="44" rx="5" fill="#E7F3EC" stroke="#3B7A57"/>
+    <text x="464" y="454" font-weight="bold" fill="#2d5c43">x23</text><text x="527" y="454" fill="#2C2C2A">s7　保存</text>
+  </g>
+
+  <!-- 列 4: x24-x31 -->
+  <g font-size="13">
+    <rect x="655" y="90" width="180" height="44" rx="5" fill="#E7F3EC" stroke="#3B7A57"/>
+    <text x="669" y="118" font-weight="bold" fill="#2d5c43">x24</text><text x="732" y="118" fill="#2C2C2A">s8　保存</text>
+    <rect x="655" y="138" width="180" height="44" rx="5" fill="#E7F3EC" stroke="#3B7A57"/>
+    <text x="669" y="166" font-weight="bold" fill="#2d5c43">x25</text><text x="732" y="166" fill="#2C2C2A">s9　保存</text>
+    <rect x="655" y="186" width="180" height="44" rx="5" fill="#E7F3EC" stroke="#3B7A57"/>
+    <text x="669" y="214" font-weight="bold" fill="#2d5c43">x26</text><text x="732" y="214" fill="#2C2C2A">s10　保存</text>
+    <rect x="655" y="234" width="180" height="44" rx="5" fill="#E7F3EC" stroke="#3B7A57"/>
+    <text x="669" y="262" font-weight="bold" fill="#2d5c43">x27</text><text x="732" y="262" fill="#2C2C2A">s11　保存</text>
+    <rect x="655" y="282" width="180" height="44" rx="5" fill="#E6F1FB" stroke="#185FA5"/>
+    <text x="669" y="310" font-weight="bold" fill="#0C447C">x28</text><text x="732" y="310" fill="#2C2C2A">t3　临时</text>
+    <rect x="655" y="330" width="180" height="44" rx="5" fill="#E6F1FB" stroke="#185FA5"/>
+    <text x="669" y="358" font-weight="bold" fill="#0C447C">x29</text><text x="732" y="358" fill="#2C2C2A">t4　临时</text>
+    <rect x="655" y="378" width="180" height="44" rx="5" fill="#E6F1FB" stroke="#185FA5"/>
+    <text x="669" y="406" font-weight="bold" fill="#0C447C">x30</text><text x="732" y="406" fill="#2C2C2A">t5　临时</text>
+    <rect x="655" y="426" width="180" height="44" rx="5" fill="#E6F1FB" stroke="#185FA5"/>
+    <text x="669" y="454" font-weight="bold" fill="#0C447C">x31</text><text x="732" y="454" fill="#2C2C2A">t6　临时</text>
+  </g>
+
+  <rect x="40" y="496" width="795" height="44" rx="6" fill="#FAFAF8" stroke="#D3D1C8"/>
+  <text x="56" y="523" font-size="12.5" fill="#3a3a38">t 系列随手可用，s 系列在函数里用了要恢复，a 系列传参数和返回值，sp 和 ra 有专门用途</text>
+</svg>

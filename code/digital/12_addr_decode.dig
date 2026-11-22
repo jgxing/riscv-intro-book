@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<circuit>
+  <version>1</version>
+  <attributes>
+    <entry>
+      <string>Description</string>
+      <string>第12章 外设地址译码的简化模型：用地址最高两位 a1 a0 译出四个片选。
+00-&gt;内存 mem_sel，01-&gt;定时器 timer_sel，10-&gt;GPIO gpio_sel，11-&gt;串口 uart_sel。
+对应 code/verilog/12_peripheral/bus.v 中按地址选择设备的思想，真实电路要比较全部地址位，门数更多，原理相同。
+真值表（a1 a0 -&gt; mem timer gpio uart）：
+00-&gt;1000 01-&gt;0100 10-&gt;0010 11-&gt;0001。</string>
+    </entry>
+    <entry>
+      <string>Width</string>
+      <int>4</int>
+    </entry>
+  </attributes>
+  <visualElements>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>a1</string>
+        </entry>
+      </elementAttributes>
+      <pos x="80" y="100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>a0</string>
+        </entry>
+      </elementAttributes>
+      <pos x="80" y="300"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Not</elementName>
+      <elementAttributes/>
+      <pos x="200" y="100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Not</elementName>
+      <elementAttributes/>
+      <pos x="200" y="300"/>
+    </visualElement>
+    <visualElement>
+      <elementName>And</elementName>
+      <elementAttributes/>
+      <pos x="420" y="80"/>
+    </visualElement>
+    <visualElement>
+      <elementName>And</elementName>
+      <elementAttributes/>
+      <pos x="420" y="180"/>
+    </visualElement>
+    <visualElement>
+      <elementName>And</elementName>
+      <elementAttributes/>
+      <pos x="420" y="280"/>
+    </visualElement>
+    <visualElement>
+      <elementName>And</elementName>
+      <elementAttributes/>
+      <pos x="420" y="380"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>mem_sel</string>
+        </entry>
+      </elementAttributes>
+      <pos x="580" y="90"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>timer_sel</string>
+        </entry>
+      </elementAttributes>
+      <pos x="580" y="190"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>gpio_sel</string>
+        </entry>
+      </elementAttributes>
+      <pos x="580" y="290"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>uart_sel</string>
+        </entry>
+      </elementAttributes>
+      <pos x="580" y="390"/>
+    </visualElement>
+  </visualElements>
+  <wires>
+    <!-- ~a1 供给 y=80 与 y=180 两个与门 -->
+    <wire><p1 x="80" y="100"/><p2 x="200" y="100"/></wire>
+    <wire><p1 x="240" y="100"/><p2 x="420" y="80"/></wire>
+    <wire><p1 x="240" y="100"/><p2 x="420" y="180"/></wire>
+    <!-- ~a0 供给 y=100 与 y=300 两个与门输入 -->
+    <wire><p1 x="80" y="300"/><p2 x="200" y="300"/></wire>
+    <wire><p1 x="240" y="300"/><p2 x="420" y="100"/></wire>
+    <wire><p1 x="240" y="300"/><p2 x="420" y="300"/></wire>
+    <!-- a1 原始信号供给 y=280 与 y=380 -->
+    <wire><p1 x="80" y="100"/><p2 x="420" y="280"/></wire>
+    <wire><p1 x="80" y="100"/><p2 x="420" y="380"/></wire>
+    <!-- a0 原始信号供给 y=200 与 y=400 -->
+    <wire><p1 x="80" y="300"/><p2 x="420" y="200"/></wire>
+    <wire><p1 x="80" y="300"/><p2 x="420" y="400"/></wire>
+    <!-- 四个与门输出 -->
+    <wire><p1 x="450" y="90"/><p2 x="580" y="90"/></wire>
+    <wire><p1 x="450" y="190"/><p2 x="580" y="190"/></wire>
+    <wire><p1 x="450" y="290"/><p2 x="580" y="290"/></wire>
+    <wire><p1 x="450" y="390"/><p2 x="580" y="390"/></wire>
+  </wires>
+  <tests>
+    <test>
+      <entry><string>a1</string><int>0</int></entry>
+      <entry><string>a0</string><int>0</int></entry>
+      <entry><string>mem_sel</string><int>1</int></entry>
+      <entry><string>timer_sel</string><int>0</int></entry>
+      <entry><string>gpio_sel</string><int>0</int></entry>
+      <entry><string>uart_sel</string><int>0</int></entry>
+    </test>
+    <test>
+      <entry><string>a1</string><int>0</int></entry>
+      <entry><string>a0</string><int>1</int></entry>
+      <entry><string>mem_sel</string><int>0</int></entry>
+      <entry><string>timer_sel</string><int>1</int></entry>
+      <entry><string>gpio_sel</string><int>0</int></entry>
+      <entry><string>uart_sel</string><int>0</int></entry>
+    </test>
+    <test>
+      <entry><string>a1</string><int>1</int></entry>
+      <entry><string>a0</string><int>0</int></entry>
+      <entry><string>mem_sel</string><int>0</int></entry>
+      <entry><string>timer_sel</string><int>0</int></entry>
+      <entry><string>gpio_sel</string><int>1</int></entry>
+      <entry><string>uart_sel</string><int>0</int></entry>
+    </test>
+    <test>
+      <entry><string>a1</string><int>1</int></entry>
+      <entry><string>a0</string><int>1</int></entry>
+      <entry><string>mem_sel</string><int>0</int></entry>
+      <entry><string>timer_sel</string><int>0</int></entry>
+      <entry><string>gpio_sel</string><int>0</int></entry>
+      <entry><string>uart_sel</string><int>1</int></entry>
+    </test>
+  </tests>
+</circuit>

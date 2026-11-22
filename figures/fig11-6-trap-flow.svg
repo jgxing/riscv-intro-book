@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 460" width="900" height="460" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 11-6　一次 ecall 的完整处理流程</title>
+  <desc>主程序执行 ecall 后硬件保存现场并跳到异常入口，处理程序读取 mcause、调整 mepc，再用 mret 返回主程序。</desc>
+  <rect x="0" y="0" width="900" height="460" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 11-6　一次 ecall 的完整处理流程</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">硬件负责保存与跳转，软件负责分辨原因与恢复</text>
+
+  <!-- 上排 -->
+  <rect x="30" y="100" width="180" height="96" rx="7" fill="#EFF6FF" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="46" y="128" font-size="13" font-weight="bold" fill="#0B3D6E">主程序</text>
+  <text x="46" y="152" font-size="11.5" fill="#374151" font-family="monospace">addi x1, x0, 10</text>
+  <text x="46" y="174" font-size="11.5" fill="#374151" font-family="monospace">ecall</text>
+
+  <rect x="250" y="100" width="180" height="96" rx="7" fill="#F5F3FF" stroke="#7E22CE" stroke-width="1.5"/>
+  <text x="266" y="128" font-size="13" font-weight="bold" fill="#581C87">硬件陷入</text>
+  <text x="266" y="152" font-size="11.5" fill="#374151" font-family="monospace">mepc &lt;= 0x10</text>
+  <text x="266" y="174" font-size="11.5" fill="#374151" font-family="monospace">mcause &lt;= 8</text>
+
+  <rect x="470" y="100" width="180" height="96" rx="7" fill="#F5F3FF" stroke="#7E22CE" stroke-width="1.5"/>
+  <text x="486" y="128" font-size="13" font-weight="bold" fill="#581C87">跳到入口</text>
+  <text x="486" y="152" font-size="11.5" fill="#374151" font-family="monospace">pc &lt;= mtvec</text>
+  <text x="486" y="174" font-size="11.5" fill="#374151">关闭中断使能</text>
+
+  <rect x="690" y="100" width="180" height="96" rx="7" fill="#ECFDF5" stroke="#047857" stroke-width="1.5"/>
+  <text x="706" y="128" font-size="13" font-weight="bold" fill="#065F46">处理程序</text>
+  <text x="706" y="152" font-size="11.5" fill="#374151" font-family="monospace">csrrs x10, mcause</text>
+  <text x="706" y="174" font-size="11.5" fill="#374151">判断是哪种陷入</text>
+
+  <path d="M 210 148 L 244 148" stroke="#6B7280" stroke-width="2" marker-end="url(#arrow3)"/>
+  <path d="M 430 148 L 464 148" stroke="#6B7280" stroke-width="2" marker-end="url(#arrow3)"/>
+  <path d="M 650 148 L 684 148" stroke="#6B7280" stroke-width="2" marker-end="url(#arrow3)"/>
+  <defs>
+    <marker id="arrow3" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#6B7280"/>
+    </marker>
+  </defs>
+
+  <!-- 下排 -->
+  <rect x="690" y="264" width="180" height="96" rx="7" fill="#ECFDF5" stroke="#047857" stroke-width="1.5"/>
+  <text x="706" y="292" font-size="13" font-weight="bold" fill="#065F46">调整返回点</text>
+  <text x="706" y="316" font-size="11.5" fill="#374151" font-family="monospace">mepc += 4</text>
+  <text x="706" y="338" font-size="11.5" fill="#6B7280">只对同步异常需要</text>
+
+  <rect x="470" y="264" width="180" height="96" rx="7" fill="#ECFDF5" stroke="#047857" stroke-width="1.5"/>
+  <text x="486" y="292" font-size="13" font-weight="bold" fill="#065F46">执行 mret</text>
+  <text x="486" y="316" font-size="11.5" fill="#374151" font-family="monospace">pc &lt;= mepc</text>
+  <text x="486" y="338" font-size="11.5" fill="#374151" font-family="monospace">MIE &lt;= MPIE</text>
+
+  <rect x="250" y="264" width="180" height="96" rx="7" fill="#EFF6FF" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="266" y="292" font-size="13" font-weight="bold" fill="#0B3D6E">回到主程序</text>
+  <text x="266" y="316" font-size="11.5" fill="#374151" font-family="monospace">addi x2, x1, 5</text>
+  <text x="266" y="338" font-size="11.5" fill="#6B7280">从 ecall 的下一条继续</text>
+
+  <rect x="30" y="264" width="180" height="96" rx="7" fill="#FFFFF7" stroke="#B45309" stroke-width="1.5"/>
+  <text x="46" y="292" font-size="13" font-weight="bold" fill="#92400E">程序继续</text>
+  <text x="46" y="316" font-size="11.5" fill="#374151">主程序并不知道刚才</text>
+  <text x="46" y="338" font-size="11.5" fill="#374151">被中断过一次</text>
+
+  <path d="M 780 196 L 780 258" stroke="#047857" stroke-width="2" marker-end="url(#arrow3)"/>
+  <path d="M 690 312 L 656 312" stroke="#047857" stroke-width="2" marker-end="url(#arrow3)"/>
+  <path d="M 470 312 L 436 312" stroke="#047857" stroke-width="2" marker-end="url(#arrow3)"/>
+  <path d="M 250 312 L 216 312" stroke="#047857" stroke-width="2" marker-end="url(#arrow3)"/>
+
+  <text x="30" y="392" font-size="12.5" fill="#374151">图中省略了整数寄存器的保存。真实的处理程序会用 mscratch 换出一个寄存器，再把寄存器写进栈上。</text>
+  <text x="30" y="420" font-size="12.5" fill="#B45309">本章的处理程序只读 CSR、写 mepc，用到的 x10 至 x14 随后被主程序重新赋值，不影响结果。</text>
+  <text x="30" y="446" font-size="12.5" fill="#6B7280">把这条流程走通，再去看操作系统里的上下文切换，会发现骨架是一样的。</text>
+</svg>

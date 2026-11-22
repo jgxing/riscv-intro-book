@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 360" width="940" height="360" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 14-6　两个任务交替输出的时空图</title>
+  <desc>定时器把时间切成一段段时间片，任务 A 与 B 轮流占用处理器，串口上出现 ABAB 交替的字符。</desc>
+  <rect x="0" y="0" width="940" height="360" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 14-6　两个任务交替输出的时空图</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">每个任务都以为自己在独占处理器，其实时间被切成了小段</text>
+
+  <!-- 时间片方格 -->
+  <g font-size="12" text-anchor="middle">
+    <rect x="40" y="100" width="80" height="44" rx="4" fill="#DBEAFE" stroke="#185FA5"/>
+    <text x="80" y="128" fill="#0B3D6E">A</text>
+    <rect x="124" y="100" width="80" height="44" rx="4" fill="#D1FAE5" stroke="#047857"/>
+    <text x="164" y="128" fill="#065F46">B</text>
+    <rect x="208" y="100" width="80" height="44" rx="4" fill="#DBEAFE" stroke="#185FA5"/>
+    <text x="248" y="128" fill="#0B3D6E">A</text>
+    <rect x="292" y="100" width="80" height="44" rx="4" fill="#D1FAE5" stroke="#047857"/>
+    <text x="332" y="128" fill="#065F46">B</text>
+    <rect x="376" y="100" width="80" height="44" rx="4" fill="#DBEAFE" stroke="#185FA5"/>
+    <text x="416" y="128" fill="#0B3D6E">A</text>
+    <rect x="460" y="100" width="80" height="44" rx="4" fill="#D1FAE5" stroke="#047857"/>
+    <text x="500" y="128" fill="#065F46">B</text>
+    <rect x="544" y="100" width="80" height="44" rx="4" fill="#DBEAFE" stroke="#185FA5"/>
+    <text x="584" y="128" fill="#0B3D6E">A</text>
+    <rect x="628" y="100" width="80" height="44" rx="4" fill="#D1FAE5" stroke="#047857"/>
+    <text x="668" y="128" fill="#065F46">B</text>
+  </g>
+  <text x="740" y="128" font-size="13" fill="#6B7280">… 一直交替</text>
+
+  <!-- 切换标记 -->
+  <g stroke="#BE123C" stroke-width="1.5" stroke-dasharray="3 3">
+    <line x1="124" y1="92" x2="124" y2="150"/>
+    <line x1="208" y1="92" x2="208" y2="150"/>
+    <line x1="292" y1="92" x2="292" y2="150"/>
+    <line x1="376" y1="92" x2="376" y2="150"/>
+    <line x1="460" y1="92" x2="460" y2="150"/>
+    <line x1="544" y1="92" x2="544" y2="150"/>
+    <line x1="628" y1="92" x2="628" y2="150"/>
+  </g>
+  <text x="40" y="168" font-size="11" fill="#BE123C">↑ 每次虚线处都是一次定时器陷阱</text>
+
+  <!-- 串口输出 -->
+  <rect x="40" y="205" width="860" height="70" rx="10" fill="#FAFAF9" stroke="#D6D3D1"/>
+  <text x="58" y="232" font-size="12" fill="#374151">串口实际看到：</text>
+  <text x="58" y="260" font-size="18" font-family="monospace" fill="#1f2937">A B A B A B A B …</text>
+
+  <text x="40" y="320" font-size="12" fill="#6B7280">注：每个时间片里任务执行一次循环，写自己的字符，然后忙等；定时器一到点就被换下。</text>
+</svg>

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 420" width="940" height="420" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 14-4　陷阱进入时保存的现场</title>
+  <desc>进入陷阱时，硬件只自动保存 pc 与原因，通用寄存器要由软件压进当前任务的栈，形成一帧完整的现场。</desc>
+  <rect x="0" y="0" width="940" height="420" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 14-4　陷阱进入时保存的现场</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">硬件只管跳，现场得软件自己收</text>
+
+  <!-- 左边：硬件自动部分 -->
+  <rect x="30" y="95" width="290" height="290" rx="10" fill="#DBEAFE" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="175" y="125" font-size="14" font-weight="bold" fill="#0B3D6E" text-anchor="middle">硬件自动完成</text>
+  <g font-size="12" fill="#1f2937">
+    <text x="52" y="160">mepc  ← 被中断的 pc</text>
+    <text x="52" y="190">mcause ← 陷阱原因</text>
+    <text x="52" y="220">mtval  ← 附加信息</text>
+    <text x="52" y="250">mstatus.MIE ← 清零</text>
+    <text x="52" y="280">mstatus.MPIE ← 旧 MIE</text>
+    <text x="52" y="310">pc ← mtvec</text>
+  </g>
+  <text x="52" y="350" font-size="11" fill="#185FA5">只保存这几样，通用寄存器原样不动</text>
+
+  <!-- 中间箭头 -->
+  <path d="M325 240 L395 240" stroke="#6B7280" stroke-width="2" marker-end="url(#arr)"/>
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#6B7280"/>
+    </marker>
+  </defs>
+
+  <!-- 右边：软件压栈 -->
+  <rect x="400" y="95" width="510" height="290" rx="10" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="655" y="125" font-size="14" font-weight="bold" fill="#92400E" text-anchor="middle">软件压进当前任务的内核栈</text>
+
+  <!-- 栈示意 -->
+  <g font-size="11.5" font-family="monospace" fill="#1f2937">
+    <rect x="430" y="145" width="450" height="26" fill="#FFFFFF" stroke="#D6D3D1"/>
+    <text x="440" y="163">sp →   ra, gp, tp, t0…t6</text>
+    <rect x="430" y="173" width="450" height="26" fill="#F5F5F4" stroke="#D6D3D1"/>
+    <text x="440" y="191">       s0…s11, a0…a7</text>
+    <rect x="430" y="201" width="450" height="26" fill="#FFFFFF" stroke="#D6D3D1"/>
+    <text x="440" y="219">       mepc（返回地址）</text>
+    <rect x="430" y="229" width="450" height="26" fill="#F5F5F4" stroke="#D6D3D1"/>
+    <text x="440" y="247">       旧的 sp</text>
+  </g>
+  <text x="430" y="285" font-size="12" fill="#92400E">这一帧就是任务的“现场”：切走时存进去，切回来时照原样弹回寄存器。</text>
+  <text x="430" y="315" font-size="12" fill="#92400E">PCB 里只要记住这帧的栈顶指针，切换就只剩一次赋值。</text>
+  <text x="430" y="355" font-size="12" font-family="monospace" fill="#1f2937">current->sp = trap_sp;</text>
+</svg>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<circuit>
+  <version>1</version>
+  <attributes>
+    <entry>
+      <string>Description</string>
+      <string>第11章 外部中断响应判据：irq_taken = irq_i &amp; mstatus.MIE &amp; mie[11]。
+三个拨码开关分别代表外部中断请求、全局中断使能、该类中断使能，三者全为 1 时输出才为 1。
+真值表（irq, MIE, mie11 -&gt; taken）：
+000-&gt;0 001-&gt;0 010-&gt;0 011-&gt;0 100-&gt;0 101-&gt;0 110-&gt;0 111-&gt;1。
+对应 code/verilog/11_trap/core.v 中的 irq_pending 信号。</string>
+    </entry>
+    <entry>
+      <string>Width</string>
+      <int>4</int>
+    </entry>
+  </attributes>
+  <visualElements>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>外部中断请求 irq_i。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>irq_i</string>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>该中断源自己的使能位 mie[11]。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>mie11</string>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="200"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>全局中断使能 mstatus.MIE。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>MIE</string>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="300"/>
+    </visualElement>
+    <visualElement>
+      <elementName>And</elementName>
+      <elementAttributes/>
+      <pos x="300" y="120"/>
+    </visualElement>
+    <visualElement>
+      <elementName>And</elementName>
+      <elementAttributes/>
+      <pos x="440" y="180"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>三个条件同时满足才响应中断。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>irq_taken</string>
+        </entry>
+      </elementAttributes>
+      <pos x="560" y="190"/>
+    </visualElement>
+  </visualElements>
+  <wires>
+    <wire><p1 x="100" y="100"/><p2 x="280" y="100"/></wire>
+    <wire><p1 x="280" y="100"/><p2 x="280" y="120"/></wire>
+    <wire><p1 x="280" y="120"/><p2 x="300" y="120"/></wire>
+    <wire><p1 x="100" y="200"/><p2 x="280" y="200"/></wire>
+    <wire><p1 x="280" y="200"/><p2 x="280" y="140"/></wire>
+    <wire><p1 x="280" y="140"/><p2 x="300" y="140"/></wire>
+    <wire><p1 x="330" y="130"/><p2 x="420" y="130"/></wire>
+    <wire><p1 x="420" y="130"/><p2 x="420" y="180"/></wire>
+    <wire><p1 x="420" y="180"/><p2 x="440" y="180"/></wire>
+    <wire><p1 x="100" y="300"/><p2 x="420" y="300"/></wire>
+    <wire><p1 x="420" y="300"/><p2 x="420" y="200"/></wire>
+    <wire><p1 x="420" y="200"/><p2 x="440" y="200"/></wire>
+    <wire><p1 x="470" y="190"/><p2 x="560" y="190"/></wire>
+  </wires>
+</circuit>

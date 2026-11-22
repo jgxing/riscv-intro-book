@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 12-2　CPU 经总线连接内存与外设</title>
+  <desc>CPU 把地址、写使能和数据送给总线，总线按地址分发给内存、定时器、GPIO 和 UART，再把选中的读出数据送回 CPU。</desc>
+  <rect x="0" y="0" width="900" height="520" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 12-2　CPU 经总线连接内存与外设</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">总线只有一个任务：这次访问该交给谁</text>
+
+  <!-- CPU -->
+  <rect x="40" y="180" width="180" height="150" rx="8" fill="#EFF6FF" stroke="#185FA5" stroke-width="2"/>
+  <text x="130" y="215" font-size="16" font-weight="bold" fill="#0B3D6E" text-anchor="middle">CPU 核</text>
+  <text x="130" y="245" font-size="12" fill="#374151" text-anchor="middle">PC、寄存器堆、ALU</text>
+  <text x="130" y="270" font-size="12" fill="#374151" text-anchor="middle">译码与控制</text>
+  <text x="130" y="300" font-size="11" font-family="monospace" fill="#1f2937" text-anchor="middle">addr / we / wdata</text>
+
+  <!-- Bus -->
+  <rect x="330" y="170" width="200" height="170" rx="8" fill="#F5F3FF" stroke="#7E22CE" stroke-width="2"/>
+  <text x="430" y="205" font-size="16" font-weight="bold" fill="#581C87" text-anchor="middle">总线 bus</text>
+  <text x="430" y="232" font-size="12" fill="#374151" text-anchor="middle">地址译码</text>
+  <text x="430" y="254" font-size="12" fill="#374151" text-anchor="middle">片选 + 读数据选择</text>
+  <text x="430" y="284" font-size="11" fill="#6B7280" text-anchor="middle">mem_sel  io_sel</text>
+  <text x="430" y="306" font-size="11" fill="#6B7280" text-anchor="middle">rdata 送回 CPU</text>
+
+  <!-- CPU -> Bus -->
+  <line x1="220" y1="245" x2="330" y2="245" stroke="#185FA5" stroke-width="2"/>
+  <polygon points="330,245 320,240 320,250" fill="#185FA5"/>
+  <text x="275" y="236" font-size="11" fill="#185FA5" text-anchor="middle">访存请求</text>
+  <line x1="330" y1="290" x2="220" y2="290" stroke="#7E22CE" stroke-width="2"/>
+  <polygon points="220,290 230,285 230,295" fill="#7E22CE"/>
+  <text x="275" y="308" font-size="11" fill="#7E22CE" text-anchor="middle">rdata</text>
+
+  <!-- 四个设备 -->
+  <rect x="640" y="90" width="220" height="62" rx="6" fill="#D1FAE5" stroke="#047857" stroke-width="1.5"/>
+  <text x="750" y="115" font-size="13" font-weight="bold" fill="#065F46" text-anchor="middle">数据内存 dmem</text>
+  <text x="750" y="136" font-size="11" font-family="monospace" fill="#047857" text-anchor="middle">0x10000000</text>
+
+  <rect x="640" y="168" width="220" height="62" rx="6" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="750" y="193" font-size="13" font-weight="bold" fill="#92400E" text-anchor="middle">定时器 timer</text>
+  <text x="750" y="214" font-size="11" font-family="monospace" fill="#92400E" text-anchor="middle">0xffff0000</text>
+
+  <rect x="640" y="246" width="220" height="62" rx="6" fill="#DBEAFE" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="750" y="271" font-size="13" font-weight="bold" fill="#0B3D6E" text-anchor="middle">GPIO</text>
+  <text x="750" y="292" font-size="11" font-family="monospace" fill="#0B3D6E" text-anchor="middle">0xffff0010 / 0020</text>
+
+  <rect x="640" y="324" width="220" height="62" rx="6" fill="#F5F3FF" stroke="#7E22CE" stroke-width="1.5"/>
+  <text x="750" y="349" font-size="13" font-weight="bold" fill="#581C87" text-anchor="middle">UART</text>
+  <text x="750" y="370" font-size="11" font-family="monospace" fill="#581C87" text-anchor="middle">0xffff0030 / 0034</text>
+
+  <!-- Bus -> devices -->
+  <line x1="530" y1="200" x2="640" y2="121" stroke="#047857" stroke-width="1.8"/>
+  <line x1="530" y1="220" x2="640" y2="199" stroke="#D97706" stroke-width="1.8"/>
+  <line x1="530" y1="250" x2="640" y2="277" stroke="#185FA5" stroke-width="1.8"/>
+  <line x1="530" y1="285" x2="640" y2="355" stroke="#7E22CE" stroke-width="1.8"/>
+
+  <!-- 外部引脚 -->
+  <text x="640" y="416" font-size="11.5" fill="#1f2937">外部世界：</text>
+  <text x="640" y="438" font-size="11" fill="#185FA5">switch_i（8 位拨码）</text>
+  <text x="640" y="458" font-size="11" fill="#0B3D6E">led_o（8 位灯）</text>
+  <text x="640" y="478" font-size="11" fill="#7E22CE">rx_i / tx_o（串口收发）</text>
+
+  <text x="40" y="120" font-size="12.5" fill="#374151">CPU 看到的接口始终一样：给地址、给数据、读写。</text>
+  <text x="40" y="142" font-size="12.5" fill="#374151">至于是内存还是设备，由总线的地址译码决定。</text>
+
+  <text x="40" y="500" font-size="12" fill="#B45309">把设备藏在同一套地址后面，正是软件能用普通 store 控制硬件的原因。</text>
+</svg>

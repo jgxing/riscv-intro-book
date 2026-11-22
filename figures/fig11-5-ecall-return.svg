@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 11-5　ecall 的返回地址为什么要加四</title>
+  <desc>硬件把 ecall 指令自身的地址写入 mepc，处理程序在执行 mret 之前把它加四，才能回到下一条指令。</desc>
+  <rect x="0" y="0" width="900" height="400" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 11-5　ecall 的返回地址为什么要加四</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">mepc 指向触发异常的指令，这类异常返回后必须跳过它</text>
+
+  <!-- 时间轴 -->
+  <line x1="60" y1="196" x2="850" y2="196" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arrow2)"/>
+  <defs>
+    <marker id="arrow2" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#9CA3AF"/>
+    </marker>
+  </defs>
+
+  <circle cx="130" cy="196" r="9" fill="#185FA5"/>
+  <circle cx="400" cy="196" r="9" fill="#B91C1C"/>
+  <circle cx="640" cy="196" r="9" fill="#047857"/>
+  <circle cx="800" cy="196" r="9" fill="#185FA5"/>
+
+  <text x="92" y="176" font-size="12" fill="#1f2937" font-family="monospace">0x10</text>
+  <text x="80" y="240" font-size="12" fill="#0B3D6E">主程序：ecall</text>
+  <text x="80" y="262" font-size="11.5" fill="#6B7280">执行到这里陷入</text>
+
+  <text x="352" y="176" font-size="12" fill="#1f2937" font-family="monospace">0x40</text>
+  <text x="330" y="240" font-size="12" fill="#991B1B">异常入口</text>
+  <text x="300" y="262" font-size="11.5" fill="#6B7280">mcause=8，mepc=0x10</text>
+
+  <text x="600" y="176" font-size="12" fill="#1f2937" font-family="monospace">0x74</text>
+  <text x="576" y="240" font-size="12" fill="#065F46">处理程序</text>
+  <text x="556" y="262" font-size="11.5" fill="#6B7280">csrrw mepc, 0x14</text>
+
+  <text x="768" y="176" font-size="12" fill="#1f2937" font-family="monospace">0x14</text>
+  <text x="742" y="240" font-size="12" fill="#0B3D6E">mret 返回</text>
+  <text x="730" y="262" font-size="11.5" fill="#6B7280">接着执行下一条</text>
+
+  <rect x="30" y="292" width="410" height="88" rx="6" fill="#FEF2F2" stroke="#B91C1C" stroke-width="1.2"/>
+  <text x="46" y="318" font-size="12" font-weight="bold" fill="#991B1B">如果忘了加四</text>
+  <text x="46" y="342" font-size="11.5" fill="#374151">mret 又回到 ecall 自身，再次陷入，程序卡在这个循环里。</text>
+  <text x="46" y="364" font-size="11.5" fill="#6B7280">这是写异常处理程序时最常见的错误之一。</text>
+
+  <rect x="460" y="292" width="410" height="88" rx="6" fill="#ECFDF5" stroke="#047857" stroke-width="1.2"/>
+  <text x="476" y="318" font-size="12" font-weight="bold" fill="#065F46">中断不一样</text>
+  <text x="476" y="342" font-size="11.5" fill="#374151">中断响应时当前指令已经做完，硬件直接把 pc+4 写入 mepc。</text>
+  <text x="476" y="364" font-size="11.5" fill="#6B7280">所以中断返回前通常不需要软件调整。</text>
+</svg>

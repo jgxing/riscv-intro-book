@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" width="900" height="480" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 13-1　裸机程序与操作系统程序的区别</title>
+  <desc>左边裸机程序从 _start 开始直接跑在硬件上，右边操作系统程序依赖运行时和内核提供的服务。</desc>
+  <rect x="0" y="0" width="900" height="480" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 13-1　裸机程序与操作系统程序的区别</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">本书写的是裸机程序：没有内核，没有运行时库，程序自己就是最接近硬件的那一层</text>
+
+  <!-- 左：裸机 -->
+  <rect x="40" y="90" width="390" height="340" rx="10" fill="#F0FDF4" stroke="#047857" stroke-width="2"/>
+  <text x="235" y="122" font-size="15" font-weight="bold" fill="#065F46" text-anchor="middle">裸机 bare metal</text>
+
+  <rect x="70" y="145" width="330" height="60" rx="6" fill="#ffffff" stroke="#10B981"/>
+  <text x="235" y="170" font-size="13" font-weight="bold" fill="#065F46" text-anchor="middle">你的 C 程序 main()</text>
+  <text x="235" y="191" font-size="11" fill="#047857" text-anchor="middle">自己管栈、自己初始化、自己读写外设</text>
+
+  <rect x="70" y="225" width="330" height="55" rx="6" fill="#ffffff" stroke="#10B981"/>
+  <text x="235" y="248" font-size="12.5" fill="#065F46" text-anchor="middle">启动代码 start.S</text>
+  <text x="235" y="267" font-size="11" fill="#047857" text-anchor="middle">设栈、清 bss、跳 main</text>
+
+  <rect x="70" y="300" width="330" height="55" rx="6" fill="#D1FAE5" stroke="#047857"/>
+  <text x="235" y="332" font-size="13" font-weight="bold" fill="#065F46" text-anchor="middle">硬件</text>
+
+  <text x="235" y="395" font-size="11.5" fill="#047857" text-anchor="middle">层数少，everything 自己来</text>
+  <text x="235" y="414" font-size="11.5" fill="#047857" text-anchor="middle">这正是学习处理器最好的舞台</text>
+
+  <!-- 右：操作系统 -->
+  <rect x="470" y="90" width="390" height="340" rx="10" fill="#EFF6FF" stroke="#185FA5" stroke-width="2"/>
+  <text x="665" y="122" font-size="15" font-weight="bold" fill="#0B3D6E" text-anchor="middle">带操作系统</text>
+
+  <rect x="500" y="145" width="330" height="50" rx="6" fill="#ffffff" stroke="#3B82F6"/>
+  <text x="665" y="176" font-size="12.5" fill="#0B3D6E" text-anchor="middle">应用程序</text>
+
+  <rect x="500" y="205" width="330" height="50" rx="6" fill="#ffffff" stroke="#3B82F6"/>
+  <text x="665" y="236" font-size="12.5" fill="#0B3D6E" text-anchor="middle">C 运行时库 / libc</text>
+
+  <rect x="500" y="265" width="330" height="50" rx="6" fill="#ffffff" stroke="#3B82F6"/>
+  <text x="665" y="296" font-size="12.5" fill="#0B3D6E" text-anchor="middle">操作系统内核</text>
+
+  <rect x="500" y="325" width="330" height="50" rx="6" fill="#DBEAFE" stroke="#185FA5"/>
+  <text x="665" y="356" font-size="13" font-weight="bold" fill="#0B3D6E" text-anchor="middle">硬件</text>
+
+  <text x="665" y="406" font-size="11.5" fill="#185FA5" text-anchor="middle">printf、malloc、文件系统都由下层提供</text>
+
+  <text x="30" y="460" font-size="12" fill="#6B7280">注：两种模式没有高低之分。嵌入式里资源受限，裸机反而最常见。</text>
+</svg>

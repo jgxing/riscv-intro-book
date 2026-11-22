@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 10-1　流水线里的三类冒险</title>
+  <desc>结构冒险争用硬件资源，数据冒险等前一条指令的结果，控制冒险不知道下一条该取哪条。</desc>
+  <rect x="0" y="0" width="900" height="500" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 10-1　流水线里的三类冒险</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">冒险就是"下一条指令这拍没法按计划往前走"</text>
+
+  <!-- 结构冒险 -->
+  <rect x="30" y="88" width="272" height="330" rx="8" fill="#EFF6FF" stroke="#185FA5" stroke-width="1.5"/>
+  <rect x="30" y="88" width="272" height="46" rx="8" fill="#DBEAFE"/>
+  <text x="46" y="118" font-size="15" font-weight="bold" fill="#0B3D6E">结构冒险</text>
+  <text x="46" y="160" font-size="12.5" fill="#374151">两条指令同一拍要用同一份硬件。</text>
+  <rect x="46" y="178" width="240" height="58" rx="5" fill="#ffffff" stroke="#93C5FD"/>
+  <text x="58" y="200" font-size="11.5" fill="#1f2937">IF 要取指令</text>
+  <text x="58" y="222" font-size="11.5" fill="#1f2937">MEM 要读写数据</text>
+  <text x="46" y="262" font-size="12" fill="#B45309">若指令和数据放在同一存储器</text>
+  <text x="46" y="284" font-size="12" fill="#B45309">两边就撞车了</text>
+  <text x="46" y="326" font-size="12" fill="#374151">本章的解决办法：</text>
+  <text x="46" y="350" font-size="12" font-weight="bold" fill="#047857">指令、数据存储器分开</text>
+  <text x="46" y="376" font-size="11.5" fill="#6B7280">（第 8 章的哈佛结构已经做到）</text>
+
+  <!-- 数据冒险 -->
+  <rect x="314" y="88" width="272" height="330" rx="8" fill="#F5F3FF" stroke="#7E22CE" stroke-width="1.5"/>
+  <rect x="314" y="88" width="272" height="46" rx="8" fill="#EDE9FE"/>
+  <text x="330" y="118" font-size="15" font-weight="bold" fill="#581C87">数据冒险</text>
+  <text x="330" y="160" font-size="12.5" fill="#374151">后一条要用的数，前一条还没算出来。</text>
+  <text x="330" y="185" font-size="11.5" fill="#1f2937" font-family="monospace">addi x1, x0, 5</text>
+  <text x="330" y="206" font-size="11.5" fill="#1f2937" font-family="monospace">add  x2, x1, x3</text>
+  <text x="330" y="246" font-size="12" fill="#B45309">add 在 ID 级读 x1 时，</text>
+  <text x="330" y="268" font-size="12" fill="#B45309">addi 还没写回</text>
+  <text x="330" y="310" font-size="12" fill="#374151">本章的解决办法：</text>
+  <text x="330" y="334" font-size="12" font-weight="bold" fill="#047857">转发 + load-use 停顿</text>
+  <text x="330" y="360" font-size="11.5" fill="#6B7280">（把结果直接送过去，来不及就停一拍）</text>
+
+  <!-- 控制冒险 -->
+  <rect x="598" y="88" width="272" height="330" rx="8" fill="#FEF2F2" stroke="#B91C1C" stroke-width="1.5"/>
+  <rect x="598" y="88" width="272" height="46" rx="8" fill="#FEE2E2"/>
+  <text x="614" y="118" font-size="15" font-weight="bold" fill="#991B1B">控制冒险</text>
+  <text x="614" y="160" font-size="12.5" fill="#374151">还没判出是否跳转，下一拍该取哪条？</text>
+  <text x="614" y="185" font-size="11.5" fill="#1f2937" font-family="monospace">beq  x1, x2, target</text>
+  <text x="614" y="206" font-size="11.5" fill="#1f2937" font-family="monospace">addi x3, x0, 1</text>
+  <text x="614" y="246" font-size="12" fill="#B45309">分支到 EX 级才判出方向，</text>
+  <text x="614" y="268" font-size="12" fill="#B45309">后面两条已经取进来了</text>
+  <text x="614" y="310" font-size="12" fill="#374151">本章的解决办法：</text>
+  <text x="614" y="334" font-size="12" font-weight="bold" fill="#047857">静态预测 + 冲刷</text>
+  <text x="614" y="360" font-size="11.5" fill="#6B7280">（先当不跳，猜错就作废）</text>
+
+  <text x="30" y="458" font-size="12.5" fill="#374151">三种冒险里，结构冒险已经靠存储器分离避开；本章的重点是后两种，它们会让流水线冒泡或走错路。</text>
+  <text x="30" y="482" font-size="12.5" fill="#B45309">处理冒险要付代价：要么加硬件连线，要么让流水线停顿，都要占用面积或时间。</text>
+</svg>

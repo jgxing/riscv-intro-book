@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 8-2　控制单元的输入与输出</title>
+  <desc>控制单元读取指令的各个字段，结合两个源操作数，产生立即数、写寄存器、写内存、运算选择、下条 PC 来源等控制信号。</desc>
+  <rect x="0" y="0" width="900" height="560" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#1f2937">图 8-2　控制单元的输入与输出</text>
+  <text x="30" y="64" font-size="12.5" fill="#5F5E5A">一条 32 位指令，拆成十来根控制信号</text>
+
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#185FA5"/>
+    </marker>
+    <marker id="o" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#BA7517"/>
+    </marker>
+  </defs>
+
+  <g text-anchor="middle">
+    <rect x="30" y="100" width="230" height="60" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.6"/>
+    <text x="145" y="124" font-size="13" font-weight="bold" fill="#0C447C">instr [31:0]</text>
+    <text x="145" y="145" font-size="10.5" fill="#3a3a38">opcode / funct3 / funct7 / 寄存器号 / 立即数字段</text>
+
+    <rect x="30" y="200" width="230" height="44" rx="6" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.4"/>
+    <text x="145" y="227" font-size="12" fill="#2d5c43">r1, r2（分支判断用）</text>
+
+    <rect x="345" y="120" width="210" height="120" rx="8" fill="#FDF2E4" stroke="#BA7517" stroke-width="2"/>
+    <text x="450" y="158" font-size="15" font-weight="bold" fill="#7a4f00">control</text>
+    <text x="450" y="182" font-size="11.5" fill="#3a3a38">类型译码</text>
+    <text x="450" y="203" font-size="11.5" fill="#3a3a38">立即数拼接</text>
+    <text x="450" y="224" font-size="11.5" fill="#3a3a38">转移条件判断</text>
+
+    <g font-size="11.5" text-anchor="start" fill="#0C447C">
+      <rect x="640" y="92"  width="225" height="34" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+      <text x="652" y="114">imm [31:0]</text>
+      <rect x="640" y="134" width="225" height="34" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+      <text x="652" y="156">alu_op [3:0]</text>
+      <rect x="640" y="176" width="225" height="34" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+      <text x="652" y="198">alu_src_b</text>
+      <rect x="640" y="218" width="225" height="34" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+      <text x="652" y="240">wreg / wreg_src [2:0]</text>
+      <rect x="640" y="260" width="225" height="34" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+      <text x="652" y="282">mem_write / mem_func</text>
+      <rect x="640" y="302" width="225" height="34" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+      <text x="652" y="324">pc_src [1:0]</text>
+    </g>
+  </g>
+
+  <g stroke="#185FA5" stroke-width="1.6" fill="none" marker-end="url(#a)">
+    <path d="M260 130 L345 150"/>
+    <path d="M260 222 L345 205"/>
+  </g>
+  <g stroke="#BA7517" stroke-width="1.5" fill="none" marker-end="url(#o)">
+    <path d="M555 140 L640 109"/>
+    <path d="M555 155 L640 151"/>
+    <path d="M555 170 L640 193"/>
+    <path d="M555 190 L640 235"/>
+    <path d="M555 210 L640 277"/>
+    <path d="M555 225 L640 319"/>
+  </g>
+
+  <text x="30" y="430" font-size="12.5" font-weight="bold" fill="#1f2937">几类指令各自要拧紧的开关</text>
+  <g font-size="11.5" fill="#3a3a38">
+    <rect x="30" y="448" width="835" height="86" rx="6" fill="#FAFAF8" stroke="#DDD9D0" stroke-width="1.2"/>
+    <text x="45" y="470">LUI / AUIPC　写寄存器，写回来源选立即数或 pc+imm，ALU 不参与</text>
+    <text x="45" y="491">JAL / JALR / Branch　改写 pc_src，链接寄存器写 pc+4</text>
+    <text x="45" y="512">I 型 / R 型　alu_src_b 选立即数或 r2，alu_op 由 funct3 与 funct7 决定</text>
+    <text x="45" y="531">Load / Store　mem_write 区分读写，mem_func 决定宽度与符号扩展</text>
+  </g>
+</svg>

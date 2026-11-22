@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" width="900" height="420" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 9-4　吞吐率与延迟的区别</title>
+  <desc>单周期和流水线单条指令的延迟都在数拍，但流水线稳定后每拍产出一条，吞吐率显著提高。</desc>
+  <rect x="0" y="0" width="900" height="420" fill="#ffffff"/>
+
+  <text x="28" y="36" font-size="18" font-weight="bold" fill="#1f2937">图 9-4　吞吐率与延迟的区别</text>
+  <text x="28" y="60" font-size="12.5" fill="#5F5E5A">延迟看"一条指令要多久"，吞吐率看"单位时间流出几条"，这是两个指标</text>
+
+  <!-- 左：延迟对比 -->
+  <rect x="28" y="88" width="404" height="290" rx="8" fill="#FAFAF9" stroke="#E5E7EB"/>
+  <text x="48" y="118" font-size="14" font-weight="bold" fill="#1f2937">单条指令的延迟</text>
+
+  <g font-size="12" fill="#374151">
+    <text x="48" y="158">单周期</text>
+  </g>
+  <rect x="130" y="142" width="280" height="26" rx="4" fill="#E6F1FB" stroke="#185FA5"/>
+  <text x="270" y="160" font-size="11" fill="#0B3D6E" text-anchor="middle">一条指令独占 1 个长周期</text>
+  <text x="48" y="182" font-size="11" fill="#6B7280">延迟 ≈ 最慢指令的整条路径</text>
+
+  <g font-size="12" fill="#374151">
+    <text x="48" y="232">流水线</text>
+  </g>
+  <g>
+    <rect x="130" y="216" width="56" height="26" rx="3" fill="#E6F1FB" stroke="#185FA5"/>
+    <rect x="186" y="216" width="56" height="26" rx="3" fill="#F3E8FF" stroke="#7E22CE"/>
+    <rect x="242" y="216" width="56" height="26" rx="3" fill="#FEF3C7" stroke="#B45309"/>
+    <rect x="298" y="216" width="56" height="26" rx="3" fill="#D1FAE5" stroke="#047857"/>
+    <rect x="354" y="216" width="56" height="26" rx="3" fill="#FEE2E2" stroke="#B91C1C"/>
+  </g>
+  <text x="270" y="262" font-size="11" fill="#6B7280" text-anchor="middle">一条指令仍要走完 5 级</text>
+  <text x="48" y="292" font-size="12" fill="#B45309">结论：流水线没有缩短单条指令的延迟，甚至因寄存器开销略增。</text>
+
+  <!-- 右：吞吐率对比 -->
+  <rect x="456" y="88" width="416" height="290" rx="8" fill="#FAFAF9" stroke="#E5E7EB"/>
+  <text x="476" y="118" font-size="14" font-weight="bold" fill="#1f2937">多条指令的吞吐率</text>
+
+  <g font-size="11.5" fill="#374151">
+    <text x="476" y="152">单周期：8 条指令</text>
+  </g>
+  <g>
+    <rect x="600" y="140" width="34" height="22" rx="2" fill="#E6F1FB" stroke="#185FA5"/>
+    <rect x="636" y="140" width="34" height="22" rx="2" fill="#E6F1FB" stroke="#185FA5"/>
+    <rect x="672" y="140" width="34" height="22" rx="2" fill="#E6F1FB" stroke="#185FA5"/>
+    <rect x="708" y="140" width="34" height="22" rx="2" fill="#E6F1FB" stroke="#185FA5"/>
+    <rect x="744" y="140" width="34" height="22" rx="2" fill="#E6F1FB" stroke="#185FA5"/>
+    <rect x="780" y="140" width="34" height="22" rx="2" fill="#E6F1FB" stroke="#185FA5"/>
+    <rect x="816" y="140" width="34" height="22" rx="2" fill="#E6F1FB" stroke="#185FA5"/>
+    <rect x="852" y="140" width="18" height="22" rx="2" fill="#E6F1FB" stroke="#185FA5"/>
+  </g>
+  <text x="476" y="176" font-size="11" fill="#6B7280">约 8 个长周期</text>
+
+  <g font-size="11.5" fill="#374151">
+    <text x="476" y="232">流水线：8 条指令</text>
+  </g>
+  <g font-size="10" text-anchor="middle">
+    <rect x="600" y="220" width="30" height="22" rx="2" fill="#E6F1FB" stroke="#185FA5"/><text x="615" y="235" fill="#0B3D6E">I1</text>
+    <rect x="630" y="220" width="30" height="22" rx="2" fill="#E6F1FB" stroke="#185FA5"/><text x="645" y="235" fill="#0B3D6E">I2</text>
+    <rect x="660" y="220" width="30" height="22" rx="2" fill="#F3E8FF" stroke="#7E22CE"/><text x="675" y="235" fill="#581C87">I1</text>
+    <rect x="690" y="220" width="30" height="22" rx="2" fill="#E6F1FB" stroke="#185FA5"/><text x="705" y="235" fill="#0B3D6E">I3</text>
+    <rect x="720" y="220" width="30" height="22" rx="2" fill="#F3E8FF" stroke="#7E22CE"/><text x="735" y="235" fill="#581C87">I2</text>
+    <rect x="750" y="220" width="30" height="22" rx="2" fill="#FEF3C7" stroke="#B45309"/><text x="765" y="235" fill="#7C2D12">I1</text>
+    <rect x="780" y="220" width="30" height="22" rx="2" fill="#D1FAE5" stroke="#047857"/><text x="795" y="235" fill="#065F46">I1</text>
+    <rect x="810" y="220" width="30" height="22" rx="2" fill="#FEE2E2" stroke="#B91C1C"/><text x="825" y="235" fill="#991B1B">I1</text>
+  </g>
+  <text x="476" y="266" font-size="11" fill="#6B7280">稳定后每短周期流出一条</text>
+  <text x="476" y="296" font-size="12" fill="#047857">结论：流水线提高的是单位时间的完成数量。</text>
+  <text x="476" y="320" font-size="11.5" fill="#374151">若每级延时约为单周期的 1/5，理想吞吐率接近 5 倍。</text>
+  <text x="476" y="344" font-size="11.5" fill="#B45309">实际达不到，因为填充、冒险和级间不平衡都会扣分。</text>
+
+  <text x="28" y="400" font-size="12" fill="#374151">性能指标：IPC = 每条指令的时钟周期数的倒数。理想流水线 IPC 接近 1，单发射处理器不会超过 1。</text>
+</svg>

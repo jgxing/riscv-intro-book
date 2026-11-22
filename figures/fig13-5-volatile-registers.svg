@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 460" width="900" height="460" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 13-5　volatile 与外设寄存器的读写</title>
+  <desc>左边不加 volatile 的连续两次写被编译器合并成一次，右边加了 volatile 的两次写都保留下来。</desc>
+  <rect x="0" y="0" width="900" height="460" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 13-5　volatile 与外设寄存器的读写</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">外设寄存器的值不由编译器决定，优化必须让它原样保留每一次访问</text>
+
+  <!-- 左：不加 volatile -->
+  <rect x="40" y="95" width="395" height="315" rx="10" fill="#FEF2F2" stroke="#DC2626" stroke-width="2"/>
+  <text x="237" y="125" font-size="14" font-weight="bold" fill="#991B1B" text-anchor="middle">不加 volatile</text>
+
+  <rect x="60" y="145" width="355" height="70" rx="6" fill="#ffffff" stroke="#FCA5A5"/>
+  <text x="76" y="170" font-size="11.5" font-family="monospace" fill="#1f2937">UART_DATA = 'H';</text>
+  <text x="76" y="192" font-size="11.5" font-family="monospace" fill="#1f2937">UART_DATA = 'i';</text>
+
+  <text x="60" y="245" font-size="12" fill="#7F1D1D">编译器想：这两个值都是常量，</text>
+  <text x="60" y="266" font-size="12" fill="#7F1D1D">中间又没人读，最后一次写就够了。</text>
+
+  <rect x="60" y="288" width="355" height="55" rx="6" fill="#FEE2E2" stroke="#DC2626"/>
+  <text x="237" y="312" font-size="12" font-family="monospace" fill="#991B1B" text-anchor="middle">只发出一个 'i'</text>
+  <text x="237" y="331" font-size="10.5" fill="#B91C1C" text-anchor="middle">'H' 被优化掉，串口少一个字符</text>
+
+  <text x="60" y="375" font-size="11.5" fill="#991B1B">内存变量可以这样优化，外设寄存器不行。</text>
+  <text x="60" y="395" font-size="11.5" fill="#991B1B">每次写都是一次真实的硬件动作。</text>
+
+  <!-- 右：加 volatile -->
+  <rect x="465" y="95" width="395" height="315" rx="10" fill="#F0FDF4" stroke="#047857" stroke-width="2"/>
+  <text x="662" y="125" font-size="14" font-weight="bold" fill="#065F46" text-anchor="middle">加上 volatile</text>
+
+  <rect x="485" y="145" width="355" height="70" rx="6" fill="#ffffff" stroke="#6EE7B7"/>
+  <text x="501" y="170" font-size="11.5" font-family="monospace" fill="#1f2937">#define UART_DATA \</text>
+  <text x="510" y="191" font-size="11" font-family="monospace" fill="#1f2937">(*(volatile uint32_t*)0xffff0030)</text>
+
+  <text x="485" y="245" font-size="12" fill="#065F46">volatile 告诉编译器：这个地址会自己变，</text>
+  <text x="485" y="266" font-size="12" fill="#065F46">每一次读写都必须原样生成指令。</text>
+
+  <rect x="485" y="288" width="355" height="55" rx="6" fill="#D1FAE5" stroke="#047857"/>
+  <text x="662" y="312" font-size="12" font-family="monospace" fill="#065F46" text-anchor="middle">sw 'H'；sw 'i'</text>
+  <text x="662" y="331" font-size="10.5" fill="#047857" text-anchor="middle">两次写都在，串口正确收到 Hi</text>
+
+  <text x="485" y="375" font-size="11.5" fill="#065F46">状态寄存器要反复轮询，更要靠 volatile</text>
+  <text x="485" y="395" font-size="11.5" fill="#065F46">不然编译器会把等待循环整个删掉。</text>
+
+  <text x="30" y="440" font-size="12" fill="#6B7280">注：volatile 只管"别优化"，不管原子性，也不保证访问顺序 across 不同外设，写驱动时要清楚它的边界。</text>
+</svg>

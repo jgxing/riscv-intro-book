@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 8-3　下条 PC 与写回数据的选择</title>
+  <desc>下条 PC 在 pc+4、pc+imm、jalr 目标之间选择；写回数据在立即数、pc+imm、pc+4、ALU 结果、访存结果之间选择。</desc>
+  <rect x="0" y="0" width="900" height="560" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#1f2937">图 8-3　下条 PC 与写回数据的选择</text>
+  <text x="30" y="64" font-size="12.5" fill="#5F5E5A">两条指令走到岔路口，选择信号决定哪一路生效</text>
+
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#185FA5"/>
+    </marker>
+  </defs>
+
+  <g font-size="11.5" fill="#3a3a38">
+    <text x="30" y="100" font-size="13" font-weight="bold" fill="#0C447C">下条 PC 的选择</text>
+  </g>
+  <g text-anchor="start">
+    <rect x="30" y="115" width="150" height="34" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+    <text x="42" y="137">0　pc + 4</text>
+    <rect x="30" y="157" width="150" height="34" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+    <text x="42" y="179">1　pc + imm</text>
+    <rect x="30" y="199" width="150" height="34" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+    <text x="42" y="221">2　r1 + imm</text>
+    <rect x="245" y="140" width="110" height="70" rx="6" fill="#FDF2E4" stroke="#BA7517" stroke-width="1.6"/>
+    <text x="300" y="170" font-size="13" font-weight="bold" fill="#7a4f00" text-anchor="middle">MUX</text>
+    <text x="300" y="190" font-size="10.5" fill="#3a3a38" text-anchor="middle">pc_src</text>
+    <rect x="430" y="152" width="130" height="44" rx="6" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.4"/>
+    <text x="495" y="180" font-size="12.5" font-weight="bold" fill="#2d5c43" text-anchor="middle">next_pc → PC</text>
+  </g>
+  <g stroke="#185FA5" stroke-width="1.5" fill="none" marker-end="url(#a)">
+    <path d="M180 132 L245 155"/>
+    <path d="M180 174 L245 174"/>
+    <path d="M180 216 L245 193"/>
+    <path d="M355 175 L430 175"/>
+  </g>
+  <g font-size="11" fill="#5F5E5A">
+    <text x="600" y="130">顺序执行选 0；jal 和转移成功的分支选 1；jalr 选 2</text>
+    <text x="600" y="152">jalr 的目标要把最低位清零，这是指令集的规定</text>
+  </g>
+
+  <g font-size="11.5" fill="#3a3a38">
+    <text x="30" y="290" font-size="13" font-weight="bold" fill="#0C447C">写回数据的选择</text>
+  </g>
+  <g text-anchor="start">
+    <rect x="30" y="305" width="150" height="30" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+    <text x="42" y="325">0　imm（lui）</text>
+    <rect x="30" y="340" width="150" height="30" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+    <text x="42" y="360">1　pc+imm（auipc）</text>
+    <rect x="30" y="375" width="150" height="30" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+    <text x="42" y="395">2　pc+4（jal）</text>
+    <rect x="30" y="410" width="150" height="30" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+    <text x="42" y="430">3　ALU 结果</text>
+    <rect x="30" y="445" width="150" height="30" rx="5" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+    <text x="42" y="465">4　访存结果</text>
+    <rect x="245" y="365" width="110" height="70" rx="6" fill="#FDF2E4" stroke="#BA7517" stroke-width="1.6"/>
+    <text x="300" y="395" font-size="13" font-weight="bold" fill="#7a4f00" text-anchor="middle">MUX</text>
+    <text x="300" y="415" font-size="10.5" fill="#3a3a38" text-anchor="middle">wreg_src</text>
+    <rect x="430" y="377" width="130" height="44" rx="6" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.4"/>
+    <text x="495" y="405" font-size="12.5" font-weight="bold" fill="#2d5c43" text-anchor="middle">wdata → 寄存器堆</text>
+  </g>
+  <g stroke="#185FA5" stroke-width="1.4" fill="none" marker-end="url(#a)">
+    <path d="M180 320 L245 378"/>
+    <path d="M180 355 L245 385"/>
+    <path d="M180 390 L245 393"/>
+    <path d="M180 425 L245 408"/>
+    <path d="M180 460 L245 420"/>
+    <path d="M355 400 L430 400"/>
+  </g>
+  <g font-size="11" fill="#5F5E5A">
+    <text x="600" y="350">算术指令选 3，load 选 4，跳转链接选 2</text>
+    <text x="600" y="372">lui 选 0，auipc 选 1</text>
+    <text x="600" y="420">wreg 为 0 的指令（store、branch）谁来选都无所谓</text>
+    <text x="600" y="442">因为写使能关着，寄存器堆根本不写入</text>
+  </g>
+</svg>

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" width="900" height="470" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 11-4　异常进入时硬件保存的现场</title>
+  <desc>发生陷入时，硬件把返回地址、原因和附加信息写进 CSR，关掉中断，再把 PC 换成异常入口。</desc>
+  <rect x="0" y="0" width="900" height="470" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 11-4　异常进入时硬件保存的现场</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">这几步在同一个时钟沿完成，处理程序看到的已经是新状态</text>
+
+  <!-- 左侧：触发 -->
+  <rect x="30" y="96" width="250" height="150" rx="8" fill="#FEF2F2" stroke="#B91C1C" stroke-width="1.5"/>
+  <text x="46" y="124" font-size="14" font-weight="bold" fill="#991B1B">触发条件</text>
+  <text x="46" y="152" font-size="11.5" fill="#374151" font-family="monospace">ecall / ebreak / 非法指令</text>
+  <text x="46" y="176" font-size="11.5" fill="#374151">或：使能的外部中断到来</text>
+  <text x="46" y="208" font-size="12" fill="#B45309">当前指令的后续动作被撤销</text>
+  <text x="46" y="230" font-size="11.5" fill="#6B7280">不写寄存器堆，不写数据存储器</text>
+
+  <path d="M 280 170 L 340 170" stroke="#6B7280" stroke-width="2" marker-end="url(#arrow)"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#6B7280"/>
+    </marker>
+  </defs>
+
+  <!-- 中间：CSR 动作 -->
+  <rect x="340" y="96" width="290" height="300" rx="8" fill="#F5F3FF" stroke="#7E22CE" stroke-width="1.5"/>
+  <text x="356" y="124" font-size="14" font-weight="bold" fill="#581C87">CSR 模块的原子动作</text>
+  <text x="356" y="156" font-size="12" fill="#374151" font-family="monospace">mepc   &lt;= 返回地址</text>
+  <text x="356" y="184" font-size="11.5" fill="#6B7280">异常指向自己，中断指向下一条</text>
+  <text x="356" y="216" font-size="12" fill="#374151" font-family="monospace">mcause &lt;= 陷入原因</text>
+  <text x="356" y="244" font-size="11.5" fill="#6B7280">最高位 0 是异常，1 是中断</text>
+  <text x="356" y="276" font-size="12" fill="#374151" font-family="monospace">mtval  &lt;= 附加信息</text>
+  <text x="356" y="304" font-size="11.5" fill="#6B7280">非法指令异常写入指令字</text>
+  <text x="356" y="336" font-size="12" fill="#374151" font-family="monospace">mstatus.MPIE &lt;= MIE</text>
+  <text x="356" y="364" font-size="12" fill="#374151" font-family="monospace">mstatus.MIE  &lt;= 0</text>
+  <text x="356" y="386" font-size="11.5" fill="#6B7280">先存旧中断位，再关中断</text>
+
+  <path d="M 630 170 L 690 170" stroke="#6B7280" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 右侧：PC 跳转 -->
+  <rect x="690" y="96" width="180" height="150" rx="8" fill="#EFF6FF" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="706" y="124" font-size="14" font-weight="bold" fill="#0B3D6E">PC 跳转</text>
+  <text x="706" y="156" font-size="12" fill="#374151" font-family="monospace">pc &lt;= mtvec</text>
+  <text x="706" y="184" font-size="11.5" fill="#6B7280">直接模式，入口地址</text>
+  <text x="706" y="204" font-size="11.5" fill="#6B7280">按 4 字节对齐</text>
+  <text x="706" y="230" font-size="11.5" fill="#B45309">固件在启动时设置 mtvec</text>
+
+  <!-- 返回 -->
+  <rect x="690" y="270" width="180" height="126" rx="8" fill="#ECFDF5" stroke="#047857" stroke-width="1.5"/>
+  <text x="706" y="298" font-size="14" font-weight="bold" fill="#065F46">mret 返回</text>
+  <text x="706" y="326" font-size="12" fill="#374151" font-family="monospace">pc &lt;= mepc</text>
+  <text x="706" y="352" font-size="12" fill="#374151" font-family="monospace">MIE &lt;= MPIE</text>
+  <text x="706" y="378" font-size="11.5" fill="#6B7280">把进入时存的状态还回去</text>
+
+  <path d="M 690 333 L 640 333" stroke="#047857" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="30" y="432" font-size="12.5" fill="#374151">整数寄存器堆的内容硬件一概不动。要保住它们，处理程序得自己把要用的寄存器存到栈上。</text>
+  <text x="30" y="456" font-size="12.5" fill="#B45309">本章的处理程序只借用少量寄存器，主程序随后会重新赋值，所以省略了保存整数的步骤。</text>
+</svg>

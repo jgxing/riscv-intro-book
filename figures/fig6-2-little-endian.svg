@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 6-2　一个小端字在内存里的存放方式</title>
+  <desc>32 位值 0x12345678 写到地址 0x80000000 后，最低字节 0x78 放在最低地址，load32 再把四个字节拼回原值。</desc>
+  <rect x="0" y="0" width="900" height="400" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#1f2937">图 6-2　一个小端字在内存里的存放方式</text>
+  <text x="30" y="64" font-size="12.5" fill="#5F5E5A">低位字节放在低地址，这是 RISC-V 默认的小端序</text>
+
+  <rect x="60" y="105" width="740" height="62" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.6"/>
+  <text x="430" y="143" font-size="15" fill="#0C447C" text-anchor="middle">store32(0x80000000, 0x12345678)</text>
+
+  <g text-anchor="middle">
+    <rect x="60" y="215" width="175" height="70" rx="6" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.6"/>
+    <text x="147" y="242" font-size="11.5" fill="#5F5E5A">0x80000000</text>
+    <text x="147" y="270" font-size="19" font-weight="bold" fill="#2d5c43">78</text>
+
+    <rect x="245" y="215" width="175" height="70" rx="6" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.6"/>
+    <text x="332" y="242" font-size="11.5" fill="#5F5E5A">0x80000001</text>
+    <text x="332" y="270" font-size="19" font-weight="bold" fill="#2d5c43">56</text>
+
+    <rect x="430" y="215" width="175" height="70" rx="6" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.6"/>
+    <text x="517" y="242" font-size="11.5" fill="#5F5E5A">0x80000002</text>
+    <text x="517" y="270" font-size="19" font-weight="bold" fill="#2d5c43">34</text>
+
+    <rect x="615" y="215" width="175" height="70" rx="6" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.6"/>
+    <text x="702" y="242" font-size="11.5" fill="#5F5E5A">0x80000003</text>
+    <text x="702" y="270" font-size="19" font-weight="bold" fill="#2d5c43">12</text>
+  </g>
+
+  <text x="147" y="310" font-size="11" fill="#5F5E5A" text-anchor="middle">最低字节</text>
+  <text x="702" y="310" font-size="11" fill="#5F5E5A" text-anchor="middle">最高字节</text>
+
+  <rect x="180" y="335" width="540" height="42" rx="6" fill="#FDF2E4" stroke="#BA7517" stroke-width="1.4"/>
+  <text x="450" y="362" font-size="13" fill="#7a4f00" text-anchor="middle">load32 按 78→56→34→12 的顺序移位拼接，还原 0x12345678</text>
+</svg>

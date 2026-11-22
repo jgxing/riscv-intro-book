@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 13-3　链接脚本决定的内存布局</title>
+  <desc>链接脚本把 text 和 rodata 放进 Flash 的 0x00400000，把 data 和 bss 放进 RAM 的 0x10000000，栈顶在 RAM 末端。</desc>
+  <rect x="0" y="0" width="900" height="500" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 13-3　链接脚本决定的内存布局</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">同样的目标文件，换个链接脚本，段就落到不同的地址</text>
+
+  <!-- Flash -->
+  <text x="60" y="105" font-size="14" font-weight="bold" fill="#92400E">FLASH（rx）　0x00400000 起 64 KB</text>
+  <rect x="60" y="118" width="780" height="130" fill="#FFFBEB" stroke="#D97706" stroke-width="1.5"/>
+
+  <rect x="60" y="118" width="330" height="55" fill="#FDE68A" stroke="#D97706"/>
+  <text x="225" y="143" font-size="12.5" font-weight="bold" fill="#92400E" text-anchor="middle">.text</text>
+  <text x="225" y="162" font-size="10.5" font-family="monospace" fill="#92400E" text-anchor="middle">代码：start.S + main.c 编译结果</text>
+
+  <rect x="390" y="118" width="230" height="55" fill="#FEF3C7" stroke="#D97706"/>
+  <text x="505" y="143" font-size="12.5" font-weight="bold" fill="#92400E" text-anchor="middle">.rodata</text>
+  <text x="505" y="162" font-size="10.5" fill="#92400E" text-anchor="middle">只读常量、字符串</text>
+
+  <rect x="620" y="118" width="220" height="55" fill="#F3F4F6" stroke="#9CA3AF" stroke-dasharray="5 4"/>
+  <text x="730" y="150" font-size="11" fill="#6B7280" text-anchor="middle">其余 Flash 空间</text>
+
+  <text x="60" y="212" font-size="11" fill="#92400E">ENTRY(_start) 指定的入口就落在 .text 的开头</text>
+  <text x="60" y="232" font-size="11" fill="#92400E">程序从这里开始执行，先跑启动代码，再进 main</text>
+
+  <!-- RAM -->
+  <text x="60" y="290" font-size="14" font-weight="bold" fill="#065F46">RAM（rwx）　0x10000000 起 64 KB</text>
+  <rect x="60" y="303" width="780" height="130" fill="#F0FDF4" stroke="#047857" stroke-width="1.5"/>
+
+  <rect x="60" y="303" width="230" height="55" fill="#A7F3D0" stroke="#047857"/>
+  <text x="175" y="328" font-size="12.5" font-weight="bold" fill="#065F46" text-anchor="middle">.data</text>
+  <text x="175" y="347" font-size="10.5" fill="#065F46" text-anchor="middle">已初始化的全局变量</text>
+
+  <rect x="290" y="303" width="230" height="55" fill="#D1FAE5" stroke="#047857"/>
+  <text x="405" y="328" font-size="12.5" font-weight="bold" fill="#065F46" text-anchor="middle">.bss</text>
+  <text x="405" y="347" font-size="10.5" fill="#065F46" text-anchor="middle">未初始化的全局变量</text>
+
+  <rect x="520" y="303" width="320" height="55" fill="#ffffff" stroke="#9CA3AF" stroke-dasharray="5 4"/>
+  <text x="680" y="328" font-size="11" fill="#6B7280" text-anchor="middle">堆、栈使用的空闲区</text>
+  <text x="680" y="347" font-size="10.5" fill="#6B7280" text-anchor="middle">栈从高位往下长</text>
+
+  <text x="60" y="397" font-size="11" fill="#065F46">__bss_start / __bss_end 是脚本定义的符号，启动代码据此清零 bss</text>
+  <text x="60" y="417" font-size="11" fill="#065F46">__stack_top = 0x10010000，启动代码用它初始化 sp</text>
+
+  <!-- 关键点 -->
+  <rect x="60" y="440" width="780" height="42" rx="6" fill="#EFF6FF" stroke="#93C5FD"/>
+  <text x="76" y="467" font-size="12" fill="#1f2937">链接脚本里的地址是逻辑地址；装进模拟器时要按模拟器的基址重新安放，指令本身不变。</text>
+</svg>

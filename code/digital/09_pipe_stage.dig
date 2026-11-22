@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<circuit>
+  <version>1</version>
+  <attributes>
+    <entry>
+      <string>Description</string>
+      <string>第9章 流水线寄存器：两个 D_FF 串联，共享同一个时钟。
+每个上升沿，d 的值前进一级：第一拍后 q1=d，第二拍后 q2=d。
+这就是流水线的基本概念——各级之间用寄存器隔开，数据每拍向下游移动一级。
+操作：拨 d=1，点动 clk 两次，观察 q1、q2 依次变 1；改 d=0 再点动，0 会逐级传下去。
+对照教材第9章 9.2 节。</string>
+    </entry>
+    <entry>
+      <string>Width</string>
+      <int>4</int>
+    </entry>
+  </attributes>
+  <visualElements>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry><string>Label</string><string>d</string></entry>
+      </elementAttributes>
+      <pos x="100" y="100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry><string>Label</string><string>clk</string></entry>
+      </elementAttributes>
+      <pos x="100" y="320"/>
+    </visualElement>
+    <visualElement>
+      <elementName>D_FF</elementName>
+      <elementAttributes>
+        <entry><string>Bits</string><int>1</int></entry>
+      </elementAttributes>
+      <pos x="280" y="100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>D_FF</elementName>
+      <elementAttributes>
+        <entry><string>Bits</string><int>1</int></entry>
+      </elementAttributes>
+      <pos x="480" y="100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry><string>Label</string><string>q1</string></entry>
+      </elementAttributes>
+      <pos x="380" y="240"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry><string>Label</string><string>q2</string></entry>
+      </elementAttributes>
+      <pos x="660" y="100"/>
+    </visualElement>
+  </visualElements>
+  <wires>
+    <wire><p1 x="100" y="100"/><p2 x="280" y="100"/></wire>
+    <wire><p1 x="100" y="320"/><p2 x="280" y="120"/></wire>
+    <wire><p1 x="100" y="320"/><p2 x="480" y="320"/></wire>
+    <wire><p1 x="480" y="320"/><p2 x="480" y="120"/></wire>
+    <wire><p1 x="340" y="100"/><p2 x="480" y="100"/></wire>
+    <wire><p1 x="340" y="100"/><p2 x="340" y="240"/></wire>
+    <wire><p1 x="340" y="240"/><p2 x="380" y="240"/></wire>
+    <wire><p1 x="540" y="100"/><p2 x="660" y="100"/></wire>
+  </wires>
+</circuit>

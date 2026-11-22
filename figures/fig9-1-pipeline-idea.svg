@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" width="900" height="440" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 9-1　流水线的想法：三阶段洗衣类比</title>
+  <desc>串行做三批衣服各花三步的时间；流水线让三批衣服重叠进行，填满后每个节拍出一批。</desc>
+  <rect x="0" y="0" width="900" height="440" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 9-1　流水线的想法：三阶段洗衣类比</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">每一步用同样的时间，重叠起来后每个节拍就有一批完成</text>
+
+  <!-- 串行方案 -->
+  <text x="30" y="105" font-size="14" font-weight="bold" fill="#B45309">串行：一批做完再做下一批</text>
+  <g font-size="11" fill="#3a3a38">
+    <text x="30" y="130">时间 →</text>
+  </g>
+  <g font-size="11" text-anchor="middle">
+    <rect x="100" y="140" width="70" height="30" rx="3" fill="#FEF3C7" stroke="#B45309"/>
+    <text x="135" y="160" fill="#7C2D12">洗</text>
+    <rect x="170" y="140" width="70" height="30" rx="3" fill="#D1FAE5" stroke="#047857"/>
+    <text x="205" y="160" fill="#065F46">烘</text>
+    <rect x="240" y="140" width="70" height="30" rx="3" fill="#DBEAFE" stroke="#1D4ED8"/>
+    <text x="275" y="160" fill="#1E3A8A">叠</text>
+
+    <rect x="320" y="140" width="70" height="30" rx="3" fill="#FEF3C7" stroke="#B45309"/>
+    <text x="355" y="160" fill="#7C2D12">洗</text>
+    <rect x="390" y="140" width="70" height="30" rx="3" fill="#D1FAE5" stroke="#047857"/>
+    <text x="425" y="160" fill="#065F46">烘</text>
+    <rect x="460" y="140" width="70" height="30" rx="3" fill="#DBEAFE" stroke="#1D4ED8"/>
+    <text x="495" y="160" fill="#1E3A8A">叠</text>
+
+    <rect x="540" y="140" width="70" height="30" rx="3" fill="#FEF3C7" stroke="#B45309"/>
+    <text x="575" y="160" fill="#7C2D12">洗</text>
+    <rect x="610" y="140" width="70" height="30" rx="3" fill="#D1FAE5" stroke="#047857"/>
+    <text x="645" y="160" fill="#065F46">烘</text>
+    <rect x="680" y="140" width="70" height="30" rx="3" fill="#DBEAFE" stroke="#1D4ED8"/>
+    <text x="715" y="160" fill="#1E3A8A">叠</text>
+  </g>
+  <text x="30" y="192" font-size="12" fill="#7C2D12">三批共 9 拍，机器大多数时候只有一台在工作</text>
+
+  <!-- 分隔线 -->
+  <line x1="30" y1="218" x2="870" y2="218" stroke="#E5E7EB" stroke-width="1.2"/>
+
+  <!-- 流水线方案 -->
+  <text x="30" y="248" font-size="14" font-weight="bold" fill="#047857">流水线：三批重叠进行</text>
+  <g font-size="11" text-anchor="middle">
+    <!-- 时刻列标 -->
+    <text x="135" y="276" fill="#6B7280">拍1</text>
+    <text x="205" y="276" fill="#6B7280">拍2</text>
+    <text x="275" y="276" fill="#6B7280">拍3</text>
+    <text x="345" y="276" fill="#6B7280">拍4</text>
+    <text x="415" y="276" fill="#6B7280">拍5</text>
+
+    <!-- 批次1 -->
+    <rect x="100" y="286" width="70" height="30" rx="3" fill="#FEF3C7" stroke="#B45309"/>
+    <text x="135" y="306" fill="#7C2D12">洗1</text>
+    <rect x="170" y="286" width="70" height="30" rx="3" fill="#D1FAE5" stroke="#047857"/>
+    <text x="205" y="306" fill="#065F46">烘1</text>
+    <rect x="240" y="286" width="70" height="30" rx="3" fill="#DBEAFE" stroke="#1D4ED8"/>
+    <text x="275" y="306" fill="#1E3A8A">叠1</text>
+
+    <!-- 批次2 -->
+    <rect x="170" y="322" width="70" height="30" rx="3" fill="#FEF3C7" stroke="#B45309"/>
+    <text x="205" y="342" fill="#7C2D12">洗2</text>
+    <rect x="240" y="322" width="70" height="30" rx="3" fill="#D1FAE5" stroke="#047857"/>
+    <text x="275" y="342" fill="#065F46">烘2</text>
+    <rect x="310" y="322" width="70" height="30" rx="3" fill="#DBEAFE" stroke="#1D4ED8"/>
+    <text x="345" y="342" fill="#1E3A8A">叠2</text>
+
+    <!-- 批次3 -->
+    <rect x="240" y="358" width="70" height="30" rx="3" fill="#FEF3C7" stroke="#B45309"/>
+    <text x="275" y="378" fill="#7C2D12">洗3</text>
+    <rect x="310" y="358" width="70" height="30" rx="3" fill="#D1FAE5" stroke="#047857"/>
+    <text x="345" y="378" fill="#065F46">烘3</text>
+    <rect x="380" y="358" width="70" height="30" rx="3" fill="#DBEAFE" stroke="#1D4ED8"/>
+    <text x="415" y="378" fill="#1E3A8A">叠3</text>
+  </g>
+  <text x="480" y="300" font-size="12" fill="#065F46">填满后，每拍完成一批</text>
+  <text x="480" y="324" font-size="12" fill="#374151">单批延迟仍是 3 拍，没变</text>
+  <text x="480" y="348" font-size="12" fill="#374151">但三批只用了 5 拍，不是 9 拍</text>
+
+  <text x="30" y="418" font-size="11.5" fill="#6B7280">关键：各步耗时相同，且彼此独立；寄存器隔开后，不同批次就能同时待在不同阶段。</text>
+</svg>

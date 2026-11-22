@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 4-5　有限状态机的结构</title>
+  <desc>状态寄存器保存当前状态，下一状态逻辑根据当前状态和输入算出 next state，输出逻辑根据状态产生输出，时钟沿更新状态。</desc>
+  <rect x="0" y="0" width="900" height="400" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#1f2937">图 4-5　有限状态机的结构</text>
+  <text x="30" y="64" font-size="12.5" fill="#5F5E5A">寄存器里只放状态，组合逻辑负责算下一拍去哪和这一拍输出什么</text>
+
+  <g text-anchor="middle">
+    <rect x="45" y="185" width="85" height="48" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.3"/>
+    <text x="87" y="214" font-size="13" fill="#0C447C">输入 x</text>
+
+    <rect x="215" y="150" width="180" height="58" rx="6" fill="#ffffff" stroke="#185FA5" stroke-width="1.8"/>
+    <text x="305" y="174" font-size="13" font-weight="bold" fill="#0C447C">下一状态逻辑</text>
+    <text x="305" y="194" font-size="11" fill="#3a3a38">组合电路</text>
+
+    <rect x="215" y="255" width="180" height="58" rx="6" fill="#FDF2E4" stroke="#BA7517" stroke-width="1.8"/>
+    <text x="305" y="279" font-size="13" font-weight="bold" fill="#7a4f00">状态寄存器</text>
+    <text x="305" y="299" font-size="11" fill="#3a3a38">clk 上升沿更新</text>
+
+    <rect x="480" y="150" width="170" height="58" rx="6" fill="#ffffff" stroke="#3B7A57" stroke-width="1.8"/>
+    <text x="565" y="174" font-size="13" font-weight="bold" fill="#2d5c43">输出逻辑</text>
+    <text x="565" y="194" font-size="11" fill="#3a3a38">组合电路</text>
+
+    <rect x="730" y="165" width="85" height="48" rx="6" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.3"/>
+    <text x="772" y="194" font-size="13" fill="#2d5c43">输出 y</text>
+
+    <rect x="200" y="345" width="65" height="36" rx="6" fill="#FDF2E4" stroke="#BA7517" stroke-width="1.3"/>
+    <text x="232" y="369" font-size="12" fill="#7a4f00">clk</text>
+  </g>
+
+  <g stroke="#9CA3AF" stroke-width="1.7" marker-end="url(#arrow)">
+    <line x1="130" y1="209" x2="213" y2="180"/>
+    <line x1="305" y1="208" x2="305" y2="253"/>
+    <line x1="395" y1="284" x2="478" y2="180"/>
+    <line x1="650" y1="179" x2="728" y2="189"/>
+    <line x1="232" y1="345" x2="232" y2="315"/>
+  </g>
+  <path d="M215,284 L180,284 L180,179 L213,179" fill="none" stroke="#BA7517" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <text x="305" y="234" font-size="11" fill="#3a3a38" text-anchor="middle">next state</text>
+  <text x="170" y="145" font-size="11" fill="#7a4f00">当前状态反馈</text>
+  <text x="445" y="228" font-size="11" fill="#3a3a38" text-anchor="middle">state</text>
+
+  <text x="45" y="378" font-size="12" fill="#5F5E5A">摩尔型状态机的输出只看当前状态；米利型还要看输入，输出逻辑多接一根输入线。</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#9CA3AF"/>
+    </marker>
+  </defs>
+</svg>

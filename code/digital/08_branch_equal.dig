@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<circuit>
+  <version>1</version>
+  <attributes>
+    <entry>
+      <string>Description</string>
+      <string>第8章 分支判等电路：一位相等判据 eq = ~(a ^ b)。
+把 a、b 拨成四种组合，观察 XOr 输出（不同为 1）与经过 Not 后的 eq（相等为 1）。
+控制单元的 beq 判据就是把 32 位逐位比较的结果合起来；bne 则直接取 XOr 的输出。
+对照教材第8章控制单元一节与 code/verilog/08_single_cycle/control.v。</string>
+    </entry>
+    <entry>
+      <string>Width</string>
+      <int>4</int>
+    </entry>
+  </attributes>
+  <visualElements>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>操作数 a 的一位。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>a</string>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="120"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>操作数 b 的一位。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>b</string>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="260"/>
+    </visualElement>
+    <visualElement>
+      <elementName>XOr</elementName>
+      <elementAttributes/>
+      <pos x="300" y="140"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Not</elementName>
+      <elementAttributes/>
+      <pos x="440" y="150"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Description</string>
+          <string>相等判据 eq = ~(a ^ b)，相等时为 1。</string>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>eq</string>
+        </entry>
+      </elementAttributes>
+      <pos x="540" y="150"/>
+    </visualElement>
+  </visualElements>
+  <wires>
+    <wire><p1 x="100" y="120"/><p2 x="280" y="120"/></wire>
+    <wire><p1 x="280" y="120"/><p2 x="280" y="140"/></wire>
+    <wire><p1 x="280" y="140"/><p2 x="300" y="140"/></wire>
+    <wire><p1 x="100" y="260"/><p2 x="280" y="260"/></wire>
+    <wire><p1 x="280" y="260"/><p2 x="280" y="160"/></wire>
+    <wire><p1 x="280" y="160"/><p2 x="300" y="160"/></wire>
+    <wire><p1 x="330" y="150"/><p2 x="440" y="150"/></wire>
+    <wire><p1 x="480" y="150"/><p2 x="540" y="150"/></wire>
+  </wires>
+</circuit>

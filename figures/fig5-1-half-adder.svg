@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" width="900" height="430" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 5-1　半加器</title>
+  <desc>左边是半加器的真值表，中间是用异或门和门搭出的电路，右边给出两个输出的表达式。</desc>
+  <rect x="0" y="0" width="900" height="430" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#1f2937">图 5-1　半加器</text>
+  <text x="30" y="64" font-size="12.5" fill="#5F5E5A">两个一位数相加，得到一个本位和和一个进位</text>
+
+  <rect x="30" y="90" width="250" height="290" rx="8" fill="#FAFAF8" stroke="#D3D1C8" stroke-width="1.2"/>
+  <text x="50" y="118" font-size="14" font-weight="bold" fill="#7a4f00">真值表</text>
+  <g font-size="12.5" fill="#3a3a38" text-anchor="middle">
+    <text x="90" y="155" font-weight="bold">a</text>
+    <text x="140" y="155" font-weight="bold">b</text>
+    <text x="205" y="155" font-weight="bold">sum</text>
+    <text x="258" y="155" font-weight="bold">carry</text>
+    <line x1="55" y1="165" x2="272" y2="165" stroke="#D3D1C8" stroke-width="1.2"/>
+    <text x="90" y="190">0</text><text x="140" y="190">0</text><text x="205" y="190">0</text><text x="258" y="190">0</text>
+    <text x="90" y="218">0</text><text x="140" y="218">1</text><text x="205" y="218">1</text><text x="258" y="218">0</text>
+    <text x="90" y="246">1</text><text x="140" y="246">0</text><text x="205" y="246">1</text><text x="258" y="246">0</text>
+    <text x="90" y="274">1</text><text x="140" y="274">1</text><text x="205" y="274">0</text><text x="258" y="274">1</text>
+  </g>
+  <text x="50" y="330" font-size="12" fill="#3a3a38">四个输入组合穷举完，电路的行为就定死了。</text>
+  <text x="50" y="352" font-size="12" fill="#3a3a38">加法器是最适合从真值表出发搭的电路。</text>
+
+  <rect x="300" y="90" width="330" height="290" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.3"/>
+  <text x="320" y="118" font-size="14" font-weight="bold" fill="#0C447C">门电路实现</text>
+
+  <g text-anchor="middle">
+    <rect x="320" y="165" width="55" height="34" rx="5" fill="#ffffff" stroke="#185FA5" stroke-width="1.3"/>
+    <text x="348" y="188" font-size="13" fill="#0C447C">a</text>
+    <rect x="320" y="265" width="55" height="34" rx="5" fill="#ffffff" stroke="#185FA5" stroke-width="1.3"/>
+    <text x="348" y="288" font-size="13" fill="#0C447C">b</text>
+
+    <path d="M420,170 L420,220 L465,195 Z" fill="#ffffff" stroke="#185FA5" stroke-width="1.8"/>
+    <path d="M410,170 Q420,195 410,220 Q425,195 410,170 Z" fill="#ffffff" stroke="#185FA5" stroke-width="1.8"/>
+    <text x="455" y="200" font-size="12" fill="#0C447C">XOr</text>
+
+    <path d="M420,255 H455 A20,20 0 0 1 455,295 H420 Z" fill="#ffffff" stroke="#BA7517" stroke-width="1.8"/>
+    <text x="455" y="280" font-size="12" fill="#7a4f00">And</text>
+
+    <rect x="545" y="180" width="65" height="32" rx="5" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.2"/>
+    <text x="578" y="202" font-size="12" fill="#2d5c43">sum</text>
+    <rect x="545" y="265" width="65" height="32" rx="5" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.2"/>
+    <text x="578" y="287" font-size="12" fill="#2d5c43">carry</text>
+  </g>
+  <g stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#a)">
+    <line x1="375" y1="182" x2="418" y2="188"/>
+    <line x1="375" y1="282" x2="418" y2="276"/>
+    <line x1="375" y1="182" x2="418" y2="262"/>
+    <line x1="375" y1="282" x2="418" y2="296"/>
+    <line x1="475" y1="195" x2="543" y2="196"/>
+    <line x1="475" y1="275" x2="543" y2="281"/>
+  </g>
+
+  <rect x="650" y="90" width="220" height="290" rx="8" fill="#FDF2E4" stroke="#BA7517" stroke-width="1.3"/>
+  <text x="670" y="118" font-size="14" font-weight="bold" fill="#7a4f00">表达式</text>
+  <text x="670" y="165" font-size="14" fill="#3a3a38">sum = a ^ b</text>
+  <text x="670" y="200" font-size="14" fill="#3a3a38">carry = a &amp; b</text>
+  <text x="670" y="255" font-size="12.5" fill="#3a3a38">sum 就是"两个数不同则为 1"，</text>
+  <text x="670" y="279" font-size="12.5" fill="#3a3a38">正好是异或。</text>
+  <text x="670" y="315" font-size="12.5" fill="#3a3a38">carry 只有两个都是 1 时</text>
+  <text x="670" y="339" font-size="12.5" fill="#3a3a38">才产生，所以用一个与门。</text>
+
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#9CA3AF"/>
+    </marker>
+  </defs>
+</svg>

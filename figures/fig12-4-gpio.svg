@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" width="900" height="440" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 12-4　GPIO 的 LED 与开关寄存器</title>
+  <desc>GPIO 对外是两个寄存器：写 0xffff0010 的低 8 位驱动 LED，读 0xffff0020 得到 8 位开关状态。</desc>
+  <rect x="0" y="0" width="900" height="440" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 12-4　GPIO 的 LED 与开关寄存器</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">一个只写，一个只读，合起来就是最简单的并行输入输出口</text>
+
+  <!-- LED 部分 -->
+  <rect x="30" y="90" width="410" height="300" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <rect x="30" y="90" width="410" height="44" rx="8" fill="#FDE68A"/>
+  <text x="46" y="119" font-size="15" font-weight="bold" fill="#92400E">LED　写 0xffff0010</text>
+
+  <text x="46" y="158" font-size="12.5" fill="#374151"> CPU 写来的 32 位数据</text>
+  <rect x="46" y="170" width="378" height="44" rx="4" fill="#ffffff" stroke="#FCD34D"/>
+  <text x="235" y="197" font-size="11.5" font-family="monospace" fill="#92400E" text-anchor="middle">wdata[31:8] 不用　　wdata[7:0] 送到 LED</text>
+
+  <text x="46" y="246" font-size="12.5" fill="#374151"> 复位时 LED 全灭，只有写使能且地址命中时才更新</text>
+
+  <!-- 8 个灯 -->
+  <text x="46" y="290" font-size="12" fill="#374151">点亮效果（写 0xa5 = 1010 0101）：</text>
+  <g>
+    <circle cx="72" cy="330" r="15" fill="#FBBF24" stroke="#B45309"/>
+    <circle cx="112" cy="330" r="15" fill="#E5E7EB" stroke="#9CA3AF"/>
+    <circle cx="152" cy="330" r="15" fill="#FBBF24" stroke="#B45309"/>
+    <circle cx="192" cy="330" r="15" fill="#E5E7EB" stroke="#9CA3AF"/>
+    <circle cx="232" cy="330" r="15" fill="#E5E7EB" stroke="#9CA3AF"/>
+    <circle cx="272" cy="330" r="15" fill="#FBBF24" stroke="#B45309"/>
+    <circle cx="312" cy="330" r="15" fill="#E5E7EB" stroke="#9CA3AF"/>
+    <circle cx="352" cy="330" r="15" fill="#FBBF24" stroke="#B45309"/>
+  </g>
+  <text x="46" y="372" font-size="11" fill="#92400E">位从高到低：1　0　1　0　0　1　0　1</text>
+
+  <!-- 开关部分 -->
+  <rect x="460" y="90" width="410" height="300" rx="8" fill="#DBEAFE" stroke="#185FA5" stroke-width="1.5"/>
+  <rect x="460" y="90" width="410" height="44" rx="8" fill="#BFDBFE"/>
+  <text x="476" y="119" font-size="15" font-weight="bold" fill="#0B3D6E">开关　读 0xffff0020</text>
+
+  <text x="476" y="158" font-size="12.5" fill="#374151"> 8 位拨码接到 switch_i</text>
+  <rect x="476" y="170" width="378" height="44" rx="4" fill="#ffffff" stroke="#93C5FD"/>
+  <text x="665" y="197" font-size="11.5" font-family="monospace" fill="#0B3D6E" text-anchor="middle">rdata = {24'b0, switch_i}</text>
+
+  <text x="476" y="246" font-size="12.5" fill="#374151"> 读出来的值零扩展到 32 位</text>
+
+  <!-- 8 个开关 -->
+  <text x="476" y="290" font-size="12" fill="#374151">拨码状态（读回 0x5a = 0101 1010）：</text>
+  <g fill="#ffffff" stroke="#185FA5" stroke-width="1.5">
+    <rect x="500" y="310" width="28" height="40" rx="4"/>
+    <rect x="540" y="310" width="28" height="40" rx="4"/>
+    <rect x="580" y="310" width="28" height="40" rx="4"/>
+    <rect x="620" y="310" width="28" height="40" rx="4"/>
+    <rect x="660" y="310" width="28" height="40" rx="4"/>
+    <rect x="700" y="310" width="28" height="40" rx="4"/>
+    <rect x="740" y="310" width="28" height="40" rx="4"/>
+    <rect x="780" y="310" width="28" height="40" rx="4"/>
+  </g>
+  <text x="476" y="372" font-size="11" fill="#0B3D6E">位从高到低：0　1　0　1　1　0　1　0</text>
+
+  <text x="30" y="420" font-size="12" fill="#B45309">CPU 端只是普通的 sw 和 lw，GPIO 内部才区分写灯还是读开关。</text>
+</svg>

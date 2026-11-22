@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 7-3　分支与跳转的目标地址计算</title>
+  <desc>分支与 jal 的目标是 pc 加符号扩展后的相对偏移；jalr 的目标是 rs1 加立即数并清掉最低位；三者都要写回 32 位。</desc>
+  <rect x="0" y="0" width="900" height="400" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#1f2937">图 7-3　分支与跳转的目标地址计算</text>
+  <text x="30" y="64" font-size="12.5" fill="#5F5E5A">相对跳转看当前 pc，间接跳转看寄存器，最后一位清 0</text>
+
+  <rect x="35" y="100" width="395" height="130" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.6"/>
+  <text x="55" y="128" font-size="14" font-weight="bold" fill="#0C447C">beq / jal　相对跳转</text>
+  <text x="55" y="155" font-size="13" fill="#3a3a38" font-family="Consolas,monospace">next_pc = pc + sign_extend(imm)</text>
+  <text x="55" y="180" font-size="11.5" fill="#5F5E5A">偏移在第 6 章已经按 B 型或 J 型拼好</text>
+  <text x="55" y="203" font-size="11.5" fill="#5F5E5A">分支条件不成立时维持 pc + 4</text>
+
+  <rect x="470" y="100" width="395" height="130" rx="8" fill="#FDF2E4" stroke="#BA7517" stroke-width="1.6"/>
+  <text x="490" y="128" font-size="14" font-weight="bold" fill="#7a4f00">jalr　间接跳转</text>
+  <text x="490" y="155" font-size="13" fill="#3a3a38" font-family="Consolas,monospace">next_pc = (regs[rs1] + imm) &amp; ~1</text>
+  <text x="490" y="180" font-size="11.5" fill="#5F5E5A">目标来自寄存器，函数返回常用它</text>
+  <text x="490" y="203" font-size="11.5" fill="#5F5E5A">最低位清 0 保证指令地址对齐</text>
+
+  <rect x="35" y="255" width="830" height="100" rx="8" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.6"/>
+  <text x="55" y="283" font-size="13.5" font-weight="bold" fill="#2d5c43">两种跳转都要写链接地址</text>
+  <text x="55" y="310" font-size="12.5" fill="#3a3a38" font-family="Consolas,monospace">cpu.set_reg(rd, pc + 4)</text>
+  <text x="420" y="310" font-size="11.5" fill="#5F5E5A">rd 为 x0 时不写，正好用作普通跳转</text>
+  <text x="55" y="337" font-size="11.5" fill="#5F5E5A">链接地址是下一条指令的地址，函数返回后从这里继续</text>
+</svg>

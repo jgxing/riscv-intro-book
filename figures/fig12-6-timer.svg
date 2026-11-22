@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" width="900" height="430" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 12-6　定时器的 64 位计数与读取</title>
+  <desc>定时器每个时钟加一，程序分两次读取低 32 位和高 32 位，用两次读数之间的间隔给程序计时。</desc>
+  <rect x="0" y="0" width="900" height="430" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 12-6　定时器的 64 位计数与读取</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">一个只会加一的计数器，却能给程序提供时间</text>
+
+  <!-- 计数器 -->
+  <rect x="40" y="100" width="360" height="200" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="56" y="130" font-size="14" font-weight="bold" fill="#92400E">64 位计数器 count</text>
+  <text x="56" y="158" font-size="12" fill="#374151">复位清 0，每个时钟上升沿加 1</text>
+
+  <rect x="56" y="176" width="328" height="44" rx="4" fill="#ffffff" stroke="#FCD34D"/>
+  <text x="220" y="204" font-size="11.5" font-family="monospace" fill="#92400E" text-anchor="middle">count[63:32]</text>
+  <rect x="56" y="230" width="328" height="44" rx="4" fill="#ffffff" stroke="#FCD34D"/>
+  <text x="220" y="258" font-size="11.5" font-family="monospace" fill="#92400E" text-anchor="middle">count[31:0]</text>
+
+  <text x="56" y="288" font-size="11.5" fill="#6B7280">读出高位和低位各一次，拼成 64 位数</text>
+
+  <!-- 两个读出地址 -->
+  <rect x="450" y="110" width="410" height="80" rx="6" fill="#DBEAFE" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="466" y="140" font-size="13" font-weight="bold" fill="#0B3D6E">lw 自 0xffff0000</text>
+  <text x="466" y="164" font-size="12" fill="#374151">返回 count[31:0]，定时器低 32 位</text>
+
+  <rect x="450" y="204" width="410" height="80" rx="6" fill="#DBEAFE" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="466" y="234" font-size="13" font-weight="bold" fill="#0B3D6E">lw 自 0xffff0004</text>
+  <text x="466" y="258" font-size="12" fill="#374151">返回 count[63:32]，定时器高 32 位</text>
+
+  <line x1="384" y1="252" x2="450" y2="150" stroke="#185FA5" stroke-width="1.6"/>
+  <line x1="384" y1="198" x2="450" y2="244" stroke="#185FA5" stroke-width="1.6"/>
+
+  <!-- 用法 -->
+  <rect x="40" y="326" width="820" height="80" rx="6" fill="#FAFAF9" stroke="#D6D3D1"/>
+  <text x="56" y="352" font-size="12.5" fill="#374151">用法：开始读一次记为 t0，结束再读一次记为 t1，</text>
+  <text x="56" y="374" font-size="12.5" fill="#374151">t1 − t0 就是中间经过的时钟周期数，乘以时钟周期就是时间。</text>
+  <text x="56" y="396" font-size="11.5" fill="#B45309">rdcycle 这类 CSR 也能提供周期数，第 14 章的定时器中断用的是另一套 CLINT 寄存器。</text>
+</svg>

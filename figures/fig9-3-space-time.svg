@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 460" width="920" height="460" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 9-3　五级流水线的时空图</title>
+  <desc>四条指令重叠执行，横轴是时钟周期，纵轴是指令。第 5 拍第一条指令写回，之后每拍流出一条。</desc>
+  <rect x="0" y="0" width="920" height="460" fill="#ffffff"/>
+
+  <text x="28" y="36" font-size="18" font-weight="bold" fill="#1f2937">图 9-3　五级流水线的时空图</text>
+  <text x="28" y="60" font-size="12.5" fill="#5F5E5A">同一时刻，不同指令处在不同阶段；这是时间上的重叠，不是空间上的复制</text>
+
+  <!-- 列头：时钟周期 -->
+  <g font-size="11" fill="#6B7280" text-anchor="middle">
+    <text x="270" y="96">周期1</text>
+    <text x="340" y="96">周期2</text>
+    <text x="410" y="96">周期3</text>
+    <text x="480" y="96">周期4</text>
+    <text x="550" y="96">周期5</text>
+    <text x="620" y="96">周期6</text>
+    <text x="690" y="96">周期7</text>
+    <text x="760" y="96">周期8</text>
+  </g>
+
+  <!-- 行标签 -->
+  <g font-size="11.5" fill="#374151" text-anchor="end">
+    <text x="200" y="133">I1 addi</text>
+    <text x="200" y="177">I2 addi</text>
+    <text x="200" y="221">I3 nop</text>
+    <text x="200" y="265">I4 add</text>
+    <text x="200" y="309">I5 nop</text>
+  </g>
+
+  <!-- 网格单元 -->
+  <g font-size="11" text-anchor="middle">
+    <!-- 颜色: IF #E6F1FB, ID #F3E8FF, EX #FEF3C7, MEM #D1FAE5, WB #FEE2E2 -->
+    <!-- I1 -->
+    <rect x="235" y="112" width="70" height="34" rx="3" fill="#E6F1FB" stroke="#185FA5"/><text x="270" y="134" fill="#0B3D6E">IF</text>
+    <rect x="305" y="112" width="70" height="34" rx="3" fill="#F3E8FF" stroke="#7E22CE"/><text x="340" y="134" fill="#581C87">ID</text>
+    <rect x="375" y="112" width="70" height="34" rx="3" fill="#FEF3C7" stroke="#B45309"/><text x="410" y="134" fill="#7C2D12">EX</text>
+    <rect x="445" y="112" width="70" height="34" rx="3" fill="#D1FAE5" stroke="#047857"/><text x="480" y="134" fill="#065F46">MEM</text>
+    <rect x="515" y="112" width="70" height="34" rx="3" fill="#FEE2E2" stroke="#B91C1C"/><text x="550" y="134" fill="#991B1B">WB</text>
+
+    <!-- I2 -->
+    <rect x="305" y="156" width="70" height="34" rx="3" fill="#E6F1FB" stroke="#185FA5"/><text x="340" y="178" fill="#0B3D6E">IF</text>
+    <rect x="375" y="156" width="70" height="34" rx="3" fill="#F3E8FF" stroke="#7E22CE"/><text x="410" y="178" fill="#581C87">ID</text>
+    <rect x="445" y="156" width="70" height="34" rx="3" fill="#FEF3C7" stroke="#B45309"/><text x="480" y="178" fill="#7C2D12">EX</text>
+    <rect x="515" y="156" width="70" height="34" rx="3" fill="#D1FAE5" stroke="#047857"/><text x="550" y="178" fill="#065F46">MEM</text>
+    <rect x="585" y="156" width="70" height="34" rx="3" fill="#FEE2E2" stroke="#B91C1C"/><text x="620" y="178" fill="#991B1B">WB</text>
+
+    <!-- I3 -->
+    <rect x="375" y="200" width="70" height="34" rx="3" fill="#E6F1FB" stroke="#185FA5"/><text x="410" y="222" fill="#0B3D6E">IF</text>
+    <rect x="445" y="200" width="70" height="34" rx="3" fill="#F3E8FF" stroke="#7E22CE"/><text x="480" y="222" fill="#581C87">ID</text>
+    <rect x="515" y="200" width="70" height="34" rx="3" fill="#FEF3C7" stroke="#B45309"/><text x="550" y="222" fill="#7C2D12">EX</text>
+    <rect x="585" y="200" width="70" height="34" rx="3" fill="#D1FAE5" stroke="#047857"/><text x="620" y="222" fill="#065F46">MEM</text>
+    <rect x="655" y="200" width="70" height="34" rx="3" fill="#FEE2E2" stroke="#B91C1C"/><text x="690" y="222" fill="#991B1B">WB</text>
+
+    <!-- I4 -->
+    <rect x="445" y="244" width="70" height="34" rx="3" fill="#E6F1FB" stroke="#185FA5"/><text x="480" y="266" fill="#0B3D6E">IF</text>
+    <rect x="515" y="244" width="70" height="34" rx="3" fill="#F3E8FF" stroke="#7E22CE"/><text x="550" y="266" fill="#581C87">ID</text>
+    <rect x="585" y="244" width="70" height="34" rx="3" fill="#FEF3C7" stroke="#B45309"/><text x="620" y="266" fill="#7C2D12">EX</text>
+    <rect x="655" y="244" width="70" height="34" rx="3" fill="#D1FAE5" stroke="#047857"/><text x="690" y="266" fill="#065F46">MEM</text>
+    <rect x="725" y="244" width="70" height="34" rx="3" fill="#FEE2E2" stroke="#B91C1C"/><text x="760" y="266" fill="#991B1B">WB</text>
+
+    <!-- I5 -->
+    <rect x="515" y="288" width="70" height="34" rx="3" fill="#E6F1FB" stroke="#185FA5"/><text x="550" y="310" fill="#0B3D6E">IF</text>
+    <rect x="585" y="288" width="70" height="34" rx="3" fill="#F3E8FF" stroke="#7E22CE"/><text x="620" y="310" fill="#581C87">ID</text>
+    <rect x="655" y="288" width="70" height="34" rx="3" fill="#FEF3C7" stroke="#B45309"/><text x="690" y="310" fill="#7C2D12">EX</text>
+    <rect x="725" y="288" width="70" height="34" rx="3" fill="#D1FAE5" stroke="#047857"/><text x="760" y="310" fill="#065F46">MEM</text>
+    <rect x="795" y="288" width="70" height="34" rx="3" fill="#FEE2E2" stroke="#B91C1C"/><text x="830" y="310" fill="#991B1B">WB</text>
+  </g>
+
+  <!-- 填充时间 / 稳定时间标注 -->
+  <path d="M235 350 L235 362 L550 362 L550 350" fill="none" stroke="#B45309" stroke-width="1.4"/>
+  <text x="392" y="380" font-size="11.5" fill="#B45309" text-anchor="middle">填充：前 4 拍还没有指令流出</text>
+  <path d="M550 350 L550 362 L830 362 L830 350" fill="none" stroke="#047857" stroke-width="1.4"/>
+  <text x="690" y="380" font-size="11.5" fill="#047857" text-anchor="middle">稳定：之后每拍流出一条</text>
+
+  <text x="28" y="416" font-size="12" fill="#374151">本例 5 条指令：单周期要 5 拍；流水线从第 5 拍起流出，到第 9 拍全部完成，共 9 拍。</text>
+  <text x="28" y="438" font-size="12" fill="#B45309">指令多时优势才明显：条数越多，填空的 4 拍越摊薄，平均每条趋近 1 拍。</text>
+</svg>

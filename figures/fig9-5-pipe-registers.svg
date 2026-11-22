@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 470" width="940" height="470" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 9-5　各级流水线寄存器保存的内容</title>
+  <desc>四组流水线寄存器各存一组字段：指令与 PC，运算所需的数据与控制信号，访存所需的地址与数据，写回所需的数据与目的寄存器。</desc>
+  <rect x="0" y="0" width="940" height="470" fill="#ffffff"/>
+
+  <text x="28" y="36" font-size="18" font-weight="bold" fill="#1f2937">图 9-5　各级流水线寄存器保存的内容</text>
+  <text x="28" y="60" font-size="12.5" fill="#5F5E5A">原则：后级要用什么，前级就把什么存下来；把组合逻辑算好的结果也顺手带上</text>
+
+  <!-- IF/ID -->
+  <rect x="28" y="86" width="200" height="300" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.4"/>
+  <text x="128" y="112" font-size="13" font-weight="bold" fill="#0B3D6E" text-anchor="middle">IF/ID</text>
+  <line x1="44" y1="122" x2="212" y2="122" stroke="#185FA5" stroke-width="1"/>
+  <g font-size="11.5" fill="#374151">
+    <text x="44" y="146">ifid_pc</text>
+    <text x="44" y="170">ifid_pc4</text>
+    <text x="44" y="194">ifid_instr</text>
+  </g>
+  <text x="44" y="228" font-size="11" fill="#6B7280">给 ID 译码用：</text>
+  <g font-size="11.5" fill="#374151">
+    <text x="44" y="250">· 指令本身</text>
+    <text x="44" y="272">· pc 与 pc+4</text>
+  </g>
+  <text x="44" y="320" font-size="11" fill="#6B7280">pc+4 供 jal 做</text>
+  <text x="44" y="340" font-size="11" fill="#6B7280">链接地址，先带着</text>
+
+  <!-- ID/EX -->
+  <rect x="256" y="86" width="212" height="300" rx="6" fill="#F3E8FF" stroke="#7E22CE" stroke-width="1.4"/>
+  <text x="362" y="112" font-size="13" font-weight="bold" fill="#581C87" text-anchor="middle">ID/EX</text>
+  <line x1="272" y1="122" x2="452" y2="122" stroke="#7E22CE" stroke-width="1"/>
+  <g font-size="11" fill="#374151">
+    <text x="272" y="144">pc, pc4, imm</text>
+    <text x="272" y="164">r1, r2, rd</text>
+    <text x="272" y="184">alu_op, alu_src_b</text>
+    <text x="272" y="204">wreg, wreg_src</text>
+    <text x="272" y="224">pc_src</text>
+    <text x="272" y="244">mem_write, mem_func</text>
+  </g>
+  <text x="272" y="278" font-size="11" fill="#6B7280">数据在 ID 级已经读好，</text>
+  <text x="272" y="298" font-size="11" fill="#6B7280">控制信号也在 ID 级译好，</text>
+  <text x="272" y="318" font-size="11" fill="#6B7280">一路带到 EX，免得后面</text>
+  <text x="272" y="338" font-size="11" fill="#6B7280">再重新译一遍指令。</text>
+
+  <!-- EX/MEM -->
+  <rect x="496" y="86" width="212" height="300" rx="6" fill="#FEF3C7" stroke="#B45309" stroke-width="1.4"/>
+  <text x="602" y="112" font-size="13" font-weight="bold" fill="#7C2D12" text-anchor="middle">EX/MEM</text>
+  <line x1="512" y1="122" x2="692" y2="122" stroke="#B45309" stroke-width="1"/>
+  <g font-size="11" fill="#374151">
+    <text x="512" y="144">alu（运算结果/地址）</text>
+    <text x="512" y="164">wdata（已选好的写回值）</text>
+    <text x="512" y="184">r2（要写内存的数据）</text>
+    <text x="512" y="204">rd</text>
+    <text x="512" y="224">wreg, wreg_src</text>
+    <text x="512" y="244">mem_write, mem_func</text>
+  </g>
+  <text x="512" y="278" font-size="11" fill="#6B7280">ALU 结果在这里已经算出，</text>
+  <text x="512" y="298" font-size="11" fill="#6B7280">写回值也提前选好：LUI 用</text>
+  <text x="512" y="318" font-size="11" fill="#6B7280">imm，AUIPC 用 pc+imm，</text>
+  <text x="512" y="338" font-size="11" fill="#6B7280">其余用 ALU 结果。</text>
+
+  <!-- MEM/WB -->
+  <rect x="736" y="86" width="176" height="300" rx="6" fill="#FEE2E2" stroke="#B91C1C" stroke-width="1.4"/>
+  <text x="824" y="112" font-size="13" font-weight="bold" fill="#991B1B" text-anchor="middle">MEM/WB</text>
+  <line x1="752" y1="122" x2="896" y2="122" stroke="#B91C1C" stroke-width="1"/>
+  <g font-size="11" fill="#374151">
+    <text x="752" y="144">wdata（最终写回值）</text>
+    <text x="752" y="164">rd</text>
+    <text x="752" y="184">wreg</text>
+  </g>
+  <text x="752" y="218" font-size="11" fill="#6B7280">load 的数据在 MEM 级</text>
+  <text x="752" y="238" font-size="11" fill="#6B7280">才出来，这里最后选一次：</text>
+  <text x="752" y="258" font-size="11" fill="#6B7280">load 用访存结果，</text>
+  <text x="752" y="278" font-size="11" fill="#6B7280">其余沿用上面的 wdata。</text>
+  <text x="752" y="320" font-size="11" fill="#6B7280">WB 只剩三根线，</text>
+  <text x="752" y="340" font-size="11" fill="#6B7280">直接写寄存器堆。</text>
+
+  <!-- 箭头 -->
+  <g stroke="#9CA3AF" stroke-width="2" fill="none">
+    <line x1="228" y1="236" x2="256" y2="236"/>
+    <line x1="468" y1="236" x2="496" y2="236"/>
+    <line x1="708" y1="236" x2="736" y2="236"/>
+  </g>
+
+  <text x="28" y="420" font-size="12" fill="#374151">一根信号在多级之间传递时，常常每拍都要存一次，名字前加上级名区分，例如 rd 会依次变成 idex_rd、exmem_rd、memwb_rd。</text>
+  <text x="28" y="444" font-size="12" fill="#B45309">控制信号（wreg、wreg_src 等）和数据一起流动，等到 WB 级就知道这一拍该不该写、写哪个寄存器、写什么值。</text>
+</svg>

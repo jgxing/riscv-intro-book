@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 400" width="940" height="400" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 14-3　定时器抢占的时间线</title>
+  <desc>mtime 每个周期加一，到达 mtimecmp 时置起中断；处理器在指令边界响应，保存现场后切到另一个任务。</desc>
+  <rect x="0" y="0" width="940" height="400" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 14-3　定时器抢占的时间线</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">中断只在指令之间发生，不会把一条指令执行到一半打断</text>
+
+  <!-- 时间轴 -->
+  <line x1="60" y1="130" x2="900" y2="130" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arr)"/>
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#9CA3AF"/>
+    </marker>
+  </defs>
+  <text x="870" y="120" font-size="11" fill="#6B7280">时间</text>
+
+  <!-- 任务运行条 -->
+  <rect x="70" y="150" width="200" height="34" rx="5" fill="#DBEAFE" stroke="#185FA5"/>
+  <text x="170" y="172" font-size="12" fill="#0B3D6E" text-anchor="middle">任务 A 运行</text>
+  <rect x="270" y="150" width="60" height="34" rx="5" fill="#FFE4E6" stroke="#BE123C"/>
+  <text x="300" y="172" font-size="11" fill="#9F1239" text-anchor="middle">陷阱</text>
+  <rect x="330" y="150" width="200" height="34" rx="5" fill="#D1FAE5" stroke="#047857"/>
+  <text x="430" y="172" font-size="12" fill="#065F46" text-anchor="middle">任务 B 运行</text>
+  <rect x="530" y="150" width="60" height="34" rx="5" fill="#FFE4E6" stroke="#BE123C"/>
+  <text x="560" y="172" font-size="11" fill="#9F1239" text-anchor="middle">陷阱</text>
+  <rect x="590" y="150" width="200" height="34" rx="5" fill="#DBEAFE" stroke="#185FA5"/>
+  <text x="690" y="172" font-size="12" fill="#0B3D6E" text-anchor="middle">任务 A 继续</text>
+
+  <!-- mtime 刻度 -->
+  <g font-size="11" font-family="monospace" fill="#374151">
+    <text x="70" y="210">mtime=0</text>
+    <text x="262" y="210">=29</text>
+    <text x="322" y="210">=30</text>
+    <text x="522" y="210">=59</text>
+    <text x="582" y="210">=60</text>
+    <text x="782" y="210">=89</text>
+  </g>
+  <g stroke="#BE123C" stroke-width="1.5" stroke-dasharray="4 3">
+    <line x1="270" y1="112" x2="270" y2="200"/>
+    <line x1="530" y1="112" x2="530" y2="200"/>
+  </g>
+
+  <!-- 陷阱处理细节 -->
+  <rect x="30" y="245" width="885" height="120" rx="10" fill="#FAFAF9" stroke="#D6D3D1"/>
+  <text x="50" y="272" font-size="13" font-weight="bold" fill="#374151">每个陷阱点硬件和软件各做几件事</text>
+  <g font-size="11.5" fill="#374151">
+    <text x="50" y="300">硬件：保存 mepc 与 mcause，清 mstatus.MIE，跳到 mtvec</text>
+    <text x="50" y="324">软件：把当前任务的寄存器存进它的栈，轮转选出下一个任务</text>
+    <text x="50" y="348">返回：恢复新任务现场，mret 把 MIE 还回来，从 mepc 接着跑</text>
+  </g>
+  <g font-size="11.5" font-family="monospace" fill="#1f2937">
+    <text x="560" y="300">trap()</text>
+    <text x="560" y="324">PCB.save()</text>
+    <text x="560" y="348">PCB.restore() + mret()</text>
+  </g>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" width="900" height="430" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 6-3　从汇编源码到模拟器里的程序镜像</title>
+  <desc>汇编源码经 RISC-V 交叉编译器得到 ELF 文件，再用 objcopy 抽出纯二进制镜像，最后由模拟器的 load_image 装入内存。</desc>
+  <rect x="0" y="0" width="900" height="430" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#1f2937">图 6-3　从汇编源码到模拟器里的程序镜像</text>
+  <text x="30" y="64" font-size="12.5" fill="#5F5E5A">编译器和 objcopy 在主机上做，load_image 在模拟器里做</text>
+
+  <g text-anchor="middle">
+    <rect x="35" y="120" width="160" height="66" rx="7" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.6"/>
+    <text x="115" y="147" font-size="14" font-weight="bold" fill="#0C447C">test0.s</text>
+    <text x="115" y="169" font-size="11" fill="#5F5E5A">汇编源码</text>
+
+    <rect x="265" y="120" width="160" height="66" rx="7" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.6"/>
+    <text x="345" y="147" font-size="14" font-weight="bold" fill="#2d5c43">test</text>
+    <text x="345" y="169" font-size="11" fill="#5F5E5A">ELF 可执行文件</text>
+
+    <rect x="495" y="120" width="160" height="66" rx="7" fill="#FDF2E4" stroke="#BA7517" stroke-width="1.6"/>
+    <text x="575" y="147" font-size="14" font-weight="bold" fill="#7a4f00">test.bin</text>
+    <text x="575" y="169" font-size="11" fill="#5F5E5A">纯二进制镜像</text>
+
+    <rect x="725" y="120" width="140" height="66" rx="7" fill="#EDECE8" stroke="#9CA3AF" stroke-width="1.6"/>
+    <text x="795" y="147" font-size="14" font-weight="bold" fill="#3a3a38">内存</text>
+    <text x="795" y="169" font-size="11" fill="#5F5E5A">0x80000000 起</text>
+  </g>
+
+  <g stroke="#6b6b68" stroke-width="1.6" fill="none">
+    <path d="M195 153 L260 153" marker-end="url(#ar2)"/>
+    <path d="M425 153 L490 153" marker-end="url(#ar2)"/>
+    <path d="M655 153 L720 153" marker-end="url(#ar2)"/>
+  </g>
+  <defs>
+    <marker id="ar2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#6b6b68"/>
+    </marker>
+  </defs>
+
+  <text x="227" y="112" font-size="10.5" fill="#5F5E5A" text-anchor="middle">gcc</text>
+  <text x="457" y="112" font-size="10.5" fill="#5F5E5A" text-anchor="middle">objcopy</text>
+  <text x="687" y="112" font-size="10.5" fill="#5F5E5A" text-anchor="middle">load_image</text>
+
+  <rect x="35" y="230" width="830" height="70" rx="7" fill="#ffffff" stroke="#9CA3AF" stroke-width="1.2"/>
+  <text x="50" y="255" font-size="11.5" fill="#3a3a38" font-family="Consolas,monospace">riscv-none-elf-gcc -Ttext=0x80000000 -mno-relax -march=rv32i_zicsr \</text>
+  <text x="50" y="278" font-size="11.5" fill="#3a3a38" font-family="Consolas,monospace">    -nostdlib -ffreestanding -o test test0.s</text>
+
+  <rect x="35" y="315" width="830" height="70" rx="7" fill="#ffffff" stroke="#9CA3AF" stroke-width="1.2"/>
+  <text x="50" y="340" font-size="11.5" fill="#3a3a38" font-family="Consolas,monospace">riscv-none-elf-objcopy -O binary test test.bin</text>
+  <text x="50" y="363" font-size="11.5" fill="#3a3a38" font-family="Consolas,monospace">mem.load_image("test.bin", 0x80000000)</text>
+</svg>

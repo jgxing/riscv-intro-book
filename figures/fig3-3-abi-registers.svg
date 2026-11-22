@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" width="900" height="480" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 3-3　调用约定中的寄存器分工</title>
+  <desc>a 系列用于参数与返回值，t 系列和 ra 由调用方负责保存，s 系列由被调用方负责保存，tp 与 gp 不应被修改。</desc>
+  <rect x="0" y="0" width="900" height="480" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#1f2937">图 3-3　调用约定中的寄存器分工</text>
+  <text x="30" y="64" font-size="12.5" fill="#5F5E5A">谁用谁保管，责任按寄存器类别分好</text>
+
+  <!-- a 系列 -->
+  <rect x="30" y="100" width="260" height="300" rx="8" fill="#FDF2E4" stroke="#BA7517" stroke-width="1.5"/>
+  <text x="160" y="132" font-size="16" font-weight="bold" fill="#7a4f00" text-anchor="middle">参数与返回值</text>
+  <text x="160" y="156" font-size="11.5" fill="#5F5E5A" text-anchor="middle">调用方按约定放好</text>
+  <g font-size="12.5" fill="#2C2C2A">
+    <text x="52" y="190">a0 - a7</text><text x="230" y="190" text-anchor="end">最多 8 个整数参数</text>
+    <text x="52" y="222">a0</text><text x="230" y="222" text-anchor="end">返回值</text>
+    <text x="52" y="262">超过 8 个参数</text>
+    <text x="52" y="286">放栈上，由调用方压入和弹出</text>
+  </g>
+  <line x1="52" y1="310" x2="268" y2="310" stroke="#E8D4B5" stroke-width="1"/>
+  <text x="52" y="338" font-size="11.5" fill="#7a4f00">调用方保存：调用后还要用就自己先存</text>
+  <text x="52" y="364" font-size="11.5" fill="#7a4f00">被调用方可以随便改 a 系列</text>
+
+  <!-- t 系列 -->
+  <rect x="320" y="100" width="260" height="300" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="450" y="132" font-size="16" font-weight="bold" fill="#0C447C" text-anchor="middle">调用方保存</text>
+  <text x="450" y="156" font-size="11.5" fill="#5F5E5A" text-anchor="middle">t0 - t6，以及 ra</text>
+  <g font-size="12.5" fill="#2C2C2A">
+    <text x="342" y="190">t0 - t6</text><text x="520" y="190" text-anchor="end">临时寄存器</text>
+    <text x="342" y="222">ra</text><text x="520" y="222" text-anchor="end">返回地址</text>
+  </g>
+  <line x1="342" y1="246" x2="558" y2="246" stroke="#C6DDF1" stroke-width="1"/>
+  <text x="342" y="274" font-size="12" fill="#2C2C2A">函数里要调用别的函数时</text>
+  <text x="342" y="298" font-size="12" fill="#2C2C2A">调用方必须先把 ra 存到栈上</text>
+  <text x="342" y="338" font-size="11.5" fill="#0C447C">被调用方没有义务保护这些寄存器</text>
+  <text x="342" y="364" font-size="11.5" fill="#0C447C">叶子函数不调用别人，可以省掉保存</text>
+
+  <!-- s 系列 -->
+  <rect x="610" y="100" width="260" height="300" rx="8" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.5"/>
+  <text x="740" y="132" font-size="16" font-weight="bold" fill="#2d5c43" text-anchor="middle">被调用方保存</text>
+  <text x="740" y="156" font-size="11.5" fill="#5F5E5A" text-anchor="middle">s0 - s11</text>
+  <g font-size="12.5" fill="#2C2C2A">
+    <text x="632" y="190">s0 - s11</text><text x="810" y="190" text-anchor="end">保存寄存器</text>
+  </g>
+  <line x1="632" y1="214" x2="848" y2="214" stroke="#C6E2D0" stroke-width="1"/>
+  <text x="632" y="244" font-size="12" fill="#2C2C2A">函数想用它们，就在入口存到栈上</text>
+  <text x="632" y="268" font-size="12" fill="#2C2C2A">返回前恢复原值</text>
+  <text x="632" y="310" font-size="11.5" fill="#2d5c43">调用方可以放心：调用前后值不变</text>
+  <text x="632" y="338" font-size="11.5" fill="#2d5c43">tp 和 gp 不在此列，标准代码不修改它们</text>
+
+  <text x="30" y="440" font-size="12.5" fill="#3a3a38">这条约定让两个独立编写的函数能互相调用，不需要知道对方内部用了哪些寄存器。</text>
+  <text x="30" y="464" font-size="12.5" fill="#3a3a38">约定本身不生成机器码，但违反它，程序会在看似无关的地方出错。</text>
+</svg>

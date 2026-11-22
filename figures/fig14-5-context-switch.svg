@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 400" width="940" height="400" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 14-5　PCB 与上下文切换</title>
+  <desc>两个 PCB 各指向自己栈上的现场帧，切换时把当前 sp 存回 PCB，再把另一个 PCB 的 sp 装进处理器。</desc>
+  <rect x="0" y="0" width="940" height="400" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 14-5　PCB 与上下文切换</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">切换的实质，是换一个 sp 指向的现场帧</text>
+
+  <!-- CPU -->
+  <rect x="370" y="95" width="200" height="80" rx="10" fill="#F3E8FF" stroke="#7C3AED" stroke-width="2"/>
+  <text x="470" y="125" font-size="14" font-weight="bold" fill="#6B21A8" text-anchor="middle">处理器</text>
+  <text x="470" y="152" font-size="12" font-family="monospace" fill="#1f2937" text-anchor="middle">sp → 现场帧</text>
+
+  <!-- PCB A -->
+  <rect x="60" y="230" width="330" height="120" rx="10" fill="#DBEAFE" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="225" y="258" font-size="13" font-weight="bold" fill="#0B3D6E" text-anchor="middle">PCB A</text>
+  <g font-size="11.5" font-family="monospace" fill="#1f2937">
+    <text x="82" y="284">pid = 0, state = RUN</text>
+    <text x="82" y="308">sp  → 栈 A 上的现场帧</text>
+    <text x="82" y="332">slices = 11</text>
+  </g>
+
+  <!-- PCB B -->
+  <rect x="550" y="230" width="330" height="120" rx="10" fill="#D1FAE5" stroke="#047857" stroke-width="1.5"/>
+  <text x="715" y="258" font-size="13" font-weight="bold" fill="#065F46" text-anchor="middle">PCB B</text>
+  <g font-size="11.5" font-family="monospace" fill="#1f2937">
+    <text x="572" y="284">pid = 1, state = RUN</text>
+    <text x="572" y="308">sp  → 栈 B 上的现场帧</text>
+    <text x="572" y="332">slices = 10</text>
+  </g>
+
+  <!-- 切换箭头 -->
+  <path d="M400 175 L200 225" stroke="#185FA5" stroke-width="2" marker-end="url(#arr)"/>
+  <path d="M540 175 L740 225" stroke="#047857" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="230" y="196" font-size="11" fill="#185FA5">存回当前 sp</text>
+  <text x="640" y="196" font-size="11" fill="#047857">装入下一个 sp</text>
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#6B7280"/>
+    </marker>
+  </defs>
+
+  <text x="60" y="382" font-size="12" fill="#6B7280">轮转调度只改一个 current 指针；真正让任务“接上”的，是那次 sp 的替换。</text>
+</svg>

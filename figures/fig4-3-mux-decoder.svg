@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" width="900" height="420" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 4-3　多路选择器与译码器</title>
+  <desc>左边是二选一多路选择器，由选择信号 s 决定输出取 d0 还是 d1；右边是二输入四输出译码器，每次只有一个输出为 1。</desc>
+  <rect x="0" y="0" width="900" height="420" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#1f2937">图 4-3　多路选择器与译码器</text>
+  <text x="30" y="64" font-size="12.5" fill="#5F5E5A">一个是"从多路里选一路"，一个是"按编号点亮一路"</text>
+
+  <rect x="30" y="90" width="410" height="285" rx="8" fill="#FAFAF8" stroke="#D3D1C8" stroke-width="1.2"/>
+  <text x="50" y="118" font-size="15" font-weight="bold" fill="#0C447C">二选一多路选择器 MUX</text>
+
+  <g text-anchor="middle">
+    <rect x="60" y="170" width="70" height="40" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.3"/>
+    <text x="95" y="195" font-size="13" fill="#0C447C">d0</text>
+    <rect x="60" y="240" width="70" height="40" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.3"/>
+    <text x="95" y="265" font-size="13" fill="#0C447C">d1</text>
+    <rect x="190" y="170" width="110" height="110" rx="6" fill="#ffffff" stroke="#185FA5" stroke-width="1.8"/>
+    <text x="245" y="222" font-size="14" font-weight="bold" fill="#0C447C">MUX</text>
+    <text x="245" y="246" font-size="11" fill="#3a3a38">2 选 1</text>
+    <rect x="350" y="195" width="60" height="40" rx="6" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.3"/>
+    <text x="380" y="220" font-size="13" fill="#2d5c43">y</text>
+    <rect x="175" y="305" width="60" height="36" rx="6" fill="#FDF2E4" stroke="#BA7517" stroke-width="1.3"/>
+    <text x="205" y="329" font-size="13" fill="#7a4f00">s</text>
+  </g>
+  <g stroke="#9CA3AF" stroke-width="1.6" marker-end="url(#arrow)">
+    <line x1="130" y1="190" x2="188" y2="205"/>
+    <line x1="130" y1="260" x2="188" y2="245"/>
+    <line x1="300" y1="215" x2="348" y2="215"/>
+    <line x1="205" y1="305" x2="205" y2="282"/>
+  </g>
+  <text x="50" y="360" font-size="12" fill="#3a3a38">s=0 时 y=d0，s=1 时 y=d1。选择器就是数据通路上的道岔。</text>
+
+  <rect x="460" y="90" width="410" height="285" rx="8" fill="#FAFAF8" stroke="#D3D1C8" stroke-width="1.2"/>
+  <text x="480" y="118" font-size="15" font-weight="bold" fill="#7a4f00">二输入四输出译码器</text>
+
+  <g text-anchor="middle">
+    <rect x="485" y="205" width="70" height="40" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.3"/>
+    <text x="520" y="230" font-size="13" fill="#0C447C">a1 a0</text>
+    <rect x="620" y="175" width="100" height="110" rx="6" fill="#ffffff" stroke="#BA7517" stroke-width="1.8"/>
+    <text x="670" y="226" font-size="14" font-weight="bold" fill="#7a4f00">译码器</text>
+    <text x="670" y="250" font-size="11" fill="#3a3a38">独热输出</text>
+    <rect x="780" y="145" width="60" height="30" rx="5" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.2"/>
+    <text x="810" y="165" font-size="12" fill="#2d5c43">y0</text>
+    <rect x="780" y="185" width="60" height="30" rx="5" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.2"/>
+    <text x="810" y="205" font-size="12" fill="#2d5c43">y1</text>
+    <rect x="780" y="225" width="60" height="30" rx="5" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.2"/>
+    <text x="810" y="245" font-size="12" fill="#2d5c43">y2</text>
+    <rect x="780" y="265" width="60" height="30" rx="5" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.2"/>
+    <text x="810" y="285" font-size="12" fill="#2d5c43">y3</text>
+  </g>
+  <g stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arrow)">
+    <line x1="555" y1="225" x2="618" y2="225"/>
+    <line x1="720" y1="200" x2="778" y2="160"/>
+    <line x1="720" y1="215" x2="778" y2="200"/>
+    <line x1="720" y1="240" x2="778" y2="240"/>
+    <line x1="720" y1="255" x2="778" y2="280"/>
+  </g>
+  <text x="480" y="345" font-size="12" fill="#3a3a38">a1a0=00 时只有 y0=1，01 时只有 y1=1，依此类推。</text>
+  <text x="480" y="366" font-size="12" fill="#3a3a38">指令译码就是按 opcode 和 funct 字段点亮对应的控制线。</text>
+</svg>

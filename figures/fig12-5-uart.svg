@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" width="900" height="470" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 12-5　UART 的数据寄存器与状态寄存器</title>
+  <desc>写数据寄存器发送一个字节，读数据寄存器取回收到的字节；状态寄存器用两个位表示数据就绪和发送保持寄存器空。</desc>
+  <rect x="0" y="0" width="900" height="470" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 12-5　UART 的数据寄存器与状态寄存器</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">同一地址 0xffff0030，写是发送，读是接收；状态在 0xffff0034</text>
+
+  <!-- 发送 -->
+  <rect x="30" y="90" width="410" height="160" rx="8" fill="#F5F3FF" stroke="#7E22CE" stroke-width="1.5"/>
+  <text x="46" y="118" font-size="14" font-weight="bold" fill="#581C87">发送　sw 到 0xffff0030</text>
+  <text x="46" y="146" font-size="12" fill="#374151">写数据的低 8 位送进 tx_o，</text>
+  <text x="46" y="166" font-size="12" fill="#374151">同时拉一拍 tx_valid_o 通知外界。</text>
+  <rect x="46" y="182" width="378" height="46" rx="4" fill="#ffffff" stroke="#C4B5FD"/>
+  <text x="235" y="210" font-size="11.5" font-family="monospace" fill="#581C87" text-anchor="middle">tx_o &lt;= wdata[7:0];  tx_valid_o &lt;= 1</text>
+
+  <!-- 接收 -->
+  <rect x="460" y="90" width="410" height="160" rx="8" fill="#DBEAFE" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="476" y="118" font-size="14" font-weight="bold" fill="#0B3D6E">接收　lw 自 0xffff0030</text>
+  <text x="476" y="146" font-size="12" fill="#374151">外界的字节从 rx_i 进来，</text>
+  <text x="476" y="166" font-size="12" fill="#374151">读数据寄存器就取到它。</text>
+  <rect x="476" y="182" width="378" height="46" rx="4" fill="#ffffff" stroke="#93C5FD"/>
+  <text x="665" y="210" font-size="11.5" font-family="monospace" fill="#0B3D6E" text-anchor="middle">rdata = {24'b0, rx_i}</text>
+
+  <!-- 状态寄存器 -->
+  <rect x="30" y="270" width="840" height="130" rx="8" fill="#EFF6FF" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="46" y="298" font-size="14" font-weight="bold" fill="#0B3D6E">状态寄存器　lw 自 0xffff0034</text>
+
+  <rect x="46" y="312" width="808" height="36" rx="4" fill="#ffffff" stroke="#BFDBFE"/>
+  <text x="60" y="336" font-size="11.5" font-family="monospace" fill="#374151">bit 31 … bit 6　全为 0</text>
+  <text x="330" y="336" font-size="11.5" font-family="monospace" fill="#B45309">bit 5 = THRE　发送保持寄存器空</text>
+  <text x="640" y="336" font-size="11.5" font-family="monospace" fill="#0B3D6E">bit 0 = DR　有数据可读</text>
+
+  <text x="46" y="372" font-size="12" fill="#374151">程序可以先读状态，看 DR 为 1 再去读数据；发送前不必等，因为本模型写入即发完，THRE 恒为 1。</text>
+
+  <text x="30" y="430" font-size="12" fill="#B45309">本章的串口是教学简化版：真实的 16550 还有波特率、FIFO、中断等寄存器，这里只留够用的两个。</text>
+  <text x="30" y="452" font-size="11.5" fill="#6B7280">第 7 章的 Python 模拟器里已经出现过同样的两个寄存器，软硬件可以对照着看。</text>
+</svg>

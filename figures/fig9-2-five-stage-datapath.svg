@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 430" width="980" height="430" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 9-2　插入流水级后的五级数据通路</title>
+  <desc>在单周期数据通路的取指、译码、执行、访存、写回之间各插入一级寄存器，竖排的虚线表示流水级边界。</desc>
+  <rect x="0" y="0" width="980" height="430" fill="#ffffff"/>
+
+  <text x="28" y="36" font-size="18" font-weight="bold" fill="#1f2937">图 9-2　插入流水级后的五级数据通路</text>
+  <text x="28" y="60" font-size="12.5" fill="#5F5E5A">彩色小块是组合逻辑，深色竖条是流水级之间的寄存器</text>
+
+  <!-- 级边界竖条 -->
+  <g fill="#374151">
+    <rect x="196" y="96" width="14" height="220" rx="2"/>
+    <rect x="386" y="96" width="14" height="220" rx="2"/>
+    <rect x="576" y="96" width="14" height="220" rx="2"/>
+    <rect x="766" y="96" width="14" height="220" rx="2"/>
+  </g>
+  <g font-size="10" fill="#ffffff" text-anchor="middle">
+    <text x="203" y="212" transform="rotate(-90 203 212)">IF/ID</text>
+    <text x="393" y="212" transform="rotate(-90 393 212)">ID/EX</text>
+    <text x="583" y="212" transform="rotate(-90 583 212)">EX/MEM</text>
+    <text x="773" y="212" transform="rotate(-90 773 212)">MEM/WB</text>
+  </g>
+
+  <!-- 五个阶段框 -->
+  <g font-size="12" text-anchor="middle">
+    <!-- IF -->
+    <rect x="34" y="150" width="140" height="112" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.4"/>
+    <text x="104" y="182" font-size="13" font-weight="bold" fill="#0B3D6E">IF 取指</text>
+    <text x="104" y="206" fill="#374151">PC</text>
+    <text x="104" y="226" fill="#374151">指令存储器</text>
+    <text x="104" y="246" fill="#374151">pc + 4</text>
+
+    <!-- ID -->
+    <rect x="224" y="150" width="140" height="112" rx="6" fill="#F3E8FF" stroke="#7E22CE" stroke-width="1.4"/>
+    <text x="294" y="182" font-size="13" font-weight="bold" fill="#581C87">ID 译码</text>
+    <text x="294" y="206" fill="#374151">控制器</text>
+    <text x="294" y="226" fill="#374151">立即数生成</text>
+    <text x="294" y="246" fill="#374151">读寄存器堆</text>
+
+    <!-- EX -->
+    <rect x="414" y="150" width="140" height="112" rx="6" fill="#FEF3C7" stroke="#B45309" stroke-width="1.4"/>
+    <text x="484" y="182" font-size="13" font-weight="bold" fill="#7C2D12">EX 执行</text>
+    <text x="484" y="206" fill="#374151">ALU</text>
+    <text x="484" y="226" fill="#374151">分支判据</text>
+    <text x="484" y="246" fill="#374151">跳转目标</text>
+
+    <!-- MEM -->
+    <rect x="604" y="150" width="140" height="112" rx="6" fill="#D1FAE5" stroke="#047857" stroke-width="1.4"/>
+    <text x="674" y="182" font-size="13" font-weight="bold" fill="#065F46">MEM 访存</text>
+    <text x="674" y="206" fill="#374151">数据存储器</text>
+    <text x="674" y="226" fill="#374151">读写字节使能</text>
+
+    <!-- WB -->
+    <rect x="794" y="150" width="152" height="112" rx="6" fill="#FEE2E2" stroke="#B91C1C" stroke-width="1.4"/>
+    <text x="870" y="182" font-size="13" font-weight="bold" fill="#991B1B">WB 写回</text>
+    <text x="870" y="206" fill="#374151">选写回来源</text>
+    <text x="870" y="226" fill="#374151">写寄存器堆</text>
+  </g>
+
+  <!-- 主数据流向箭头 -->
+  <g stroke="#6B7280" stroke-width="2" fill="none" marker-end="url(#ar)">
+    <line x1="174" y1="206" x2="196" y2="206"/>
+    <line x1="210" y1="206" x2="224" y2="206"/>
+    <line x1="364" y1="206" x2="386" y2="206"/>
+    <line x1="400" y1="206" x2="414" y2="206"/>
+    <line x1="554" y1="206" x2="576" y2="206"/>
+    <line x1="590" y1="206" x2="604" y2="206"/>
+    <line x1="744" y1="206" x2="766" y2="206"/>
+    <line x1="780" y1="206" x2="794" y2="206"/>
+  </g>
+  <defs>
+    <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#6B7280"/>
+    </marker>
+    <marker id="arw" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#9CA3AF"/>
+    </marker>
+  </defs>
+
+  <!-- WB 回写到 ID 寄存器堆的长反馈线 -->
+  <path d="M870 262 L870 336 L294 336 L294 262" fill="none" stroke="#9CA3AF" stroke-width="1.8" marker-end="url(#arw)"/>
+  <text x="580" y="352" font-size="11.5" fill="#6B7280" text-anchor="middle">写回数据经 WB 回到寄存器堆，供后续指令在 ID 级读取</text>
+
+  <!-- EX 分支目标回到 IF 的 PC -->
+  <path d="M484 150 L484 108 L104 108 L104 150" fill="none" stroke="#9CA3AF" stroke-width="1.8" marker-end="url(#arw)"/>
+  <text x="294" y="100" font-size="11" fill="#6B7280" text-anchor="middle">跳转/分支目标送回 PC（本章按顺序，冒险下章处理）</text>
+
+  <!-- 每级标注 -->
+  <g font-size="11" fill="#9CA3AF" text-anchor="middle">
+    <text x="104" y="284">一个时钟周期</text>
+    <text x="294" y="284">各阶段同时工作</text>
+    <text x="484" y="284">由寄存器隔开</text>
+    <text x="674" y="284">数据每拍前进一级</text>
+    <text x="870" y="284">≈</text>
+  </g>
+
+  <text x="28" y="396" font-size="12" fill="#B45309">注意：本章先把流水级插进去、按顺序跑通。相邻指令的数据相关靠程序里的 NOP 避开，转发与停顿在第 10 章解决。</text>
+</svg>

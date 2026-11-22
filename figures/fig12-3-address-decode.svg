@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 460" width="900" height="460" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 12-3　地址译码产生片选</title>
+  <desc>总线拿地址的高位做比较，命中内存区就拉高 mem_sel，命中外设区就拉高 io_sel，各设备再按自己的地址响应。</desc>
+  <rect x="0" y="0" width="900" height="460" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 12-3　地址译码产生片选</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">用地址的高几位做比较，命中哪一段就选中哪个设备</text>
+
+  <!-- 地址输入 -->
+  <rect x="40" y="120" width="220" height="220" rx="8" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+  <text x="150" y="150" font-size="14" font-weight="bold" fill="#374151" text-anchor="middle">32 位地址 addr</text>
+  <rect x="58" y="168" width="184" height="40" rx="4" fill="#FEF3C7" stroke="#D97706"/>
+  <text x="150" y="193" font-size="11.5" font-family="monospace" fill="#92400E" text-anchor="middle">addr[31:16] = 0x1000</text>
+  <rect x="58" y="220" width="184" height="40" rx="4" fill="#DBEAFE" stroke="#185FA5"/>
+  <text x="150" y="245" font-size="11.5" font-family="monospace" fill="#0B3D6E" text-anchor="middle">addr[31:16] = 0xffff</text>
+  <text x="150" y="290" font-size="11" fill="#6B7280" text-anchor="middle">再看低 16 位</text>
+  <text x="150" y="310" font-size="11" fill="#6B7280" text-anchor="middle">细分到具体寄存器</text>
+
+  <!-- 比较器 -->
+  <rect x="350" y="140" width="180" height="80" rx="8" fill="#EDE9FE" stroke="#7E22CE" stroke-width="1.5"/>
+  <text x="440" y="170" font-size="13" font-weight="bold" fill="#581C87" text-anchor="middle">比较器</text>
+  <text x="440" y="194" font-size="11" font-family="monospace" fill="#581C87" text-anchor="middle">(addr &amp; mask)==base</text>
+
+  <rect x="350" y="240" width="180" height="80" rx="8" fill="#EDE9FE" stroke="#7E22CE" stroke-width="1.5"/>
+  <text x="440" y="270" font-size="13" font-weight="bold" fill="#581C87" text-anchor="middle">高位判断</text>
+  <text x="440" y="294" font-size="11" font-family="monospace" fill="#581C87" text-anchor="middle">addr[31:16]==16'hffff</text>
+
+  <line x1="260" y1="188" x2="350" y2="180" stroke="#D97706" stroke-width="1.8"/>
+  <line x1="260" y1="240" x2="350" y2="280" stroke="#185FA5" stroke-width="1.8"/>
+
+  <!-- 输出片选 -->
+  <rect x="620" y="140" width="240" height="80" rx="6" fill="#D1FAE5" stroke="#047857" stroke-width="1.5"/>
+  <text x="740" y="168" font-size="13" font-weight="bold" fill="#065F46" text-anchor="middle">mem_sel = 1</text>
+  <text x="740" y="192" font-size="11" fill="#047857" text-anchor="middle">这次访问交给数据内存</text>
+
+  <rect x="620" y="240" width="240" height="80" rx="6" fill="#FCE7F3" stroke="#BE185D" stroke-width="1.5"/>
+  <text x="740" y="268" font-size="13" font-weight="bold" fill="#9D174D" text-anchor="middle">io_sel = 1</text>
+  <text x="740" y="292" font-size="11" fill="#BE185D" text-anchor="middle">这次访问交给某个外设</text>
+
+  <line x1="530" y1="180" x2="620" y2="180" stroke="#047857" stroke-width="1.8"/>
+  <line x1="530" y1="280" x2="620" y2="280" stroke="#BE185D" stroke-width="1.8"/>
+
+  <!-- 写使能与读选择 -->
+  <rect x="40" y="370" width="820" height="66" rx="6" fill="#FAFAF9" stroke="#D6D3D1"/>
+  <text x="60" y="396" font-size="12.5" fill="#374151">写：总线把 we 与片选相与，只有被选中的设备才真正写入。</text>
+  <text x="60" y="420" font-size="12.5" fill="#374151">读：四个设备的读出线接到一起，谁被选中谁输出数据，其余输出 0，或起来就是 rdata。</text>
+
+  <text x="30" y="452" font-size="11.5" fill="#B45309">配套电路 code/digital/12_addr_decode.dig 用门电路演示了片选是怎么译出来的。</text>
+</svg>

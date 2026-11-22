@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" width="900" height="440" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 4-1　电平、布尔值与三种基本门</title>
+  <desc>左侧说明高低电平对应布尔值 1 和 0，右侧给出与门、或门、非门的符号、表达式和真值表。</desc>
+  <rect x="0" y="0" width="900" height="440" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#1f2937">图 4-1　电平、布尔值与三种基本门</text>
+  <text x="30" y="64" font-size="12.5" fill="#5F5E5A">导线上的电压被分成两档，门电路按布尔代数对这两档做运算</text>
+
+  <rect x="30" y="90" width="230" height="300" rx="8" fill="#FAFAF8" stroke="#D3D1C8" stroke-width="1.2"/>
+  <text x="50" y="118" font-size="14" font-weight="bold" fill="#7a4f00">电压到逻辑值</text>
+  <rect x="55" y="145" width="180" height="52" rx="6" fill="#FCE8E6" stroke="#A32D2D" stroke-width="1.3"/>
+  <text x="145" y="167" font-size="13" font-weight="bold" fill="#7a2020" text-anchor="middle">低电平　0</text>
+  <text x="145" y="186" font-size="11" fill="#3a3a38" text-anchor="middle">接近 0 V</text>
+  <rect x="55" y="215" width="180" height="52" rx="6" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.3"/>
+  <text x="145" y="237" font-size="13" font-weight="bold" fill="#2d5c43" text-anchor="middle">高电平　1</text>
+  <text x="145" y="256" font-size="11" fill="#3a3a38" text-anchor="middle">接近电源电压</text>
+  <text x="50" y="300" font-size="12" fill="#3a3a38">中间的电压不当作有效逻辑值，</text>
+  <text x="50" y="321" font-size="12" fill="#3a3a38">仿真里记作 x，表示未知。</text>
+  <text x="50" y="348" font-size="12" fill="#3a3a38">悬空的输出记作 z，表示高阻。</text>
+
+  <g>
+    <rect x="285" y="90" width="190" height="300" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.3"/>
+    <text x="380" y="118" font-size="14" font-weight="bold" fill="#0C447C" text-anchor="middle">与门 AND</text>
+    <path d="M335,150 H375 A26,26 0 0 1 375,202 H335 Z" fill="#ffffff" stroke="#185FA5" stroke-width="2"/>
+    <line x1="315" y1="163" x2="335" y2="163" stroke="#185FA5" stroke-width="1.8"/>
+    <line x1="315" y1="189" x2="335" y2="189" stroke="#185FA5" stroke-width="1.8"/>
+    <line x1="401" y1="176" x2="425" y2="176" stroke="#185FA5" stroke-width="1.8"/>
+    <text x="380" y="228" font-size="14" font-weight="bold" fill="#0C447C" text-anchor="middle">y = a &amp; b</text>
+    <text x="380" y="260" font-size="12" fill="#3a3a38" text-anchor="middle">a　b　｜　y</text>
+    <text x="380" y="282" font-size="12" fill="#3a3a38" text-anchor="middle">0　0　｜　0</text>
+    <text x="380" y="302" font-size="12" fill="#3a3a38" text-anchor="middle">0　1　｜　0</text>
+    <text x="380" y="322" font-size="12" fill="#3a3a38" text-anchor="middle">1　0　｜　0</text>
+    <text x="380" y="342" font-size="12" fill="#3a3a38" text-anchor="middle">1　1　｜　1</text>
+  </g>
+
+  <g>
+    <rect x="490" y="90" width="190" height="300" rx="8" fill="#FDF2E4" stroke="#BA7517" stroke-width="1.3"/>
+    <text x="585" y="118" font-size="14" font-weight="bold" fill="#7a4f00" text-anchor="middle">或门 OR</text>
+    <path d="M540,150 Q585,150 615,176 Q585,202 540,202 Q560,176 540,150 Z" fill="#ffffff" stroke="#BA7517" stroke-width="2"/>
+    <line x1="520" y1="163" x2="552" y2="163" stroke="#BA7517" stroke-width="1.8"/>
+    <line x1="520" y1="189" x2="552" y2="189" stroke="#BA7517" stroke-width="1.8"/>
+    <line x1="615" y1="176" x2="635" y2="176" stroke="#BA7517" stroke-width="1.8"/>
+    <text x="585" y="228" font-size="14" font-weight="bold" fill="#7a4f00" text-anchor="middle">y = a | b</text>
+    <text x="585" y="260" font-size="12" fill="#3a3a38" text-anchor="middle">a　b　｜　y</text>
+    <text x="585" y="282" font-size="12" fill="#3a3a38" text-anchor="middle">0　0　｜　0</text>
+    <text x="585" y="302" font-size="12" fill="#3a3a38" text-anchor="middle">0　1　｜　1</text>
+    <text x="585" y="322" font-size="12" fill="#3a3a38" text-anchor="middle">1　0　｜　1</text>
+    <text x="585" y="342" font-size="12" fill="#3a3a38" text-anchor="middle">1　1　｜　1</text>
+  </g>
+
+  <g>
+    <rect x="695" y="90" width="175" height="300" rx="8" fill="#F3EAF6" stroke="#8B5BA8" stroke-width="1.3"/>
+    <text x="782" y="118" font-size="14" font-weight="bold" fill="#5e2f78" text-anchor="middle">非门 NOT</text>
+    <path d="M760,150 L760,202 L805,176 Z" fill="#ffffff" stroke="#8B5BA8" stroke-width="2"/>
+    <circle cx="812" cy="176" r="7" fill="#ffffff" stroke="#8B5BA8" stroke-width="2"/>
+    <line x1="740" y1="176" x2="760" y2="176" stroke="#8B5BA8" stroke-width="1.8"/>
+    <line x1="819" y1="176" x2="840" y2="176" stroke="#8B5BA8" stroke-width="1.8"/>
+    <text x="782" y="228" font-size="14" font-weight="bold" fill="#5e2f78" text-anchor="middle">y = ~a</text>
+    <text x="782" y="260" font-size="12" fill="#3a3a38" text-anchor="middle">a　　｜　y</text>
+    <text x="782" y="282" font-size="12" fill="#3a3a38" text-anchor="middle">0　　｜　1</text>
+    <text x="782" y="302" font-size="12" fill="#3a3a38" text-anchor="middle">1　　｜　0</text>
+    <text x="742" y="348" font-size="11.5" fill="#5F5E5A" text-anchor="middle">小圆圈表示取反</text>
+  </g>
+
+  <text x="30" y="420" font-size="12.5" fill="#5F5E5A">这三个门加上布线，就能表达任何组合逻辑函数</text>
+</svg>

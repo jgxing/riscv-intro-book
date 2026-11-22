@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 1-3　全书路线图</title>
+  <desc>五篇依次是指令与汇编、数字电路、软件模拟器、硬件实现、系统与软件。下方三个参照物是汇编程序、Python 模拟器和硬件仿真，后一步以前一步为对照。</desc>
+  <rect x="0" y="0" width="900" height="560" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#1f2937">图 1-3　全书路线图</text>
+  <text x="30" y="64" font-size="12.5" fill="#5F5E5A">从软件到硬件，再回到软件</text>
+
+  <!-- 五篇 -->
+  <g text-anchor="middle">
+    <rect x="30" y="110" width="160" height="160" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.4"/>
+    <text x="110" y="142" font-size="13" fill="#5F5E5A">第一篇</text>
+    <text x="110" y="172" font-size="16" font-weight="bold" fill="#0C447C">指令与汇编</text>
+    <text x="110" y="202" font-size="12" fill="#3a3a38">第 1 - 3 章</text>
+    <text x="110" y="232" font-size="11.5" fill="#5F5E5A">RARS</text>
+
+    <rect x="204" y="110" width="160" height="160" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.4"/>
+    <text x="284" y="142" font-size="13" fill="#5F5E5A">第二篇</text>
+    <text x="284" y="172" font-size="16" font-weight="bold" fill="#0C447C">数字电路</text>
+    <text x="284" y="202" font-size="12" fill="#3a3a38">第 4 - 5 章</text>
+    <text x="284" y="232" font-size="11.5" fill="#5F5E5A">Digital + Verilog</text>
+
+    <rect x="378" y="110" width="160" height="160" rx="8" fill="#F3E8F6" stroke="#7B4A8A" stroke-width="1.4"/>
+    <text x="458" y="142" font-size="13" fill="#5F5E5A">第三篇</text>
+    <text x="458" y="172" font-size="16" font-weight="bold" fill="#5E2E6E">软件模拟器</text>
+    <text x="458" y="202" font-size="12" fill="#3a3a38">第 6 - 7 章</text>
+    <text x="458" y="232" font-size="11.5" fill="#5F5E5A">Python</text>
+
+    <rect x="552" y="110" width="160" height="160" rx="8" fill="#FCE8E6" stroke="#A32D2D" stroke-width="2"/>
+    <text x="632" y="142" font-size="13" fill="#5F5E5A">第四篇</text>
+    <text x="632" y="172" font-size="16" font-weight="bold" fill="#7a2020">硬件实现</text>
+    <text x="632" y="202" font-size="12" fill="#3a3a38">第 8 - 10 章</text>
+    <text x="632" y="232" font-size="11.5" fill="#5F5E5A">Digital + Verilog</text>
+
+    <rect x="726" y="110" width="144" height="160" rx="8" fill="#E7F3EC" stroke="#3B7A57" stroke-width="1.4"/>
+    <text x="798" y="142" font-size="13" fill="#5F5E5A">第五篇</text>
+    <text x="798" y="172" font-size="16" font-weight="bold" fill="#2d5c43">系统与软件</text>
+    <text x="798" y="202" font-size="12" fill="#3a3a38">第 11 - 14 章</text>
+    <text x="798" y="232" font-size="11.5" fill="#5F5E5A">GCC + QEMU</text>
+  </g>
+
+  <g stroke="#9CA3AF" stroke-width="1.8" marker-end="url(#arrowGray)">
+    <line x1="191" y1="190" x2="202" y2="190"/>
+    <line x1="365" y1="190" x2="376" y2="190"/>
+    <line x1="539" y1="190" x2="550" y2="190"/>
+    <line x1="713" y1="190" x2="724" y2="190"/>
+  </g>
+
+  <!-- 参照物 -->
+  <text x="30" y="322" font-size="14" font-weight="bold" fill="#1f2937">三个可以互相参照的东西</text>
+
+  <rect x="30" y="344" width="240" height="92" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.3"/>
+  <text x="150" y="378" font-size="15" font-weight="bold" fill="#0C447C" text-anchor="middle">汇编程序</text>
+  <text x="150" y="404" font-size="12" fill="#3a3a38" text-anchor="middle">第 3 章，在 RARS 里单步执行</text>
+
+  <rect x="330" y="344" width="240" height="92" rx="8" fill="#F3E8F6" stroke="#7B4A8A" stroke-width="1.3"/>
+  <text x="450" y="378" font-size="15" font-weight="bold" fill="#5E2E6E" text-anchor="middle">Python 模拟器</text>
+  <text x="450" y="404" font-size="12" fill="#3a3a38" text-anchor="middle">第 6 - 7 章，可调试的软件模型</text>
+
+  <rect x="630" y="344" width="240" height="92" rx="8" fill="#FCE8E6" stroke="#A32D2D" stroke-width="1.3"/>
+  <text x="750" y="378" font-size="15" font-weight="bold" fill="#7a2020" text-anchor="middle">硬件仿真</text>
+  <text x="750" y="404" font-size="12" fill="#3a3a38" text-anchor="middle">第 8 - 10 章，Verilog 测试台</text>
+
+  <g stroke="#9CA3AF" stroke-width="1.8" marker-end="url(#arrowGray)">
+    <line x1="272" y1="390" x2="328" y2="390"/>
+    <line x1="572" y1="390" x2="628" y2="390"/>
+  </g>
+
+  <text x="30" y="482" font-size="13" fill="#3a3a38">每次硬件实现有疑问，先回到软件模型看一眼：它给出的寄存器值就是参考答案。</text>
+  <text x="30" y="508" font-size="13" fill="#3a3a38">最后在 QEMU 上观察异常、定时器和多任务切换，把整条链走完。</text>
+
+  <defs>
+    <marker id="arrowGray" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#9CA3AF"/>
+    </marker>
+  </defs>
+</svg>

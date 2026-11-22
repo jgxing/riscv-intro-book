@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560" font-family="'Microsoft YaHei','PingFang SC',sans-serif">
+  <title>图 12-1　本系统的地址空间布局</title>
+  <desc>32 位地址空间里，代码段在 0x00400000，数据内存在 0x10000000，外设寄存器集中在 0xffff0000 开始的一小段。</desc>
+  <rect x="0" y="0" width="900" height="560" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="18" font-weight="bold" fill="#1f2937">图 12-1　本系统的地址空间布局</text>
+  <text x="30" y="62" font-size="12.5" fill="#5F5E5A">外设寄存器占一段地址，读写外设和读写内存用同一套 load / store 指令</text>
+
+  <!-- 地址竖条 -->
+  <rect x="70" y="90" width="200" height="410" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+  <text x="170" y="82" font-size="12" font-weight="bold" fill="#374151" text-anchor="middle">地址（高 → 低）</text>
+
+  <rect x="70" y="90" width="200" height="60" fill="#E5E7EB"/>
+  <text x="170" y="126" font-size="12" fill="#6B7280" text-anchor="middle">其余地址</text>
+  <text x="170" y="142" font-size="11" fill="#9CA3AF" text-anchor="middle">未使用</text>
+
+  <rect x="70" y="150" width="200" height="70" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="170" y="178" font-size="12.5" font-weight="bold" fill="#92400E" text-anchor="middle">图形显存</text>
+  <text x="170" y="198" font-size="11" fill="#92400E" text-anchor="middle">0xffff8000</text>
+  <text x="170" y="213" font-size="10.5" fill="#B45309" text-anchor="middle">~ 0xffffffff（选读）</text>
+
+  <rect x="70" y="220" width="200" height="200" fill="#DBEAFE" stroke="#185FA5" stroke-width="1.5"/>
+  <text x="170" y="245" font-size="12.5" font-weight="bold" fill="#0B3D6E" text-anchor="middle">外设区</text>
+  <text x="170" y="266" font-size="11" font-family="monospace" fill="#0B3D6E" text-anchor="middle">0xffff0000</text>
+  <text x="170" y="288" font-size="10.5" fill="#374151" text-anchor="middle">0000 定时器低 32 位</text>
+  <text x="170" y="306" font-size="10.5" fill="#374151" text-anchor="middle">0004 定时器高 32 位</text>
+  <text x="170" y="324" font-size="10.5" fill="#374151" text-anchor="middle">0010 LED（写）</text>
+  <text x="170" y="342" font-size="10.5" fill="#374151" text-anchor="middle">0020 开关（读）</text>
+  <text x="170" y="360" font-size="10.5" fill="#374151" text-anchor="middle">0030 UART 数据</text>
+  <text x="170" y="378" font-size="10.5" fill="#374151" text-anchor="middle">0034 UART 状态</text>
+  <text x="170" y="402" font-size="10.5" fill="#6B7280" text-anchor="middle">0040 起保留</text>
+
+  <rect x="70" y="420" width="200" height="80" fill="#D1FAE5" stroke="#047857" stroke-width="1.5"/>
+  <text x="170" y="450" font-size="12.5" font-weight="bold" fill="#065F46" text-anchor="middle">数据内存</text>
+  <text x="170" y="470" font-size="11" font-family="monospace" fill="#065F46" text-anchor="middle">0x10000000</text>
+  <text x="170" y="488" font-size="10.5" fill="#047857" text-anchor="middle">4 KB</text>
+
+  <!-- 右侧说明 -->
+  <rect x="320" y="90" width="550" height="410" rx="8" fill="#FAFAF9" stroke="#D6D3D1" stroke-width="1.5"/>
+  <text x="340" y="120" font-size="15" font-weight="bold" fill="#1f2937">一条 store 指令是怎样点亮灯的</text>
+
+  <text x="340" y="156" font-size="12.5" fill="#374151">1　用 lui 把外设基址 0xffff0000 装进一个寄存器</text>
+  <text x="356" y="178" font-size="11.5" font-family="monospace" fill="#1f2937">lui   x1, 0xffff0</text>
+
+  <text x="340" y="210" font-size="12.5" fill="#374151">2　加上偏移，得到 LED 的地址 0xffff0010</text>
+  <text x="356" y="232" font-size="11.5" font-family="monospace" fill="#1f2937">addi  x3, x1, 0x10</text>
+
+  <text x="340" y="264" font-size="12.5" fill="#374151">3　把要显示的数据写到这个地址</text>
+  <text x="356" y="286" font-size="11.5" font-family="monospace" fill="#1f2937">sw    x2, 0(x3)</text>
+
+  <rect x="340" y="310" width="510" height="70" rx="6" fill="#EFF6FF" stroke="#93C5FD"/>
+  <text x="356" y="334" font-size="12" fill="#1f2937">总线看到地址落在 0xffff0010，就把这次写</text>
+  <text x="356" y="356" font-size="12" fill="#1f2937">交给 GPIO；GPIO 取数据的低 8 位驱动 LED。</text>
+  <text x="356" y="374" font-size="11.5" fill="#185FA5">CPU 完全不必知道对面是内存还是一盏灯。</text>
+
+  <text x="340" y="410" font-size="12.5" fill="#374151">读开关也是同一套办法，只是把 sw 换成 lw：</text>
+  <text x="356" y="432" font-size="11.5" font-family="monospace" fill="#1f2937">lw    x5, 0(x4)　　# x4 = 0xffff0020</text>
+
+  <text x="340" y="470" font-size="12" font-weight="bold" fill="#B45309">这就是内存映射 I/O：地址本身就是设备的名字。</text>
+
+  <text x="30" y="530" font-size="12" fill="#6B7280">注：显存一区本书不展开，列在这里只为说明外设地址是连续编排的。</text>
+</svg>
